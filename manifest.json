@@ -6,6 +6,6 @@
   "description": "Renders OpenAPI specifications in Obsidian notes",
   "author": "Sentiago",
   "authorUrl": "https://github.com/Ssentiago",
-  "description": "Generates a Swagger-UI interface and embeds it as an iframe or link in Obsidian notes. Requires a YAML or JSON OpenAPI specification file in the current note's directory",
+  "description": "Generates a Swagger-UI interface and embeds it as an iframe or link in Obsidian notes",
   "isDesktopOnly": false
 }
