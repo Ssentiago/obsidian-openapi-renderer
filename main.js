@@ -116,7 +116,7 @@ class OpenAPIPlugin extends obsidian.Plugin {
         const editor = activeView.editor;
         const currentContent = editor.getValue();
         const dataviewjsScript = this.generateDataviewJSScript();
-        const dataviewjsScriptPresent = currentContent.includes(dataviewjsScript)
+        const dataviewjsScriptPresent = currentContent.match(/await renderIframe/)
 
         if (dataviewjsScriptPresent) {
             new obsidian.Notice('New HTML was Rendered. Please Look At This');
@@ -130,6 +130,7 @@ class OpenAPIPlugin extends obsidian.Plugin {
         return `
 \`\`\`dataviewjs
 const { Platform } = require("obsidian");
+const { MarkdownView } = require("obsidian")
 
 function relativePathToUrl(relativePath, notePath) {
     const { URL } = require("node:url")
@@ -217,11 +218,11 @@ await renderIframe({ dv, relativePath: "openapi-spec.html" });
 </html>
         `;
     }
-
     onunload() {
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }
+    }   
 }
 
 class OpenAPISettingTab extends obsidian.PluginSettingTab {
