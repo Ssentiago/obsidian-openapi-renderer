@@ -1,27 +1,32 @@
 ### OpenAPI Renderer Plugin for Obsidian
 
-This plugin is designed to generate a Swagger-UI interface and then embed it as an iframe in the current view of a note. It operates in two modes: If the current device is a desktop application, the iframe is added. If it's not, a clickable HTML link is added instead - this allows you to view the Swagger UI in a browser.
+This plugin generates a Swagger-UI interface and embeds it as an iframe in the current view of a note. It works in two modes:
+- Desktop app: Adds an iframe
+- Other devices: Adds a clickable HTML link to view Swagger UI in a browser
 
-### **Important notes:**
-- The plugin looks for a YAML file in the current folder of the opened note. Make sure your OpenAPI specification is in YAML format and located in the same folder.
-- By default, the plugin generates an HTML file called openapi-spec.html in the folder containing the YAML file.
-- Internet access is necessary for proper operation, as it uses CDNs to download Swagger UI and js-yaml.
-- The plugin uses DataviewJS to render an iframe or link. Please make sure that you have installed the Dataview plugin and enabled the JS script settings for it in your Obsidian instance.
+### Important notes:
+- Plugin searches for a YAML or JSON file in the current folder of the opened note. OpenAPI specification should be in YAML / JSON format in the same folder. Make sure that the name of the specification file corresponds to the plugin setting
+- By default, generates HTML file named openapi-spec.html in the folder with YAML file.
+- Default OpenAPI specification filename is "openapi-spec.yaml" in the same folder.
+- Needs internet access to download Swagger UI and js-yaml from CDNs.
+- Uses DataviewJS for iframe/link rendering. Install Dataview plugin and enable JS script settings in its settings.
+
 
 ### Installation
-- Copy the plugin files to the `obsidian/plugins/openapi-renderer/` folder in your Obsidian repository.
-- Enable the plugin in the Obsidian settings (Settings → Third-party plugins).
+- Copy plugin files to obsidian/plugins/openapi-renderer/ in your Obsidian vault.
+- Enable plugin in Obsidian settings (Settings → Third-party plugins).
 
 ### Usage
-- Open a note in the same directory as your OpenAPI YAML file.
-- Press `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) to generate HTML and insert the Dataview JS script.
-- If all goes well, you should see the generated Swagger UI in your note.
+- Open note in same directory as OpenAPI YAML/JSON file.
+- Press Ctrl+Shift+O (or Cmd+Shift+O on Mac) to generate HTML and insert DataviewJS script.
+- Swagger UI should appear in your note if everything's okay.
 
 ### Settings
-In the settings for the plugin, you can customize:
-- The name of the generated HTML file.
-- The name of the OpenAPI specification
-- The dimensions (width and height) of the iframe.
+Customize in plugin settings:
+- Generated HTML filename
+- OpenAPI specification filename
+- Iframe dimensions (width and height)
+- Auto-update toggle for preview. Note that next to the plugin preview, you also have a manual update button on the top left
 
 ### Credits 
-Thank to [mnaoumov](https://github.com/mnaoumov/) for providing the dataviewjs script to render local files in an iframe.
+Special thanks to [mnaoumov](https://github.com/mnaoumov/) for providing the initial DataviewJS script to render local files in an iframe, which served as the foundation for this plugin's functionality.

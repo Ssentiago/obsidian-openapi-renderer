@@ -22,7 +22,39 @@ class OpenAPIPlugin extends obsidian.Plugin {
         });
 
         this.addSettingTab(new OpenAPISettingTab(this.app, this));
+
+
+        this.registerEvent(
+            this.app.vault.on('modify', (file) => {
+                if (file.path.endsWith(this.settings.htmlFileName)) {
+                    this.scheduleUpdate();
+                }
+            })
+        );
     }
+
+    scheduleUpdate() {
+        // Отменяем предыдущий запланированный update, если он есть
+        if (this.updateTimeout) {
+            clearTimeout(this.updateTimeout);
+        }
+
+        // Планируем новый update через 2 секунды
+        this.updateTimeout = setTimeout(() => {
+            this.updatePreview();
+        }, 2000);
+    }
+
+    updatePreview() {
+        const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
+        if (view && this.settings.autoUpdate) {
+            view.previewMode.rerender(true);
+            new obsidian.Notice('OpenAPI preview was automatically updated');
+        }
+    }
+        
+
+
 
     async loadSettings() {
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -114,12 +146,20 @@ async function checkExistsFile(htmlFile) {
     return await app.vault.adapter.exists(htmlFilePath);
 }
 
-async function renderIframe({ dv, relativePath, width = "${this.settings.iframeWidth}", height = "${this.settings.iframeHeight}" }) {
+async function renderIframe({ dv, relativePath, width = "100%", height = "800px" }) {
     const htmlExists = await checkExistsFile(relativePath);
     if (!htmlExists) {
         dv.el("div", "No HTML file was found. Please re-render this.");
         return;
     }
+	const refreshButton = dv.el("button", "Refresh", { cls: "refresh-button", onclick: () => {
+        const view = app.workspace.getActiveViewOfType(MarkdownView);
+        if (!view) {
+            return;
+        }
+        view.previewMode.rerender(true)
+        new Notice('OpenAPI preview manually updated');
+        } });
 
     if (Platform.isDesktopApp) {
         dv.el("iframe", "", {
@@ -134,7 +174,9 @@ async function renderIframe({ dv, relativePath, width = "${this.settings.iframeW
     }
 };
 
-await renderIframe({ dv, relativePath: "${this.settings.htmlFileName}" });
+
+
+await renderIframe({ dv, relativePath: "openapi-spec.html" });
 \`\`\`
 `;
     }
@@ -177,8 +219,9 @@ await renderIframe({ dv, relativePath: "${this.settings.htmlFileName}" });
     }
 
     onunload() {
-        //
-    }
+        if (this.updateTimeout) {
+            clearTimeout(this.updateTimeout);
+        }
 }
 
 class OpenAPISettingTab extends obsidian.PluginSettingTab {
@@ -258,6 +301,20 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                     this.plugin.settings.iframeHeight = value;
                     await this.plugin.saveSettings();
                 }));
+
+
+        new obsidian.Setting(containerEl)
+            .setName('Auto Update')
+            .setDesc('Automatically update the preview of iframe when the HTML file changes')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.autoUpdate)
+                .onChange(async (value) => {
+                    this.plugin.settings.autoUpdate = value;
+                    await this.plugin.saveSettings();
+                }));
+
+
+
     }
 
     isValidSpecFileName(fileName) {
