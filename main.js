@@ -3,6 +3,7 @@ const path = require('path');
 
 const DEFAULT_SETTINGS = {
     htmlFileName: 'openapi-spec.html',
+    openapiSpecFileName: 'openapi-spec.yaml',
     iframeWidth: '100%',
     iframeHeight: '600px'
 };
@@ -31,6 +32,29 @@ class OpenAPIPlugin extends obsidian.Plugin {
         await this.saveData(this.settings);
     }
 
+    async getOpenApiSpec(currentDir) {
+        const specFileName = this.settings.openapiSpecFileName;
+        const specFilePath = path.join(currentDir, specFileName);
+
+        try {
+            const content = await this.app.vault.adapter.read(specFilePath);
+            const fileExtension = path.extname(specFileName).toLowerCase();
+
+            if (fileExtension === '.json') {
+                return content;
+            } else if (fileExtension === '.yaml' || fileExtension === '.yml') {
+                    const yamlContent = content.replace(/\t/g, '    ');
+                    return yamlContent;
+                
+            } 
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                new obsidian.Notice(`The specification file '${specFileName}' was not found in the current directory`);
+            }
+            return null;
+        }
+    }
+
     async renderOpenAPISpec() {
         const activeView = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
         if (!activeView) {
@@ -45,22 +69,15 @@ class OpenAPIPlugin extends obsidian.Plugin {
         }
 
         const currentDir = path.dirname(currentFile.path);
-        const yamlFile = this.app.vault.getFiles()
-            .find(file => (file.extension === 'yaml' || file.extension === 'yml') &&
-                          path.dirname(file.path) === currentDir);
 
-        if (!yamlFile) {
-            new obsidian.Notice('No YAML file found in the current directory');
+        const specContent = await this.getOpenApiSpec(currentDir)
+
+        if (!specContent) {
             return;
         }
 
-        // Get the content of the YAML file
-        let yamlContent = await this.app.vault.adapter.read(yamlFile.path);
-        // Replace tab characters with spaces
-        yamlContent = yamlContent.replace(/\t/g, '    ');
-
         // Create HTML file with Swagger UI and embedded YAML content
-        const htmlContent = this.generateSwaggerUIHTML(yamlContent);
+        const htmlContent = this.generateSwaggerUIHTML(specContent);
         const htmlFilePath = path.join(currentDir, this.settings.htmlFileName);
         await this.app.vault.adapter.write(htmlFilePath, htmlContent);
 
@@ -73,7 +90,7 @@ class OpenAPIPlugin extends obsidian.Plugin {
             new obsidian.Notice('New HTML was Rendered. Please Look At This');
         } else {
             editor.setValue(dataviewjsScript + '\n\n' + currentContent)
-            new obsidian.Notice('OpenAPI Specification was rendered and dataviewjs script was created.');
+            new obsidian.Notice('OpenAPI Specification was rendered and DataviewJS script was created.');
         }
     }
 
@@ -122,7 +139,7 @@ await renderIframe({ dv, relativePath: "${this.settings.htmlFileName}" });
 `;
     }
 
-    generateSwaggerUIHTML(yamlContent) {
+    generateSwaggerUIHTML(specContent) {
         return `
 <!DOCTYPE html>
 <html lang="en">
@@ -142,7 +159,7 @@ await renderIframe({ dv, relativePath: "${this.settings.htmlFileName}" });
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script>
         window.onload = function() {
-            const spec = jsyaml.load(${JSON.stringify(yamlContent)});
+            const spec = jsyaml.load(${JSON.stringify(specContent)});
             const ui = SwaggerUIBundle({
                 spec: spec,
                 dom_id: '#swagger-ui',
@@ -189,6 +206,38 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                 }));
 
         new obsidian.Setting(containerEl)
+            .setName("OpenAPI specification filename")
+            .setDesc("Must end with .yaml, .yml, or .json")
+            .addText(text => {
+                text.setPlaceholder('openapi-spec.yaml')
+                    .setValue(this.plugin.settings.openapiSpecFileName)
+                    .onChange(async (value) => {
+                        // We'll handle the actual change in onBlur
+                        // to avoid constant validation during typing
+                    });
+
+                // Add onBlur event listener
+                text.inputEl.addEventListener('blur', async () => {
+                    const value = text.inputEl.value;
+                    if (this.isValidSpecFileName(value)) {
+                        this.plugin.settings.openapiSpecFileName = value;
+                        await this.plugin.saveSettings();
+                    } else {
+                        const oldValue = this.plugin.settings.openapiSpecFileName;
+                        new obsidian.Notice(`Invalid file extension. Please use .yaml, .yml, or .json. Reverting to ${oldValue} in 2 seconds.`);
+                        
+                        // Delay for 2 seconds before reverting to the old value
+                        setTimeout(() => {
+                            text.setValue(oldValue);
+                            new obsidian.Notice(`Reverted to ${oldValue}`);
+                        }, 2000);
+                    }
+                });
+
+                return text;
+            });
+
+        new obsidian.Setting(containerEl)
             .setName('iframe Width')
             .setDesc('Width of the iframe')
             .addText(text => text
@@ -209,6 +258,11 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                     this.plugin.settings.iframeHeight = value;
                     await this.plugin.saveSettings();
                 }));
+    }
+
+    isValidSpecFileName(fileName) {
+        const validExtensions = /\.(yaml|yml|json)$/i;
+        return validExtensions.test(fileName);
     }
 }
 

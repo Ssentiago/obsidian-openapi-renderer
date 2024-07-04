@@ -20,6 +20,7 @@ This plugin is designed to generate a Swagger-UI interface and then embed it as 
 ### Settings
 In the settings for the plugin, you can customize:
 - The name of the generated HTML file.
+- The name of the OpenAPI specification
 - The dimensions (width and height) of the iframe.
 
 ### Credits 
