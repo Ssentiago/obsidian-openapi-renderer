@@ -29,4 +29,5 @@ Customize in plugin settings:
 - Auto-update toggle for preview. Note that next to the plugin preview, you also have a manual update button on the top left
 
 ### Credits 
-Special thanks to [mnaoumov](https://github.com/mnaoumov/) for providing the initial DataviewJS script to render local files in an iframe, which served as the foundation for this plugin's functionality.
+Special thanks to [mnaoumov](https://github.com/mnaoumov/) for providing the initial DataviewJS script, which served as the foundation for this plugin's functionality.
+

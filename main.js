@@ -34,12 +34,10 @@ class OpenAPIPlugin extends obsidian.Plugin {
     }
 
     scheduleUpdate() {
-        // Отменяем предыдущий запланированный update, если он есть
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }
 
-        // Планируем новый update через 2 секунды
         this.updateTimeout = setTimeout(() => {
             this.updatePreview();
         }, 2000);
