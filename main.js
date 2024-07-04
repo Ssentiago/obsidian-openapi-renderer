@@ -87,7 +87,6 @@ class OpenAPIPlugin extends obsidian.Plugin {
     const dataviewjsScriptPresent = currentContent.includes(dataviewjsScript)
 
     if (dataviewjsScriptPresent) {
-
       new obsidian.Notice('New HTML was Rendered. Please Look At This');
 
     } else {
