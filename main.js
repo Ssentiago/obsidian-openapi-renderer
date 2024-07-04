@@ -8,7 +8,7 @@ const { Platform } = require("obsidian");
 
 function relativePathToUrl(relativePath, notePath) {
  const { URL } = require("node:url")
-  const noteFullPath = app.vault.adapter.getFullRealPath(notePath).replaceAll("\\", "/");
+  const noteFullPath = app.vault.adapter.getFullRealPath(notePath).replaceAll("\\\\", "/");
   const noteUrl = \`\${Platform.resourcePathPrefix}\${noteFullPath}\`;
   const relativeUrl = new URL(relativePath, noteUrl);
   return relativeUrl.toString();
