@@ -108,7 +108,6 @@ class OpenAPIPlugin extends obsidian.Plugin {
         const htmlContent = this.generateSwaggerUIHTML(specContent);
 
         const htmlFilePath = currentDir + this.settings.htmlFileName;
-        console.log(htmlFilePath)
         await this.app.vault.adapter.write(htmlFilePath, htmlContent);
 
         const editor = activeView.editor;
