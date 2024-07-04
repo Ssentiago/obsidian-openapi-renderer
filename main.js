@@ -1,5 +1,5 @@
 const obsidian = require('obsidian');
-const path = require('path');
+const { Platform } = require("obsidian");
 
 const DEFAULT_SETTINGS = {
     htmlFileName: 'openapi-spec.html',
@@ -64,12 +64,11 @@ class OpenAPIPlugin extends obsidian.Plugin {
 
     async getOpenApiSpec(currentDir) {
         const specFileName = this.settings.openapiSpecFileName;
-        const specFilePath = path.join(currentDir, specFileName);
+        const specFilePath = currentDir + specFileName;
 
         try {
             const content = await this.app.vault.adapter.read(specFilePath);
-            const fileExtension = path.extname(specFileName).toLowerCase();
-
+            const fileExtension = specFileName.match(/\..+?$/)[0]
             if (fileExtension === '.json') {
                 return content;
             } else if (fileExtension === '.yaml' || fileExtension === '.yml') {
@@ -97,8 +96,7 @@ class OpenAPIPlugin extends obsidian.Plugin {
             new obsidian.Notice('No file is currently open');
             return;
         }
-
-        const currentDir = path.dirname(currentFile.path);
+        const currentDir = currentFile.path.substring(0, currentFile.path.lastIndexOf("/") + 1)
 
         const specContent = await this.getOpenApiSpec(currentDir)
 
@@ -108,7 +106,9 @@ class OpenAPIPlugin extends obsidian.Plugin {
 
         // Create HTML file with Swagger UI and embedded YAML content
         const htmlContent = this.generateSwaggerUIHTML(specContent);
-        const htmlFilePath = path.join(currentDir, this.settings.htmlFileName);
+
+        const htmlFilePath = currentDir + this.settings.htmlFileName;
+        console.log(htmlFilePath)
         await this.app.vault.adapter.write(htmlFilePath, htmlContent);
 
         const editor = activeView.editor;
@@ -151,6 +151,9 @@ async function renderIframe({ dv, relativePath, width = "100%", height = "800px"
         dv.el("div", "No HTML file was found. Please re-render this.");
         return;
     }
+
+    if (Platform.isDesktopApp) {
+
 	const refreshButton = dv.el("button", "Refresh", { cls: "refresh-button", onclick: () => {
         const view = app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) {
@@ -160,7 +163,6 @@ async function renderIframe({ dv, relativePath, width = "100%", height = "800px"
         new Notice('OpenAPI preview manually updated');
         } });
 
-    if (Platform.isDesktopApp) {
         dv.el("iframe", "", {
             attr: {
                 src: relativePathToUrl(relativePath, dv.current().file.path),
@@ -169,7 +171,7 @@ async function renderIframe({ dv, relativePath, width = "100%", height = "800px"
             }
         });
     } else {
-        dv.el("div", \`[[\${relativePath}|Открыть swagger-ui]]\`);
+        dv.el("div", \`[[\${relativePath}|Open swagger-ui]]\`);
     }
 };
 
@@ -278,39 +280,42 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
 
                 return text;
             });
-
-        new obsidian.Setting(containerEl)
-            .setName('iframe Width')
-            .setDesc('Width of the iframe')
-            .addText(text => text
-                .setPlaceholder('100%')
-                .setValue(this.plugin.settings.iframeWidth)
-                .onChange(async (value) => {
-                    this.plugin.settings.iframeWidth = value;
-                    await this.plugin.saveSettings();
-                }));
-
-        new obsidian.Setting(containerEl)
-            .setName('iframe Height')
-            .setDesc('Height of the iframe')
-            .addText(text => text
-                .setPlaceholder('600px')
-                .setValue(this.plugin.settings.iframeHeight)
-                .onChange(async (value) => {
-                    this.plugin.settings.iframeHeight = value;
-                    await this.plugin.saveSettings();
-                }));
-
-
-        new obsidian.Setting(containerEl)
-            .setName('Auto Update')
-            .setDesc('Automatically update the preview of iframe when the HTML file changes')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.autoUpdate)
-                .onChange(async (value) => {
-                    this.plugin.settings.autoUpdate = value;
-                    await this.plugin.saveSettings();
-                }));
+            
+            if (Platform.isDesktopApp) {
+                new obsidian.Setting(containerEl)
+                .setName('iframe Width')
+                .setDesc('Width of the iframe')
+                .addText(text => text
+                    .setPlaceholder('100%')
+                    .setValue(this.plugin.settings.iframeWidth)
+                    .onChange(async (value) => {
+                        this.plugin.settings.iframeWidth = value;
+                        await this.plugin.saveSettings();
+                    }));
+    
+            new obsidian.Setting(containerEl)
+                .setName('iframe Height')
+                .setDesc('Height of the iframe')
+                .addText(text => text
+                    .setPlaceholder('600px')
+                    .setValue(this.plugin.settings.iframeHeight)
+                    .onChange(async (value) => {
+                        this.plugin.settings.iframeHeight = value;
+                        await this.plugin.saveSettings();
+                    }));
+    
+    
+            new obsidian.Setting(containerEl)
+                .setName('Auto Update')
+                .setDesc('Automatically update the preview of iframe when the HTML file changes')
+                .addToggle(toggle => toggle
+                    .setValue(this.plugin.settings.autoUpdate)
+                    .onChange(async (value) => {
+                        this.plugin.settings.autoUpdate = value;
+                        await this.plugin.saveSettings();
+                    }));
+            }
+        
 
 
 
