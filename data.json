@@ -1,6 +1,6 @@
 {
   "htmlFileName": "openapi-spec.html",
-  "openapiSpecFileName": "openapi-spec.json",
+  "openapiSpecFileName": "openapi-spec.yaml",
   "iframeWidth": "100%",
   "iframeHeight": "800px",
   "autoUpdate": false
