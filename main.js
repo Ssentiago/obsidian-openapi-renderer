@@ -64,7 +64,6 @@ class OpenAPIPlugin extends obsidian.Plugin {
         const htmlFilePath = path.join(currentDir, this.settings.htmlFileName);
         await this.app.vault.adapter.write(htmlFilePath, htmlContent);
 
-        // Clear the current view and insert the new link
         const editor = activeView.editor;
         const currentContent = editor.getValue();
         const dataviewjsScript = this.generateDataviewJSScript();
@@ -74,7 +73,7 @@ class OpenAPIPlugin extends obsidian.Plugin {
             new obsidian.Notice('New HTML was Rendered. Please Look At This');
         } else {
             editor.setValue(dataviewjsScript + '\n\n' + currentContent)
-            new obsidian.Notice('OpenAPI Specification rendered and dataviewjs script inserted.');
+            new obsidian.Notice('OpenAPI Specification was rendered and dataviewjs script was created.');
         }
     }
 
@@ -161,7 +160,7 @@ await renderIframe({ dv, relativePath: "${this.settings.htmlFileName}" });
     }
 
     onunload() {
-        // Clean up if necessary
+        //
     }
 }
 
