@@ -5,7 +5,8 @@ const DEFAULT_SETTINGS = {
     htmlFileName: 'openapi-spec.html',
     openapiSpecFileName: 'openapi-spec.yaml',
     iframeWidth: '100%',
-    iframeHeight: '600px'
+    iframeHeight: '600px',
+    autoUpdate: false
 };
 
 class OpenAPIPlugin extends obsidian.Plugin {
@@ -153,7 +154,7 @@ async function checkExistsFile(htmlFile) {
     return await app.vault.adapter.exists(htmlFilePath);
 }
 
-async function renderIframe({ dv, relativePath, width = "100%", height = "800px" }) {
+async function renderIframe({ dv, relativePath, width, height  }) {
     const htmlExists = await checkExistsFile(relativePath);
     if (!htmlExists) {
         dv.el("div", "No HTML file was found. Please re-render this.");
@@ -184,7 +185,7 @@ async function renderIframe({ dv, relativePath, width = "100%", height = "800px"
 
 
 await new Promise(resolve => setTimeout(resolve, 500)); // delay 500 ms before starting dataview script
-await renderIframe({ dv, relativePath: "openapi-spec.html" });
+await renderIframe({ dv, relativePath: "openapi-spec.html", width: ${this.settings.iframeWidth}, height: ${this.settings.iframeHeight} });
 \`\`\`
 `;
     }
