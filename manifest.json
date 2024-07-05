@@ -1,11 +1,10 @@
 {
-  "id": "obsidian-openapi-renderer",
+  "id": "openapi-renderer",
   "name": "OpenAPI Renderer",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "Renders OpenAPI specifications in Obsidian notes",
   "author": "Sentiago",
   "authorUrl": "https://github.com/Ssentiago",
-  "description": "Generates a Swagger-UI interface and embeds it as an iframe or link in Obsidian notes",
+  "description": "Generates a Swagger-UI interface and embeds it as an iframe or link in notes",
   "isDesktopOnly": false
 }
