@@ -276,8 +276,8 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                 }));
 
                 new obsidian.Setting(containerEl)
-                .setName("Имя файла спецификации OpenAPI")
-                .setDesc("Должно заканчиваться на .yaml, .yml или .json")
+                .setName("OpenAPI specification file name")
+                .setDesc("Must end with .yaml, .yml or .json")
                 .addText(text => {
                     const specBlurHandler = async () => {
                         const value = text.inputEl.value;
@@ -286,11 +286,11 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                             await this.plugin.saveSettings();
                         } else {
                             const oldValue = this.plugin.settings.openapiSpecFileName;
-                            new obsidian.Notice(`Недопустимое расширение файла. Пожалуйста, используйте .yaml, .yml или .json. Возврат к ${oldValue} через 2 секунды.`);
+                            new obsidian.Notice(`Invalid file extension. Please use .yaml, .yml or .json. Return to ${oldValue} after 2 seconds.`);
                             
                             setTimeout(() => {
                                 text.setValue(oldValue);
-                                new obsidian.Notice(`Возвращено к ${oldValue}`);
+                                new obsidian.Notice(`Reverted to ${oldValue}`);
                             }, 2000);
                         }
                     };
@@ -298,10 +298,10 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                     text.setPlaceholder('openapi-spec.yaml')
                         .setValue(this.plugin.settings.openapiSpecFileName)
                         .onChange(async (value) => {
-                            // Фактическое изменение будет обрабатываться в onBlur
+                            // The actual change will be handled in onBlur
                         });
             
-                    // Сохраняем ссылку на функцию-обработчик события
+                    // We save a reference to the event handler function
                     this.blurEventRef = specBlurHandler;
                     text.inputEl.addEventListener('blur', this.blurEventRef);
                     text.inputEl.id = 'openapi-spec-filename-input';
