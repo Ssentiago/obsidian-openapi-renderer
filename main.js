@@ -1,5 +1,6 @@
 const obsidian = require('obsidian');
-const { Platform } = require("obsidian");
+const Platform  = require("obsidian");
+
 
 const DEFAULT_SETTINGS = {
     htmlFileName: 'openapi-spec.html',
@@ -237,7 +238,7 @@ await renderIframe({ dv, relativePath: "openapi-spec.html", width: '${this.setti
     };
 
     
-    
+
     
     testCleanup() {
         console.log("Starting test cleanup");
