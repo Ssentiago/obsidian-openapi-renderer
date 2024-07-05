@@ -21,6 +21,10 @@ This plugin generates a Swagger-UI interface and embeds it as an iframe in the c
 - Press Ctrl+Shift+O (or Cmd+Shift+O on Mac) to generate HTML and insert DataviewJS script.
 - Swagger UI should appear in your note if everything's okay.
 
+### Demonstration
+![2024-07-05 19-20-03](https://github.com/Ssentiago/openapi-renderer/assets/76674116/25cfc3b8-347b-4c0a-acfe-0c5bf3849d14)
+
+
 ### Settings
 Customize in plugin settings:
 - Generated HTML filename
