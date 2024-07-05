@@ -1,6 +1,6 @@
 {
   "htmlFileName": "openapi-spec.html",
-  "openapiSpecFileName": "qopenapi-spec.yaml",
+  "openapiSpecFileName": "openapi-spec.yaml",
   "iframeWidth": "100%",
   "iframeHeight": "800px",
   "autoUpdate": false
