@@ -4,6 +4,9 @@ This plugin generates a Swagger-UI interface and embeds it as an iframe in the c
 - Desktop app: Adds an iframe
 - Other devices: Adds a clickable HTML link to view Swagger UI in a browser
 
+### Requirements
+- Dataview with enabled JS settings
+
 ### Important notes:
 - Plugin searches for a YAML or JSON file in the current folder of the opened note. OpenAPI specification should be in YAML / JSON format in the same folder. Make sure that the name of the specification file corresponds to the plugin setting
 - By default, generates HTML file named openapi-spec.html in the folder with YAML file.
