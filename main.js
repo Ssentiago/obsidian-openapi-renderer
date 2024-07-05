@@ -183,7 +183,7 @@ async function renderIframe({ dv, relativePath, width = "100%", height = "800px"
 };
 
 
-
+await new Promise(resolve => setTimeout(resolve, 500)); // delay 500 ms before starting dataview script
 await renderIframe({ dv, relativePath: "openapi-spec.html" });
 \`\`\`
 `;
