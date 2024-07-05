@@ -161,7 +161,6 @@ async function renderIframe({ dv, relativePath, width = "100%", height = "800px"
     }
 
     if (Platform.isDesktopApp) {
-
 	const refreshButton = dv.el("button", "Refresh", { cls: "refresh-button", onclick: () => {
         const view = app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) {
