@@ -13,6 +13,9 @@ This plugin generates a Swagger-UI interface and embeds it as an iframe in the c
 - Default OpenAPI specification filename is "openapi-spec.yaml" in the same folder.
 - Needs internet access to download Swagger UI and js-yaml from CDNs.
 - Uses DataviewJS for iframe/link rendering. Install Dataview plugin and enable JS script settings in its settings.
+- There are two ways to update the Swagger UI preview:
+  - Manual (by default): After changing the HTML file, click the 'Refresh' button in the upper-left corner of the preview.
+  - Automatic: Enable the 'Auto Update' option in the plugin settings. The preview will be updated automatically when the HTML file is changed.
 
 
 ### Installation
@@ -33,7 +36,7 @@ Customize in plugin settings:
 - Generated HTML filename
 - OpenAPI specification filename
 - Iframe dimensions (width and height)
-- Auto-update toggle for preview. Note that next to the plugin preview, you also have a manual update button on the top left
+- Auto-update toggle for preview.
 
 ### Credits 
 Special thanks to [mnaoumov](https://github.com/mnaoumov/) for providing the initial DataviewJS script, which served as the foundation for this plugin's functionality.
