@@ -10,9 +10,16 @@ const DEFAULT_SETTINGS = {
 
 class OpenAPIPlugin extends obsidian.Plugin {
     settings;
+    modifyEventRef;
+    updateTimeout;
 
     async onload() {
         await this.loadSettings();
+
+
+        this.settingTab = new OpenAPISettingTab(this.app, this);
+        this.addSettingTab(this.settingTab);
+
 
         this.addCommand({
             id: 'render-openapi',
@@ -21,18 +28,20 @@ class OpenAPIPlugin extends obsidian.Plugin {
             hotkeys: [{ modifiers: ["Mod", "Shift"], key: "o" }]
         });
 
-        this.addSettingTab(new OpenAPISettingTab(this.app, this));
+        const modifyEventHandler = (file) => {
+            if (file.path.endsWith(this.settings.htmlFileName)) {
+                this.scheduleUpdate();
+            }
+        }
 
 
-        this.registerEvent(
-            this.app.vault.on('modify', (file) => {
-                if (file.path.endsWith(this.settings.htmlFileName)) {
-                    this.scheduleUpdate();
-                }
-            })
+        this.modifyEventRef = this.registerEvent(
+            this.app.vault.on('modify', modifyEventHandler)
         );
     }
 
+
+    
     scheduleUpdate() {
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
@@ -221,11 +230,28 @@ await renderIframe({ dv, relativePath: "openapi-spec.html" });
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }
-    }   
+
+        if (this.modifyEventRef) {
+            this.app.vault.offref(this.modifyEventRef);
+        }
+    };
+
+    
+    
+    
+    testCleanup() {
+        console.log("Starting test cleanup");
+        this.onunload();
+        console.log("Test cleanup completed");
+      }
+
+      
 }
 
 class OpenAPISettingTab extends obsidian.PluginSettingTab {
     plugin;
+    blurEventRef;
+
 
     constructor(app, plugin) {
         super(app, plugin);
@@ -248,75 +274,73 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
-        new obsidian.Setting(containerEl)
-            .setName("OpenAPI specification filename")
-            .setDesc("Must end with .yaml, .yml, or .json")
-            .addText(text => {
-                text.setPlaceholder('openapi-spec.yaml')
-                    .setValue(this.plugin.settings.openapiSpecFileName)
-                    .onChange(async (value) => {
-                        // We'll handle the actual change in onBlur
-                        // to avoid constant validation during typing
-                    });
-
-                // Add onBlur event listener
-                text.inputEl.addEventListener('blur', async () => {
-                    const value = text.inputEl.value;
-                    if (this.isValidSpecFileName(value)) {
-                        this.plugin.settings.openapiSpecFileName = value;
-                        await this.plugin.saveSettings();
-                    } else {
-                        const oldValue = this.plugin.settings.openapiSpecFileName;
-                        new obsidian.Notice(`Invalid file extension. Please use .yaml, .yml, or .json. Reverting to ${oldValue} in 2 seconds.`);
-                        
-                        // Delay for 2 seconds before reverting to the old value
-                        setTimeout(() => {
-                            text.setValue(oldValue);
-                            new obsidian.Notice(`Reverted to ${oldValue}`);
-                        }, 2000);
-                    }
+                new obsidian.Setting(containerEl)
+                .setName("Имя файла спецификации OpenAPI")
+                .setDesc("Должно заканчиваться на .yaml, .yml или .json")
+                .addText(text => {
+                    const specBlurHandler = async () => {
+                        const value = text.inputEl.value;
+                        if (this.isValidSpecFileName(value)) {
+                            this.plugin.settings.openapiSpecFileName = value;
+                            await this.plugin.saveSettings();
+                        } else {
+                            const oldValue = this.plugin.settings.openapiSpecFileName;
+                            new obsidian.Notice(`Недопустимое расширение файла. Пожалуйста, используйте .yaml, .yml или .json. Возврат к ${oldValue} через 2 секунды.`);
+                            
+                            setTimeout(() => {
+                                text.setValue(oldValue);
+                                new obsidian.Notice(`Возвращено к ${oldValue}`);
+                            }, 2000);
+                        }
+                    };
+            
+                    text.setPlaceholder('openapi-spec.yaml')
+                        .setValue(this.plugin.settings.openapiSpecFileName)
+                        .onChange(async (value) => {
+                            // Фактическое изменение будет обрабатываться в onBlur
+                        });
+            
+                    // Сохраняем ссылку на функцию-обработчик события
+                    this.blurEventRef = specBlurHandler;
+                    text.inputEl.addEventListener('blur', this.blurEventRef);
+                    text.inputEl.id = 'openapi-spec-filename-input';
+            
+                    return text;
                 });
 
-                return text;
-            });
-            
-            if (Platform.isDesktopApp) {
-                new obsidian.Setting(containerEl)
-                .setName('iframe Width')
-                .setDesc('Width of the iframe')
-                .addText(text => text
-                    .setPlaceholder('100%')
-                    .setValue(this.plugin.settings.iframeWidth)
-                    .onChange(async (value) => {
-                        this.plugin.settings.iframeWidth = value;
-                        await this.plugin.saveSettings();
-                    }));
-    
+
             new obsidian.Setting(containerEl)
-                .setName('iframe Height')
-                .setDesc('Height of the iframe')
-                .addText(text => text
-                    .setPlaceholder('600px')
-                    .setValue(this.plugin.settings.iframeHeight)
-                    .onChange(async (value) => {
-                        this.plugin.settings.iframeHeight = value;
-                        await this.plugin.saveSettings();
-                    }));
-    
-    
-            new obsidian.Setting(containerEl)
-                .setName('Auto Update')
-                .setDesc('Automatically update the preview of iframe when the HTML file changes')
-                .addToggle(toggle => toggle
-                    .setValue(this.plugin.settings.autoUpdate)
-                    .onChange(async (value) => {
-                        this.plugin.settings.autoUpdate = value;
-                        await this.plugin.saveSettings();
-                    }));
-            }
-        
+            .setName('iframe Width')
+            .setDesc('Width of the iframe')
+            .addText(text => text
+                .setPlaceholder('100%')
+                .setValue(this.plugin.settings.iframeWidth)
+                .onChange(async (value) => {
+                    this.plugin.settings.iframeWidth = value;
+                    await this.plugin.saveSettings();
+                }));
+
+        new obsidian.Setting(containerEl)
+            .setName('iframe Height')
+            .setDesc('Height of the iframe')
+            .addText(text => text
+                .setPlaceholder('600px')
+                .setValue(this.plugin.settings.iframeHeight)
+                .onChange(async (value) => {
+                    this.plugin.settings.iframeHeight = value;
+                    await this.plugin.saveSettings();
+                }));
 
 
+        new obsidian.Setting(containerEl)
+            .setName('Auto Update')
+            .setDesc('Automatically update the preview of iframe when the HTML file changes')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.autoUpdate)
+                .onChange(async (value) => {
+                    this.plugin.settings.autoUpdate = value;
+                    await this.plugin.saveSettings();
+                }));
 
     }
 
@@ -324,6 +348,14 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
         const validExtensions = /\.(yaml|yml|json)$/i;
         return validExtensions.test(fileName);
     }
+
+    hide() {
+        const input = this.containerEl.querySelector('#openapi-spec-filename-input');
+        if (input && this.blurEventRef) {
+            input.removeEventListener('blur', this.blurEventRef);
+        }
+    }
+
 }
 
 module.exports = OpenAPIPlugin;
