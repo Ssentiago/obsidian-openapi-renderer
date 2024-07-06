@@ -6,5 +6,5 @@
   "author": "Sentiago",
   "authorUrl": "https://github.com/Ssentiago",
   "description": "Generates a Swagger-UI interface and embeds it as an iframe or link in notes",
-  "isDesktopOnly": false
+  "isDesktopOnly": true
 }
