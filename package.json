@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "eslint": "^9.6.0",
+    "obsidian": "^1.5.7-1"
+  }
+}
