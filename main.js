@@ -46,7 +46,7 @@ class OpenAPIRendererPlugin extends obsidian.Plugin {
 
         this.addCommand({
             id: 'render-openapi',
-            name: 'Render OpenAPI Spec',
+            name: 'Render Swagger UI',
             checkCallback: async (checking) => {
                 const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
 
@@ -64,7 +64,7 @@ class OpenAPIRendererPlugin extends obsidian.Plugin {
         });
         this.addCommand({
             id: 'refresh-openapi',
-            name: 'Refresh OpenAPI Spec',
+            name: 'Refresh Swagger UI',
             checkCallback: async (checking) => {
                 const view = this.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
 
@@ -405,7 +405,7 @@ class PreviewHandler {
             return;
         }
         view.previewMode.rerender(true);
-        new obsidian.Notice('OpenAPI preview refreshed');
+        new obsidian.Notice('OpenAPI preview refreshed manually');
     }
 
     async setViewMode(leaf, mode) {
@@ -556,10 +556,7 @@ class EventsHandler {
                 new obsidian.Notice(`Reverted to ${oldValue}`);
             }, 2000);
         }
-
     }
-
-
 }
 
 module.exports = OpenAPIRendererPlugin;
