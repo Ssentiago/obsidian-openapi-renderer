@@ -36,6 +36,11 @@ Customize in plugin settings:
 - Iframe dimensions (width and height)
 - Auto-update of HTML and preview.
 
+### Keymap 
+By default: 
+- Render OpenAPI Swagger UI set to Ctrl + O keys
+- Refresh OpenAPI Swagger UI set to Ctrl + L keys
+
 ### Credits 
 Special thanks to [mnaoumov](https://github.com/mnaoumov/) for valuable insights and contributions, which greatly supported the development of this plugin.
 
