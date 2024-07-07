@@ -115,7 +115,7 @@ class SettingsHandler {
 
 class OpenAPISettingTab extends obsidian.PluginSettingTab {
     plugin;
-    modifyHTMLEvent;
+    modifySpecEvent;
 
     constructor(app, plugin) {
         super(app, plugin);
@@ -201,7 +201,7 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
 
         new obsidian.Setting(containerEl)
             .setName('Auto Update')
-            .setDesc('Automatically update the preview of iframe when the HTML file changes')
+            .setDesc('Automatically update the HTML file and preview of iframe when the OpenAPI Spec file changes')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.autoUpdate)
                 .onChange(async (value) => {
@@ -209,15 +209,16 @@ class OpenAPISettingTab extends obsidian.PluginSettingTab {
                     await this.plugin.settingsHandler.saveSettings();
 
                     if (value) {
-                        this.modifyHTMLEvent = this.plugin.eventsHandler.modifyHTMLEventHandler.bind(this.plugin.eventsHandler);
+
+                        this.modifySpecEvent = this.plugin.eventsHandler.modifyOpenAPISPecEventHandler.bind(this.plugin.eventsHandler);
                         this.plugin.registerEvent(
-                            this.app.vault.on('modify', this.modifyHTMLEvent)
+                            this.app.vault.on('modify', this.modifySpecEvent)
                         );
                         new obsidian.Notice('File modification tracking enabled');
                     } else {
-                        if (this.modifyHTMLEvent) {
-                            this.app.vault.off('modify', this.modifyHTMLEvent);
-                            this.modifyHTMLEvent = null;
+                        if (this.modifySpecEvent) {
+                            this.app.vault.off('modify', this.modifySpecEvent);
+                            this.modifySpecEvent = null;
                             new obsidian.Notice('File modification tracking disabled');
                         }
                     }
@@ -385,18 +386,19 @@ class PreviewHandler {
         this.appContext = appContext;
     }
 
-    scheduleAutoUpdate() {
+    async scheduleAutoUpdate(file) {
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }
-        this.updateTimeout = setTimeout(() => {
+        this.updateTimeout = setTimeout(async () => {
             const view = this.appContext.app.workspace.getActiveViewOfType(obsidian.MarkdownView);
-            this.appContext.plugin.previewHandler.previewAutoUpdate(view);
+          await this.appContext.plugin.previewHandler.previewAutoUpdate(view);
         }, 2000);
     }
 
-    previewAutoUpdate(view) {
+    async previewAutoUpdate(view) {
         if (view && this.appContext.plugin.settings.autoUpdate) {
+            await this.appContext.plugin.openAPI.renderOpenAPIResources(view);
             view.previewMode.rerender(true);
             new obsidian.Notice('OpenAPI preview was automatically updated');
         }
@@ -483,11 +485,17 @@ class EventsHandler {
         }, 100);
     };
 
-    modifyHTMLEventHandler(file) {
-        if (file.path.endsWith(this.appContext.plugin.settings.htmlFileName)) {
-            this.appContext.plugin.previewHandler.scheduleAutoUpdate();
+    // modifyHTMLEventHandler(file) {
+    //     if (file.path.endsWith(this.appContext.plugin.settings.htmlFileName)) {
+    //        await  this.appContext.plugin.previewHandler.scheduleAutoUpdate();
+    //     }
+    // };
+
+    async modifyOpenAPISPecEventHandler(file) {
+        if (file.path.endsWith(this.appContext.plugin.settings.openapiSpecFileName)) {
+           await this.appContext.plugin.previewHandler.scheduleAutoUpdate();
         }
-    };
+    }
 
     async settingsTabInputIframeBlurHandler(textComponent, event) {
         const value = textComponent.inputEl.value;
