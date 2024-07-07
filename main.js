@@ -18,15 +18,19 @@ class OpenAPIPluginContext {
 
 class OpenAPIRendererPlugin extends obsidian.Plugin {
     settings;
-    modifyEventRef;
-    updateTimeout;
-    openAPI;
-    fileHandler;
-    pathHandler;
+    settingsTab;
     appContext;
+    pathHandler;
+    openAPI;
+    settingsHandler;
+    settingsHandler;
+    previewHandler;
+    eventsHandler;
+
 
     async onload() {
         this.openedFiles = new Set();
+
         this.settingsTab = new OpenAPISettingTab(this.app, this);
         this.appContext = new OpenAPIPluginContext(this.app, this);
         this.pathHandler = new PathHandler(this.appContext);
@@ -48,7 +52,7 @@ class OpenAPIRendererPlugin extends obsidian.Plugin {
 
                 if (view) {
                     if (!checking) {
-                        await this.processOpenAPI(view);
+                        await this.openAPI.renderOpenAPIResources(view);
                     }
                     return true;
                 }
@@ -73,20 +77,11 @@ class OpenAPIRendererPlugin extends obsidian.Plugin {
                 return false;
 
             },
-            hotkeys: [{modifiers: ["Mod", "Shift"], key: "r"}]
+            hotkeys: [{modifiers: ["Mod", "Shift"], key: "l"}]
         });
 
-
-        // this.registerEvent(this.app.vault.on('modify', this.eventsHandler.modifyHTMLEventHandler.bind(this.eventsHandler)));
         this.registerEvent(this.app.workspace.on('file-open', this.eventsHandler.fileOpenEventHandler.bind(this.eventsHandler)));
     }
-
-
-    async processOpenAPI(view) {
-        await this.openAPI.renderOpenAPIResources(view);
-    }
-
-
     onunload() {
         if (this.previewHandler.updateTimeout) {
             clearTimeout(this.previewHandler.updateTimeout);
@@ -296,7 +291,7 @@ class OpenAPIRenderer {
 
 
         } else {
-            new obsidian.Notice('not exists');
+            new obsidian.Notice('The specification file was not found');
             return null;
         }
     };
@@ -339,7 +334,7 @@ class OpenAPIRenderer {
     }
 
     async getIframe(htmlFilePath, width, height) {
-        const resourceUrl = this.pathHandler.relativePathToResourseUrl(htmlFilePath);
+        const resourceUrl = this.pathHandler.relativePathToResourceUrl(htmlFilePath);
         return `<iframe id="openapi-iframe" src="${resourceUrl}" width="${width}" height="${height}"></iframe>`;
     }
 }
@@ -357,7 +352,7 @@ class PathHandler {
         return null;
     }
 
-    relativePathToResourseUrl(htmlFilePath) {
+    relativePathToResourceUrl(htmlFilePath) {
         const htmlFullPath = this.appContext.app.vault.adapter.getFullRealPath(htmlFilePath).replaceAll("\\", "/");
         const htmlResourseFullPath = `${obsidian.Platform.resourcePathPrefix}${htmlFullPath}`;
         return htmlResourseFullPath;

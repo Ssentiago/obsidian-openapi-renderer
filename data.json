@@ -2,8 +2,8 @@
   "htmlFileName": "openapi-spec.html",
   "openapiSpecFileName": "openapi-spec.yaml",
   "iframeWidth": "100%",
-  "iframeHeight": "600px",
-  "autoUpdate": false,
+  "iframeHeight": "800px",
+  "autoUpdate": true,
   "theme": "dark",
   "swaggerUiBackground": "#0000ff"
 }
