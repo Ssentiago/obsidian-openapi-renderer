@@ -12,8 +12,8 @@ This plugin generates a Swagger-UI interface and embeds it as an iframe in the c
   - Automatic: enable the 'Auto Update' option in the plugin settings. When you update 
     specification from an external application and save a file with it, the plugin tracks 
     saves the file and generates a new HTML file and also updates the iframe.
-- When using the "VSCode Editor" plugin to edit YAMl/JSON specification files 
-  There may be problems with automatic updates. Use manual update or edit 
+- When using the "VSCode Editor" plugin to edit YAMl/JSON specification files there may be 
+  problems with automatic updates. Use manual update or edit 
   specification in an external tool (for example, notepad)
 
 
