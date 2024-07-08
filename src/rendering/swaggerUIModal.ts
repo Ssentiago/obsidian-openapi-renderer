@@ -1,0 +1,46 @@
+import {App, Modal} from 'obsidian';
+import {Params} from "../typing/interfaces";
+import {IframeCreator} from 'typing/types'
+
+export class SwaggerUIModal extends Modal {
+    htmlPath: string
+    specPath: string
+    width: string
+    height: string
+    iframeCreator: IframeCreator
+
+    constructor(app: App,
+                htmlPath: string,
+                specPath: string,
+                width: string,
+                height: string,
+                iframeCreator: IframeCreator ) {
+        super(app);
+        this.htmlPath = htmlPath
+        this.specPath = specPath
+        this.width = width
+        this.height = height
+        this.iframeCreator = iframeCreator;
+    }
+
+    async onOpen() {
+        let {contentEl} = this
+        contentEl.setText('Swagger UI');
+        const iframe  = this.iframeCreator(
+            {
+                htmlPath: this.htmlPath,
+                specPath: this.specPath,
+                width: this.width,
+                height: this.height,
+            } as Params
+        )
+        debugger
+        contentEl.appendChild(iframe)
+        contentEl.show()
+    }
+
+    onClose() {
+        let {contentEl} = this
+        contentEl.empty()
+    }
+}

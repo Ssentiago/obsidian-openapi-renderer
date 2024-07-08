@@ -1,0 +1,6 @@
+.hidden-button {
+    display: none !important;
+}
+.visible-button{
+  display: block !important;
+}

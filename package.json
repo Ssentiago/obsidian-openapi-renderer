@@ -1,6 +1,38 @@
 {
+  "name": "openapi-renderer",
+  "version": "2.0.0",
+  "type": "commonjs",
+  "description": "Generates a Swagger-UI interface and embeds it as an iframe",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "npx rollup -c rollup.config.mjs -w --environment PRODUCTION:0",
+    "build": "npx rollup -c rollup.config.mjs --environment PRODUCTION:1",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": [],
+  "author": "Sentiago",
+  "license": "MIT",
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "express": "^4.19.2",
+    "obsidian": "^1.5.7-1",
+    "rollup": "^2.79.1",
+    "typescript": "^5.5.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.10",
+    "dotenv": "^16.4.5",
     "eslint": "^9.6.0",
-    "obsidian": "^1.5.7-1"
+    "nodemon": "^3.1.4",
+    "rollup-plugin-copy": "^3.5.0",
+    "tslib": "^2.6.3"
   }
 }
