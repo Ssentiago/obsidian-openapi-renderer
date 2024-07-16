@@ -7,16 +7,16 @@
   "scripts": {
     "dev": "npx rollup -c rollup.config.mjs -w --environment PRODUCTION:0",
     "build": "npx rollup -c rollup.config.mjs --environment PRODUCTION:1",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "start-obsidian": "node scripts/start-obsidian.mjs"
   },
   "keywords": [],
   "author": "Sentiago",
   "license": "MIT",
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
-    "@typescript-eslint/parser": "^7.16.0",
     "express": "^4.19.2",
     "obsidian": "^1.5.7-1",
+    "ps-list": "^8.1.1",
     "rollup": "^2.79.1",
     "typescript": "^5.5.3"
   },
@@ -29,8 +29,10 @@
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
     "dotenv": "^16.4.5",
-    "eslint": "^9.6.0",
+    "eslint": "^9.7.0",
     "nodemon": "^3.1.4",
     "rollup-plugin-copy": "^3.5.0",
     "tslib": "^2.6.3"

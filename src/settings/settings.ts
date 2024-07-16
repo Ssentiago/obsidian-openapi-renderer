@@ -2,27 +2,13 @@ import {App, PluginSettingTab, Setting} from "obsidian";
 import {DEFAULT_SETTINGS_Interface, SettingsSection,} from "../typing/interfaces";
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher,} from "../pluginEvents/eventEmitter";
+import {UISettings} from "./UISettings";
 import {ServerSettings} from "./serverSettings";
 import {RenderSettings} from "./renderSettings";
-import {UISettings} from "./UISettings";
 
-export const DEFAULT_SETTINGS: DEFAULT_SETTINGS_Interface = {
-    htmlFileName: 'openapi-spec.html',
-    openapiSpecFileName: 'openapi-spec.yaml',
-    iframeWidth: '100%',
-    iframeHeight: '600px',
-    isAutoUpdate: false,
-    serverHostName: '127.0.0.1',
-    serverPort: 8080,
-    isServerAutoStart: false,
-    isCreateServerButton: true,
-    isCreateCommandButtons: false,
-    commandButtonLocation: 'toolbar',
-    serverButtonLocation: 'ribbon',
-    theme: 'light',
-    timeoutUnit: 'milliseconds',
-    timeout: 2000
-};
+
+
+
 
 export class OpenAPISettingTab extends PluginSettingTab {
     protected publisher: OpenAPIRendererEventPublisher
@@ -49,6 +35,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
     display() {
         const {containerEl} = this;
         containerEl.empty();
+        containerEl.addClass('openapi-renderer-settings');
 
         new Setting(containerEl)
             .addButton(button => {

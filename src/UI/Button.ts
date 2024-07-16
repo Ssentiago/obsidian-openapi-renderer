@@ -1,7 +1,7 @@
-import {ButtonConfig, ChangeButtonLocationEvent, ChangeServerButtonStateEvent, ToggleButtonVisibilityEvent} from "../typing/interfaces";
+import {ButtonConfig, ChangeServerButtonStateEvent, ToggleButtonVisibilityEvent} from "../typing/interfaces";
 import {eventID} from "../typing/types";
-import {setIcon} from "obsidian";
 import {ButtonManager} from "./buttonManager";
+import {setIcon} from "obsidian";
 
 abstract class AbstractButtonObject {
     constructor(public config: ButtonConfig, public buttonManager: ButtonManager) {
@@ -30,14 +30,8 @@ export class Button extends AbstractButtonObject {
      *   to handle server button state changes.
      */
     subscribe() {
-        debugger
-        this.buttonManager.uiManager.appContext.plugin.observer.subscribe(
-            this.buttonManager.uiManager.appContext.app.workspace,
-            eventID.ChangeButtonLocation,
-            this.changeButtonLocationHandler.bind(this)
-        )
-
-        this.buttonManager.uiManager.appContext.plugin.observer.subscribe(
+        const {observer} = this.buttonManager.uiManager.appContext.plugin
+        observer.subscribe(
             this.buttonManager.uiManager.appContext.app.workspace,
             eventID.ToggleButtonVisibility,
             this.toggleButtonVisibilityHandler.bind(this)
@@ -59,27 +53,15 @@ export class Button extends AbstractButtonObject {
      * @param event The `ChangeServerButtonStateEvent` containing the event data.
      */
     private async serverButtonChangeStateHandler(event: ChangeServerButtonStateEvent) {
-        if (this.config.location === event?.data.location) {
-            let serverStarted = this.buttonManager.uiManager.appContext.plugin.server.isRunning()
-            console.log(serverStarted)
-            let icon = this.config.icon
-            console.log(icon)
-            let htmlElement = this.config.htmlElement
-            if (htmlElement) {
-                setIcon(htmlElement, this.config.icon)
+        debugger
+        const elements = this.config.htmlElements?.values()
+        if (elements) {
+            for (const element of elements) {
+                setIcon(element, this.config.icon)
             }
         }
     }
 
-    /**
-     * Handles the event when the button location changes.
-     * Updates button visibility based on the old and new locations and button ID.
-     * @param event The `ChangeButtonLocationEvent` containing the event data.
-     */
-    private async changeButtonLocationHandler(event: ChangeButtonLocationEvent) {
-        this.buttonManager.updateButtonVisibilityByLocationAndID(event.data.oldLocation, event.data.buttonID)
-        this.buttonManager.updateButtonVisibilityByLocationAndID(event.data.location, event.data.buttonID)
-    }
 
     /**
      * Handles the event when the button visibility is toggled.
@@ -88,7 +70,12 @@ export class Button extends AbstractButtonObject {
      */
     private async toggleButtonVisibilityHandler(event: ToggleButtonVisibilityEvent) {
         debugger
-        this.buttonManager.updateButtonVisibilityByLocationAndID(event.data.location, event.data.buttonID)
+        if (event.data.buttonID !== this.config.id) return;
+        const button = this.buttonManager.buttons.get(this.config.id)
+        if (button) {
+            this.buttonManager.toggleVisibility(button.config)
+        }
     }
+
 
 }

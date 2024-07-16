@@ -24,10 +24,9 @@ abstract class Observer {
     }
 
     protected register<T extends OpenAPIRendererEvent>(emitter: Events, eventID: eventID, handler: (event: T) => Promise<void>): void {
-        const eventRef = emitter.on(eventID, (event: OpenAPIRendererEvent) => handler(event as T));
-        // todo key will be subject
+        const eventRef = emitter.on(eventID, async (event: OpenAPIRendererEvent) => await handler(event as T)
+        );
         this.subscriptions.add({emitter: emitter, eventRef: eventRef} as ObserverEventData);
-        this.appContext.plugin.registerEvent(eventRef);
     }
 
     protected unregister(emitter: Events, eventRef: EventRef): void {
@@ -42,6 +41,7 @@ export class OpenAPIRendererEventPublisher extends Publisher {
 
 
     public publish(event: OpenAPIRendererEvent): void {
+
         event.emitter.trigger(event.eventID, event)
     }
 }
@@ -53,17 +53,29 @@ export class OpenAPIRendererEventObserver extends Observer {
         this.subscribe(
             this.appContext.app.workspace,
             eventID.PowerOff,
-            this.onunload
+            this.onunload.bind(this)
         )
+        this.logEvents()
     }
 
-   async onunload() {
+    async onunload() {
         this.unsubscribeAll()
+    }
+
+    logEvents() {
+        Object.values(eventID).forEach(id => {
+            this.register(this.appContext.app.workspace, id, async (event: OpenAPIRendererEvent) => {
+                console.warn(`Got event with id: ${event.eventID}. Subject of event is: ${event.subject}. Publisher of event is ${event.publisher}`)
+
+
+            });
+        });
     }
 
 
     subscribe<T extends OpenAPIRendererEvent>(emitter: Events, eventID: eventID, handler: (event: T) => Promise<void>): void {
         this.register(emitter, eventID, handler);
+        console.log(this.subscriptions)
     }
 
     unsubscribeAll() {

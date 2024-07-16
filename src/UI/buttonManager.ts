@@ -1,7 +1,7 @@
-import {ButtonLocation, RIBBON_LOCATION, STATUSBAR_LOCATION, TOOLBAR_LOCATION} from "../typing/types";
+import {ButtonID, ButtonLocation} from "../typing/types";
 import {Button} from "./Button";
 import {ButtonConfig} from "../typing/interfaces";
-import {MarkdownView, setIcon} from "obsidian";
+import {MarkdownView, setIcon, WorkspaceLeaf} from "obsidian";
 import UIManager from "./UIManager";
 
 /**
@@ -9,15 +9,11 @@ import UIManager from "./UIManager";
  * for the UIManager in Obsidian's OpenAPI Renderer Plugin.
  */
 export class ButtonManager {
-    buttons: Map<ButtonLocation, Map<string, Button>> = new Map();
+    buttons: Map<ButtonID, Button> = new Map();
     uiManager!: UIManager;
 
     constructor(uiManager: UIManager) {
         this.uiManager = uiManager;
-
-        [RIBBON_LOCATION, STATUSBAR_LOCATION, TOOLBAR_LOCATION].forEach(location => {
-            this.buttons.set(location as ButtonLocation, new Map<string, Button>());
-        });
     }
 
     /**
@@ -27,20 +23,10 @@ export class ButtonManager {
      * @param config - The configuration object defining the button's properties.
      */
     async createButton(config: ButtonConfig): Promise<void> {
-        const buttonMap = this.buttons.get(config.location);
-        if (!buttonMap) {
-            return;
-        }
-
-        const htmlElement = await this.createButtonElement(config);
-
-        if (htmlElement) {
-            config.htmlElement = htmlElement;
-
-            const buttonObject = new Button(config, this)
-            buttonMap.set(config.id, buttonObject);
-            this.toggleVisibility(buttonObject, config.state)
-        }
+        config.htmlElements = await this.createButtonElements(config);
+        const button = new Button(config, this)
+        this.buttons.set(config.id, button);
+        this.toggleVisibility(button.config);
     }
 
     /**
@@ -49,17 +35,26 @@ export class ButtonManager {
      * @param config - The configuration object defining the button's properties.
      * @returns A Promise resolving to the HTML element of the created button, or undefined if the location is invalid.
      */
-    private async createButtonElement(config: ButtonConfig): Promise<HTMLElement | undefined> {
-        switch (config.location) {
-            case RIBBON_LOCATION:
-                return this.createRibbonButtonHTMLElement(config);
-            case STATUSBAR_LOCATION:
-                return this.createStatusBarButtonHTMLElement(config);
-            case TOOLBAR_LOCATION:
-                return this.createToolBarButtonHTMLElement(config);
-            default:
-                return undefined;
+    private async createButtonElements(config: ButtonConfig): Promise<Map<ButtonLocation, HTMLElement>> {
+        const buttons = new Map()
+        for (const location of Object.values(ButtonLocation)) {
+            switch (location) {
+                case ButtonLocation.Ribbon:
+                    buttons.set(location, this.createRibbonButtonHTMLElement(config));
+                    break
+                case ButtonLocation.Statusbar:
+                    buttons.set(location, this.createStatusBarButtonHTMLElement(config))
+                    break
+                case ButtonLocation.Toolbar:
+                    buttons.set(location, this.createToolBarButtonHTMLElement(config))
+                    break
+            }
         }
+        return buttons
+    }
+
+    updateToolBarButton(button: Button): void {
+        button.config.htmlElements?.set(ButtonLocation.Toolbar, this.createToolBarButtonHTMLElement(button.config))
     }
 
     /**
@@ -125,32 +120,18 @@ export class ButtonManager {
 
 
     /**
-     * Updates the visibility of a button based on its location and ID.
-     *
-     * @param location - The location of the button (e.g., `ribbon`, `statusbar`, `toolbar`).
-     * @param id - The ID of the button to update.
-     */
-    updateButtonVisibilityByLocationAndID(location: ButtonLocation, id: string) {
-        const config = this.buttons.get(location)?.get(id);
-        if (config) {
-            this.toggleVisibility(config, config.config.state);
-        }
-    }
-
-    /**
      * Toggles the visibility of a button based on the specified state.
      *
      * @param config - The configuration object of the button.
      * @param isVisible - Indicates whether the button should be visible (`true`) or hidden (`false`).
      *                    If `true`, sets the button's display style to 'block'; otherwise, sets it to `none`.
      */
-    private toggleVisibility(config: Button, isVisible: boolean) {
-        const button = config.config.htmlElement
-        if (button) {
-            setTimeout(() => {
-                button.style.setProperty('display', isVisible ? 'block' : 'none', 'important');
-            }, 0);
-        }
+
+    toggleVisibility(config: ButtonConfig) {
+        config.htmlElements &&
+        config.htmlElements.forEach((v, k) => {
+            config.state(k) ? v.show() : v.hide();
+        })
     }
 
 
@@ -159,21 +140,40 @@ export class ButtonManager {
      * Clears the internal button map after removal.
      */
     async removeAllButtons() {
-        this.buttons.forEach((buttonMap) => {
-            buttonMap.forEach((button) => {
-                button.config.htmlElement?.remove()
-                button.config.htmlElement?.removeEventListener('click', button.config.onClick)
+        debugger
+        this.buttons.forEach((button) => {
+            button.config.htmlElements?.forEach((v, k) => {
+                v?.remove()
+                v?.removeEventListener('click', button.config.onClick)
             })
         })
         this.buttons.clear()
     }
 
-    // async updateButtonsVisibility() {
-    //     for (const [location, buttonMap] of this.buttons) {
-    //         for (const config of buttonMap.values()) {
-    //             const isVisible = config.config.state
-    //             this.toggleVisibility(config as Button, isVisible);
-    //         }
-    //     }
-    // }
+
+    async updateToolbar(leaf: WorkspaceLeaf) {
+        const view = leaf.view as MarkdownView;
+
+        if (!view) return;
+
+
+        for (const leaf of this.uiManager.appContext.app.workspace.getLeavesOfType("markdown")) {
+            this.removeToolbarButtonsFromView(leaf.view as MarkdownView);
+        }
+
+        for (const button of this.buttons.values()) {
+            this.updateToolBarButton(button)
+        }
+    }
+
+
+    removeToolbarButtonsFromView(view: MarkdownView) {
+        if (!view) return;
+
+        const toolbarContainer = this.getToolBarContainer(view);
+        if (!toolbarContainer) return;
+
+        const toolbarButtons = toolbarContainer.querySelectorAll('.openapi-renderer-toolbar-button')
+                toolbarButtons.forEach(button => toolbarContainer.removeChild(button))
+    }
 }

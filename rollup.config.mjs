@@ -11,7 +11,7 @@ const developmentConfig = {
     input: 'src/main.ts',
     external: ['obsidian'],
     output: {
-        dir: '/home/arseny/Записи/test/.obsidian/plugins/openapi-renderer',
+        dir: 'test-vault/.obsidian/plugins/openapi-renderer',
         sourcemap: false,
         format: 'cjs',
         exports: 'auto',
@@ -23,11 +23,15 @@ const developmentConfig = {
         typescript({tsconfig: './tsconfig.devs.json'}),
         copy({
             targets: [
-                {src: './assets',
-                dest: '/home/arseny/Записи/test/.obsidian/plugins/openapi-renderer',},
+                {src: './styles.css',
+                dest: 'test-vault/.obsidian/plugins/openapi-renderer/',},
                 {
-                    src: 'manifest.json',
-                    dest: '/home/arseny/Записи/test/.obsidian/plugins/openapi-renderer',
+                    src: './assets',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
+                {
+                    src: './manifest.json',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
                 },
             ],
         }),
@@ -51,10 +55,14 @@ const productionConfig = {
         typescript({tsconfig: './tsconfig.prod.json'}),
         copy({
             targets: [
-                {src: './icons/',
+                {src: './styles.css',
                 dest: 'dist/',},
                 {
-                    src: 'manifest.json',
+                    src: './assets',
+                    dest: 'dist/',
+                },
+                {
+                    src: './manifest.json',
                     dest: 'dist/',
                 },
             ],

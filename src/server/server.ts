@@ -1,7 +1,12 @@
 import express from 'express';
 import {IncomingMessage, Server, ServerResponse} from 'http';
 import {OpenAPIPluginContext} from "../contextManager";
-import {ChangeServerButtonStateEvent, OpenAPIRendererServerInterface} from "../typing/interfaces";
+import {
+    ChangeServerButtonStateEvent,
+    OpenAPIRendererServerInterface,
+    PowerOffEvent,
+    ToggleButtonVisibilityEvent
+} from "../typing/interfaces";
 import * as net from "node:net";
 import path from 'path'
 import {eventID, eventPublisher, SERVER_BUTTON_ID, Subject} from "../typing/types";
@@ -24,11 +29,12 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         this.appContext.plugin.observer.subscribe(
             this.appContext.app.workspace,
             eventID.PowerOff,
-            this.onunload
+            this.onunload.bind(this)
         )
     }
 
-    async onunload() {
+    async onunload(event: PowerOffEvent) {
+        console.log('got onunload in server class')
         this.server && await this.stop()
     }
 
@@ -81,7 +87,6 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
             emitter: this.appContext.app.workspace,
             data: {
                 buttonID: SERVER_BUTTON_ID,
-                location: this.appContext.plugin.settings.serverButtonLocation,
             }
         } as ChangeServerButtonStateEvent;
         this.appContext.plugin.publisher.publish(event)

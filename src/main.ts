@@ -2,7 +2,7 @@ import {MarkdownView, Notice, Plugin} from 'obsidian';
 import {OpenAPIRendererEventObserver, OpenAPIRendererEventPublisher} from './pluginEvents/eventEmitter'
 
 import {DEFAULT_SETTINGS_Interface, OpenAPIRendererPluginInterface, PowerOffEvent} from './typing/interfaces'
-import {DEFAULT_SETTINGS, OpenAPISettingTab} from "./settings/settings";
+import {OpenAPISettingTab} from "./settings/settings";
 import {OpenAPIPluginContext} from "./contextManager";
 import {OpenAPIRenderer, PreviewHandler} from 'rendering/openAPIRender';
 import {OpenAPIRendererEventsHandler} from 'pluginEvents/eventsHandler'
@@ -10,7 +10,8 @@ import OpenAPIRendererServer from "./server/server";
 import OpenAPIMarkdownProcessor from "./rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "./pluginLogging/loggingManager";
 import UIManager from './UI/UIManager'
-import {eventID, eventPublisher, RenderingMode, Subject} from "./typing/types";
+import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./typing/types";
+
 
 export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRendererPluginInterface {
     settings!: DEFAULT_SETTINGS_Interface;
@@ -93,12 +94,17 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
 
 
     async onload() {
-
+        console.log('baby dont hurt me')
+        console.log('baby dont hurt me')
+        console.log('no more')
+        console.log('no more')
         await this.initializePlugin()
         await this.initializeCommands()
         this.settings.isServerAutoStart && await this.server.start()
         await this.initializeUI()
         await this.markdownProcessor.registerProcessor()
+
+
 
         this.settings.isAutoUpdate &&
         this.registerEvent(this.appContext.app.vault
@@ -114,22 +120,62 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
             subject: Subject.classes,
             emitter: this.app.workspace,
         } as PowerOffEvent;
-        this.publisher.publish(event)
-    };
+        console.log('Publishing PowerOff event:', event);
+        this.publisher.publish(event);
+    }
+
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        const userSettings: DEFAULT_SETTINGS_Interface = await this.loadData()
+        if (!userSettings) {
+            this.settings = this.getDefaultSettings()
+            return;
+        }
+
+        this.settings = {
+            ...userSettings,
+            renderButtonLocation: new Set(userSettings.renderButtonLocation),
+            refreshButtonLocation: new Set(userSettings.refreshButtonLocation),
+            serverButtonLocations: new Set(userSettings.serverButtonLocations),
+        }
     }
 
     async saveSettings() {
-        await this.saveData(this.settings);
+        const saveData = {
+            ...this.settings,
+            renderButtonLocation: Array.from(this.settings.renderButtonLocation),
+            refreshButtonLocation: Array.from(this.settings.refreshButtonLocation),
+            serverButtonLocations: Array.from(this.settings.serverButtonLocations)
+        };
+        console.log(saveData)
+        await this.saveData(saveData);
     }
 
     async resetSettings() {
         const configPath = this.manifest.dir + '/data.json'
         await this.app.vault.adapter.remove(configPath)
-        this.settings = Object.assign({}, DEFAULT_SETTINGS);
-        await this.saveSettings()
+        await this.loadSettings()
+    }
+
+    getDefaultSettings(): DEFAULT_SETTINGS_Interface {
+        return {
+            htmlFileName: 'openapi-spec.html',
+            openapiSpecFileName: 'openapi-spec.yaml',
+            iframeWidth: '100%',
+            iframeHeight: '600px',
+            isAutoUpdate: false,
+            serverHostName: '127.0.0.1',
+            serverPort: 8080,
+            isServerAutoStart: false,
+            isCreateServerButton: true,
+            isCreateCommandButtons: false,
+            renderButtonLocation: new Set([ButtonLocation.Toolbar]),
+            refreshButtonLocation: new Set([ButtonLocation.Toolbar]),
+            serverButtonLocations: new Set([ButtonLocation.Toolbar]),
+            theme: 'light',
+            timeoutUnit: 'milliseconds',
+            timeout: 2000
+        }
     }
 
     /**

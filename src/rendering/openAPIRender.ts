@@ -1,4 +1,4 @@
-import {OpenAPIRendererInterface, Params, ParsedParams, PreviewHandlerInterface} from "../typing/interfaces";
+import {OpenAPIRendererInterface, Params, ParsedParams, PowerOffEvent, PreviewHandlerInterface} from "../typing/interfaces";
 import {OpenAPIPluginContext} from "../contextManager";
 import path from "path";
 import {MarkdownView, WorkspaceLeaf} from "obsidian";
@@ -186,11 +186,11 @@ export class PreviewHandler implements PreviewHandlerInterface {
         this.appContext.plugin.observer.subscribe(
             this.appContext.app.workspace,
             eventID.PowerOff,
-            this.onunload
+            this.onunload.bind(this)
         )
     }
 
-    async onunload() {
+    async onunload(event: PowerOffEvent) {
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }

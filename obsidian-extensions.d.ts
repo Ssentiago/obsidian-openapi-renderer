@@ -1,6 +1,5 @@
 import {EventRef} from 'obsidian'
 import {
-    ChangeButtonLocationEvent,
     ChangeServerButtonStateEvent, PowerOffEvent,
     ToggleButtonVisibilityEvent
 } from "./src/typing/interfaces";
@@ -14,12 +13,8 @@ declare module "obsidian" {
     interface Workspace {
         on(name: eventID.ToggleButtonVisibility, callback: (event: ToggleButtonVisibilityEvent) => any): EventRef;
 
-        trigger(name: eventID.ChangeButtonLocation, event: ToggleButtonVisibilityEvent): void;
-
-        on(name: eventID.ChangeButtonLocation, callback: (event: ChangeButtonLocationEvent) => any): EventRef;
-
-        trigger(name: eventID.ChangeButtonLocation, event: ChangeButtonLocationEvent): void;
-
+        trigger(name: eventID.ToggleButtonVisibility, event: ToggleButtonVisibilityEvent): void;
+        
         on(name: eventID.ServerStarted, callback: (event: ChangeServerButtonStateEvent) => any): EventRef;
 
         trigger(name: eventID.ServerStarted, event: ChangeServerButtonStateEvent): void;

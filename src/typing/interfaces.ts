@@ -8,8 +8,9 @@ import OpenAPIRendererServer from "../server/server";
 import OpenAPIMarkdownProcessor from "../rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "../pluginLogging/loggingManager";
 import UIManager from "../UI/UIManager";
-import {ButtonID, ButtonLocation, ButtonStateType, eventID, eventPublisher, RenderingMode, Subject} from "./types";
-import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
+import {ButtonID, eventID, eventPublisher, RenderingMode, Subject} from "./types";
+import {ButtonLocation} from 'typing/types'
+
 
 export interface DEFAULT_SETTINGS_Interface {
     htmlFileName: string,
@@ -22,8 +23,9 @@ export interface DEFAULT_SETTINGS_Interface {
     isServerAutoStart: boolean,
     isCreateServerButton: boolean,
     isCreateCommandButtons: boolean,
-    commandButtonLocation: string,
-    serverButtonLocation: string,
+    serverButtonLocations: Set<ButtonLocation>,
+    renderButtonLocation: Set<ButtonLocation>,
+    refreshButtonLocation: Set<ButtonLocation>,
     theme: string,
     timeoutUnit: string,
     timeout: number
@@ -127,7 +129,6 @@ export interface OpenAPIRendererPluginLoggerInterface {
 }
 
 
-
 export interface ParseResult {
     success: boolean;
     params: ParsedParams | null;
@@ -147,13 +148,13 @@ export interface Params extends ParsedParams {
 
 
 export interface ButtonConfig {
-    id: string;
+    id: ButtonID;
     icon: string;
     title: string;
     onClick: (ev: MouseEvent) => void | Promise<void>;
-    location: ButtonLocation;
-    htmlElement: HTMLElement | undefined;
-    state: ButtonStateType,
+    locations: Set<ButtonLocation>;
+    htmlElements: Map<ButtonLocation, HTMLElement> | undefined
+    state: (location: ButtonLocation) => boolean,
     buttonType: 'server-button' | 'command-button'
 }
 
@@ -161,8 +162,9 @@ export interface ButtonConfig {
 export interface UIPluginSettings {
     isCreateServerButton: boolean;
     isCreateCommandButtons: boolean;
-    serverButtonLocation: ButtonLocation;
-    commandButtonLocation: ButtonLocation;
+    serverButtonLocations: Set<ButtonLocation>,
+    renderButtonLocation: Set<ButtonLocation>,
+    refreshButtonLocation: Set<ButtonLocation>,
 }
 
 export interface OpenAPIRendererEvent {
@@ -173,39 +175,33 @@ export interface OpenAPIRendererEvent {
     emitter: Events;
 }
 
-interface ButtonEvent extends OpenAPIRendererEvent{
+interface ButtonEvent extends OpenAPIRendererEvent {
     data?: Record<string, any>;
 }
 
-export interface ChangeButtonLocationEvent extends ButtonEvent {
-    data: {
-        buttonID: ButtonID,
-        location: ButtonLocation,
-        oldLocation: ButtonLocation
-    }
-}
+// export interface ChangeButtonLocationEvent extends ButtonEvent {
+//     data: {
+//         buttonID: ButtonID,
+//         location: ButtonLocation,
+//         oldLocation: ButtonLocation
+//     }
+// }
 
 export interface ToggleButtonVisibilityEvent extends ButtonEvent {
     data: {
         buttonID: ButtonID,
-        location: ButtonLocation
     }
 }
 
 export interface ChangeServerButtonStateEvent extends ButtonEvent {
     data: {
         buttonID: ButtonID,
-        location: ButtonLocation
     }
 }
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {
 }
 
-export interface EventSubscription {
-    eventID: eventID;
-    handler: Promise<OpenAPIRendererEvent>;
-}
 
 export interface ObserverEventData {
     emitter: Events,
@@ -213,5 +209,5 @@ export interface ObserverEventData {
 }
 
 export interface SettingsSection {
-  display(containerEl: HTMLElement): void;
+    display(containerEl: HTMLElement): void;
 }

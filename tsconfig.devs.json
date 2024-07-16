@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./src",
-    "outDir": "/home/arseny/Записи/test/.obsidian/plugins/openapi-renderer",
+    "outDir": "test-vault/.obsidian/plugins/openapi-renderer/",
     "module": "ESNext",
     "target": "ESNext",
     "allowJs": false,
