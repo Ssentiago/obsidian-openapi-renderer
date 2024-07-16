@@ -1,5 +1,5 @@
 import {App, EventRef, Events, MarkdownPostProcessorContext, MarkdownView, TextComponent, TFile, WorkspaceLeaf} from "obsidian";
-import {OpenAPISettingTab} from "../settings";
+import {OpenAPISettingTab} from "../settings/settings";
 import {OpenAPIPluginContext} from '../contextManager'
 import {OpenAPIRenderer, PreviewHandler} from 'rendering/openAPIRender';
 import {OpenAPIRendererEventsHandler} from 'pluginEvents/eventsHandler';
@@ -9,6 +9,7 @@ import OpenAPIMarkdownProcessor from "../rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "../pluginLogging/loggingManager";
 import UIManager from "../UI/UIManager";
 import {ButtonID, ButtonLocation, ButtonStateType, eventID, eventPublisher, RenderingMode, Subject} from "./types";
+import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 
 export interface DEFAULT_SETTINGS_Interface {
     htmlFileName: string,
@@ -209,4 +210,8 @@ export interface EventSubscription {
 export interface ObserverEventData {
     emitter: Events,
     eventRef: EventRef
+}
+
+export interface SettingsSection {
+  display(containerEl: HTMLElement): void;
 }

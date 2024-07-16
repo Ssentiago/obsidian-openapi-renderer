@@ -2,7 +2,7 @@ import {MarkdownView, Notice, Plugin} from 'obsidian';
 import {OpenAPIRendererEventObserver, OpenAPIRendererEventPublisher} from './pluginEvents/eventEmitter'
 
 import {DEFAULT_SETTINGS_Interface, OpenAPIRendererPluginInterface, PowerOffEvent} from './typing/interfaces'
-import {DEFAULT_SETTINGS, OpenAPISettingTab} from "./settings";
+import {DEFAULT_SETTINGS, OpenAPISettingTab} from "./settings/settings";
 import {OpenAPIPluginContext} from "./contextManager";
 import {OpenAPIRenderer, PreviewHandler} from 'rendering/openAPIRender';
 import {OpenAPIRendererEventsHandler} from 'pluginEvents/eventsHandler'
