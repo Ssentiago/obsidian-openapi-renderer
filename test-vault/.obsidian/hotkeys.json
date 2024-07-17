@@ -1,0 +1,10 @@
+{
+  "openapi-renderer:refresh-openapi": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "O"
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+:root {
+  --text-normal: #dcddde;
+  --text-muted: #999;
+  --text-faint: #666;
+  --text-error: #ff3333;
+  --text-accent: #7f6df2;
+  --interactive-normal: #2a2a2a;
+  --interactive-hover: #303030;
+  --interactive-accent: #483699;
+  --interactive-accent-hover: #4d3ca6;
+  --background-primary: #202020;
+  --background-primary-alt: #1a1a1a;
+  --background-secondary: #161616;
+  --background-secondary-alt: #000000;
+  --background-modifier-border: #333;
+  --background-modifier-form-field: #2a2a2a;
+  --background-modifier-form-field-highlighted: #303030;
+  --background-modifier-box-shadow: rgba(0, 0, 0, 0.3);
+  --background-modifier-success: #197300;
+  --background-modifier-error: #3d0000;
+  --background-modifier-error-rgb: 61, 0, 0;
+  --background-modifier-error-hover: #470000;
+  --background-modifier-cover: rgba(0, 0, 0, 0.6);
+  --text-on-accent: #dcddde;
+  --text-selection: rgba(155, 255, 255, 0.2);
+  --text-highlight-bg: rgba(255, 255, 0, 0.4);
+  --interactive-accent-rgb: 72, 54, 153;
+  --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.2);
+  --scrollbar-bg: rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb-bg: rgba(255, 255, 255, 0.1);
+}
+
+
+/* General styles for the settings tab */
+.openapi-renderer-settings {
+    padding: 16px;
+}
+
+/* Section headers */
+.openapi-renderer-settings .setting-item-heading {
+    font-size: 1.4em;
+    color: var(--text-normal);
+    border-bottom: 2px solid var(--background-modifier-border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    margin-top: 32px;
+}
+
+/* Individual setting items */
+.openapi-renderer-settings .setting-item {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background-color: var(--background-primary);
+    transition: box-shadow 0.3s ease;
+}
+
+.openapi-renderer-settings .setting-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Setting item name */
+.openapi-renderer-settings .setting-item-name {
+    font-weight: bold;
+    color: var(--text-normal);
+}
+
+/* Setting item description */
+.openapi-renderer-settings .setting-item-description {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+/* Input fields */
+.openapi-renderer-settings input[type="text"],
+.openapi-renderer-settings input[type="number"] {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    width: 100%;
+}
+
+/* Dropdown */
+.openapi-renderer-settings select {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    width: 100%;
+}
+
+/* Toggle switch */
+.openapi-renderer-settings .checkbox-container {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Buttons */
+.openapi-renderer-settings button {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.openapi-renderer-settings button:hover {
+    background-color: var(--interactive-accent-hover);
+}
+
+/* Details-summary for grouped settings */
+.openapi-renderer-settings .openapi-renderer-details {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.openapi-renderer-settings .openapi-renderer-summary {
+    cursor: pointer;
+    padding: 12px;
+    background-color: var(--background-secondary);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.openapi-renderer-settings .openapi-renderer-summary:hover {
+    background-color: var(--background-secondary-alt);
+}
+
+.openapi-renderer-settings .openapi-renderer-summary::before {
+    content: '▶';
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+.openapi-renderer-settings .openapi-renderer-details[open] .openapi-renderer-summary::before {
+    transform: rotate(90deg);
+}
+
+.openapi-renderer-settings .openapi-renderer-details .setting-item {
+    border: none;
+    border-top: 1px solid var(--background-modifier-border);
+    border-radius: 0;
+    margin: 0;
+}
+
+/* Specific styles for server status button */
+.openapi-renderer-settings .server-status-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--interactive-normal);
+}
+
+.openapi-renderer-settings .server-status-button:hover {
+    background-color: var(--interactive-hover);
+}
+
+/* Info button styles */
+.openapi-renderer-settings .clickable-icon {
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+}
+
+.openapi-renderer-settings .clickable-icon:hover {
+    color: var(--text-normal);
+}
