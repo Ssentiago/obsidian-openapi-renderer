@@ -1,50 +1,75 @@
-### OpenAPI Renderer Plugin for Obsidian
+# OpenAPI Renderer Plugin for Obsidian
 
-This plugin generates a Swagger-UI interface and embeds it as an iframe in the current view of a note.
+This plugin generates a Swagger-UI interface and embeds it as an iframe in the current view of an Obsidian note.
 
-### Important notes:
-- Plugin searches for a YAML or JSON file in the current folder of the opened note. OpenAPI specification should be in YAML / JSON format in the same folder. Make sure that the name of the specification file corresponds to the plugin setting
-- By default, generates HTML file named openapi-spec.html in the folder with YAML file.
-- Default OpenAPI specification filename is "openapi-spec.yaml" in the same folder.
-- Needs internet access to download Swagger UI and js-yaml from CDNs.
-- There are two ways to update the Swagger UI preview:
-  - Manual (by default): after changing the HTML file, call the Refresh Swagger UI command (Ctrl + L by default)
-  - Automatic: enable the 'Auto Update' option in the plugin settings. When you update 
-    specification from an external application and save a file with it, the plugin tracks 
-    saves the file and generates a new HTML file and also updates the iframe.
+## Features
 
-### Known issues
-- When using the "VSCode Editor" plugin to edit YAMl/JSON specification files there may be 
-  problems with automatic updates. Use manual update or edit 
-  specification in an external tool (for example, notepad)
+- Renders OpenAPI specifications as interactive Swagger UI
+- Supports both YAML and JSON formats
+- Embedded lightweight Express server for local file serving
+- Flexible rendering options: inline or in a modal window
+- Customizable UI settings
+- Automatic and manual update options
 
+## Installation
 
-### Installation
-- Copy plugin files to .obsidian/plugins/openapi-renderer/ in your Obsidian vault.
-- Enable plugin in Obsidian settings (Settings → Community plugins).
+1. Copy plugin files to `.obsidian/plugins/openapi-renderer/` in your Obsidian vault.
+2. Enable the plugin in Obsidian settings (Settings → Community plugins).
 
-### Usage
-- Open note in same directory as OpenAPI YAML/JSON file.
-- Press Ctrl+Shift+O (or Cmd+Shift+O on Mac) to generate HTML and insert iframe.
-- Swagger UI should appear in your note if everything's okay.
+## Usage
 
-### Demonstration
-![2024-07-05 19-20-03](https://github.com/Ssentiago/openapi-renderer/assets/76674116/25cfc3b8-347b-4c0a-acfe-0c5bf3849d14)
+1. Open a note in the same directory as your OpenAPI YAML/JSON file.
+2. Use one of the following methods to render the Swagger UI:
+   - Use the command palette to choose between inline or modal rendering or set key for it
+3. The Swagger UI should appear in your note or a modal window.
 
-### Settings
-Customize in plugin settings:
-- Generated HTML filename
-- OpenAPI specification filename
-- Iframe dimensions (width and height)
-- Auto-update of HTML and preview.
+## Configuration
 
-### Keymap 
-By default: 
-- Render OpenAPI Swagger UI set to Ctrl + O keys
-- Refresh OpenAPI Swagger UI set to Ctrl + L keys
+Customize the plugin in the settings:
 
-### Credits 
+### Server Settings
+- Enable/disable the server
+- Set automatic server start on plugin launch
+- Configure server port (auto-selects if occupied)
+
+### Rendering Settings
+- Set expected HTML and OpenAPI specification filenames
+- Configure iframe dimensions (width and height)
+- Enable/disable auto-update on specification file changes
+- Set auto-update timeout
+
+### UI Settings
+- Toggle visibility of server and command buttons
+- Choose button locations (ribbon, status bar, toolbar)
+
+## Key Features
+
+- **Custom Event System**: Centralized handling for efficient plugin operations
+- **Error Logging**: Built-in system for tracking and diagnosing issues
+- **Flexible Rendering**: Support for both inline and modal Swagger UI display
+- **Express Server**: Lightweight server for serving local HTML files
+- **Auto-update**: Optional automatic refresh of Swagger UI on specification changes
+
+## Commands
+
+- Render OpenAPI Swagger UI inline
+- Render OpenAPI Swagger UI in modal
+- Refresh OpenAPI Swagger UI preview
+
+## Known Issues
+
+- When using the "VSCode Editor" plugin to edit YAML/JSON specification files, there may be issues with automatic updates. Use manual update or edit specifications in an external tool.
+
+## Demonstration
+
+![OpenAPI Renderer Demo](https://github.com/Ssentiago/openapi-renderer/assets/76674116/25cfc3b8-347b-4c0a-acfe-0c5bf3849d14)
+
+## Credits
+
 Special thanks to [mnaoumov](https://github.com/mnaoumov/) for valuable insights and contributions, which greatly supported the development of this plugin.
 
+## Important Notes
 
-
+- The plugin searches for YAML or JSON files in the current folder of the opened note.
+- Ensure that the specification filename matches your plugin settings.
+- Internet access is required for now to download Swagger UI and js-yaml from CDNs.

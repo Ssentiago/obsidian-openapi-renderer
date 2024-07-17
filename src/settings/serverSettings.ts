@@ -43,7 +43,19 @@ export class ServerSettings implements SettingsSection {
 
                 button.onClick(async () => {
                     if (this.plugin.server.isRunning()) {
-                        this.plugin.showNotice('Pong! Server is running.');
+                        this.plugin.showNotice('Pong! Server is running. Click again if you want to stop it');
+                        setTimeout(async () => {
+                             if (this.plugin.server.isRunning()) {
+                                 this.plugin.showNotice('Stopping the server...')
+                                 const stopServer = await this.plugin.server.stop();
+                                 if (stopServer) {
+                                     this.plugin.showNotice('Server stopped successfully!');
+                                 } else {
+                                     this.plugin.showNotice('Failed to stop server. Check logs for details.');
+                                 }
+                                 updateButtonState();
+                             }
+                         }, 3000);
                     } else {
                         const startServer = await this.plugin.server.start();
                         if (startServer) {
@@ -57,7 +69,7 @@ export class ServerSettings implements SettingsSection {
             });
         new Setting(containerEl)
             .setName('Autostart server')
-            .setDesc('Will the server automatically start when the app is opened?')
+            .setDesc('Will the server automatically start when the plugin is started?')
             .addToggle((toggle) => toggle
                 .setValue(this.plugin.settings.isServerAutoStart)
                 .onChange(async (value) => {
