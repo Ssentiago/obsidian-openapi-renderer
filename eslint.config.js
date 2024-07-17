@@ -1,126 +1,91 @@
 const tsParser = require("@typescript-eslint/parser");
 const tsPlugin = require("@typescript-eslint/eslint-plugin");
 
-module.exports [
+module.exports = [
     {
         files: ["**/*.ts", "**/*.tsx"],
         languageOptions: {
             parser: tsParser,
             parserOptions: {
+                ecmaVersion: 2022,
                 sourceType: "module",
+                project: "./tsconfig.json"
             },
         },
         plugins: {
             "@typescript-eslint": tsPlugin,
         },
         rules: {
-            // Отключаем стандартное правило для неиспользуемых переменных
+            "arrow-body-style": ["error", "as-needed"],
+            // Отключение стандартных правил в пользу TypeScript-специфичных
             "no-unused-vars": "off",
-            // Используем правило TypeScript для неиспользуемых переменных, игнорируя аргументы
-            "@typescript-eslint/no-unused-vars": ["error", {args: "none"}],
-            // Отключаем правило, запрещающее комментарии типа @ts-ignore
-            "@typescript-eslint/ban-ts-comment": "off",
-            // Отключаем правило, запрещающее использование метода hasOwnProperty
-            "no-prototype-builtins": "off",
-            // Отключаем правило, запрещающее пустые функции
-            "@typescript-eslint/no-empty-function": "off",
+            "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "^_"}], // Запрещает неиспользуемые переменные, игнорируя аргументы, начинающиеся с _
 
-            // Рекомендуемые правила
-            // Требует явно указывать возвращаемый тип функций
-            "@typescript-eslint/explicit-function-return-type": "warn",
-            // Предупреждает об избыточных типах, которые можно вывести автоматически
-            "@typescript-eslint/no-inferrable-types": "warn",
-            // Запрещает использование пространства имён
-            "@typescript-eslint/no-namespace": "error",
-            // Запрещает использование функции require для импортов
-            "@typescript-eslint/no-var-requires": "error",
-            // Требует использование одного типа утверждений
-            "@typescript-eslint/consistent-type-assertions": "warn",
-            // Запрещает неиспользуемые выражения
-            "@typescript-eslint/no-unused-expressions": "error",
-            // Требует использование интерфейсов вместо типов
-            "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
-            // Предупреждает о использовании типа any
-            "@typescript-eslint/no-explicit-any": "warn",
-            // Запрещает неправильное использование промисов
-            "@typescript-eslint/no-misused-promises": "error",
-            // Предупреждает о неявном использовании оператора !
-            "@typescript-eslint/no-non-null-assertion": "warn",
-            // Предпочтение опциональной цепочки вместо вложенных проверок
-            "@typescript-eslint/prefer-optional-chain": "warn",
-            // Запрещает использование определённых типов
+            // Отключение правил, которые могут конфликтовать с TypeScript или вашими предпочтениями
+            "@typescript-eslint/ban-ts-comment": "off", // Разрешает комментарии типа @ts-ignore
+            "no-prototype-builtins": "off", // Разрешает использование методов прототипа напрямую
+            "@typescript-eslint/no-empty-function": "off", // Разрешает пустые функции
+
+            // TypeScript-специфичные правила
+            "@typescript-eslint/explicit-function-return-type": "warn", // Требует явного указания типа возвращаемого значения функций
+            "@typescript-eslint/no-inferrable-types": "warn", // Предупреждает о избыточном указании типов, которые можно вывести автоматически
+            "@typescript-eslint/no-namespace": "error", // Запрещает использование пространств имен
+            "@typescript-eslint/no-var-requires": "error", // Запрещает использование require для импортов
+            "@typescript-eslint/consistent-type-assertions": "warn", // Обеспечивает согласованное использование приведения типов
+            // "@typescript-eslint/no-unused-expressions": "warn", // Предупреждает о неиспользуемых выражениях
+            "@typescript-eslint/consistent-type-definitions": ["error", "interface"], // Требует использования интерфейсов вместо типов
+            // "@typescript-eslint/no-explicit-any": "warn", // Предупреждает об использовании типа any
+            "@typescript-eslint/no-misused-promises": "error", // Запрещает неправильное использование промисов
+            // "@typescript-eslint/no-non-null-assertion": "warn", // Предупреждает о использовании оператора !
+            "@typescript-eslint/prefer-optional-chain": "warn", // Предпочитает использование опциональной цепочки
             "@typescript-eslint/ban-types": [
                 "error",
                 {
-                    types: {
-                        Function: false, // Разрешает использование Function
+                    "types": {
+                        "Function": false, // Разрешает использование Function
                     },
-                    extendDefaults: true,
+                    "extendDefaults": true,
                 },
             ],
-            // Требует возвращение значения из функции обратного вызова массива
-            "array-callback-return": "error",
-            // Требует использования строгого равенства === и !==
-            "eqeqeq": ["error", "always"],
-            // Запрещает дублирование импортов
-            "no-duplicate-imports": "error",
-            // Запрещает использование await в return
-            "no-return-await": "error",
-            // Запрещает ненужное объединение строк
-            "no-useless-concat": "error",
-            // Предпочитает использование const для неизменяемых переменных
-            "prefer-const": "error",
-            // Предпочитает использование шаблонных строк вместо конкатенации
-            "prefer-template": "warn",
-            // Требует указания основания для функции parseInt
-            "radix": "error",
-            // Требует использование async-await в асинхронных функциях
-            "require-await": "error"
-        }
+            "@typescript-eslint/no-unnecessary-condition": "warn", // Предупреждает о условиях, которые всегда истинны или ложны
+            "@typescript-eslint/prefer-nullish-coalescing": "warn", // Предпочитает использование оператора ??
+            "@typescript-eslint/no-floating-promises": "error", // Требует обработки промисов
+            "@typescript-eslint/await-thenable": "error", // Гарантирует, что await используется только с Promises
+
+            // Общие правила JavaScript (применимы как к JS, так и к TS)
+            "array-callback-return": "error", // Требует возвращения значения из функций обратного вызова массива
+            "eqeqeq": ["error", "always"], // Требует использования === и !==
+            "no-duplicate-imports": "error", // Запрещает дублирование импортов
+            "no-return-await": "error", // Запрещает ненужное использование await в return
+            "no-useless-concat": "error", // Запрещает ненужное объединение строк
+            "prefer-const": "error", // Требует использования const для неизменяемых переменных
+            "prefer-template": "warn", // Предпочитает использование шаблонных строк
+            "radix": "error", // Требует указания основания для функции parseInt
+            "no-var": "error", // Запрещает использование var
+            "no-throw-literal": "error", // Запрещает бросать литералы в качестве исключений
+            "no-async-promise-executor": "error", // Запрещает асинхронные исполнители промисов
+            "no-await-in-loop": "warn", // Предупреждает о await в циклах
+            "no-constant-binary-expression": "error", // Запрещает постоянные бинарные выражения
+            "no-use-before-define": ["error", {"functions": false, "classes": true}], // Запрещает использование переменных до их объявления
+            "curly": ["error", "all"], // Требует фигурные скобки для всех блоков управления
+            "default-param-last": "error", // Требует, чтобы параметры по умолчанию были последними
+            "dot-notation": "error", // Требует использования точечной нотации при возможности
+            "no-else-return": "error", // Запрещает else после return
+            "no-empty-function": "warn", // Предупреждает о пустых функциях
+            "no-loop-func": "error", // Запрещает создание функций внутри циклов
+            "no-useless-return": "error", // Запрещает ненужные return
+            "prefer-arrow-callback": "warn", // Предпочитает стрелочные функции для колбэков
+            "prefer-rest-params": "error", // Предпочитает rest параметры вместо arguments
+            "prefer-spread": "error", // Предпочитает spread оператор вместо .apply()
+
+            "no-console": "warn", // Предупреждает об использовании console.log
+        },
     },
-        {
-            files: ["**/*.js", "**/*.jsx"],
-            languageOptions: {
-                parserOptions: {
-                    sourceType: "module",
-                },
-            },
-            rules: {
-                // Запрещает объявления переменных, которые не используются
-                "no-unused-vars": "error",
-                // Требует явно указывать возвращаемый тип функций
-                "consistent-return": "error",
-                // Запрещает изменять переменные, объявленные с помощью const
-                "no-const-assign": "error",
-                // Запрещает использование console
-                "no-console": "warn",
-                // Требует использования строгого равенства === и !==
-                "eqeqeq": ["error", "always"],
-                // Запрещает повторное объявление переменных
-                "no-redeclare": "error",
-                // Запрещает объявление функций в циклах
-                "no-loop-func": "error",
-                // Запрещает использование var, предпочитая let или const
-                "no-var": "error",
-                // Требует использования let или const вместо var
-                "no-use-before-define": ["error", {"functions": false, "classes": true}],
-                // Требует использования const для переменных, которые не изменяются
-                "prefer-const": ["error", {
-                    "destructuring": "all",
-                    "ignoreReadBeforeAssign": true
-                }],
-                // Предпочитает шаблонные строки вместо конкатенации
-                "prefer-template": "error",
-                // Запрещает пустые блоки
-                "no-empty": ["error", {"allowEmptyCatch": true}],
-                // Запрещает ненужное объединение строк
-                "no-useless-concat": "error",
-                // Запрещает дублирование импортов
-                "no-duplicate-imports": "error",
-                // Требует возвращение значения из функции обратного вызова массива
-                "array-callback-return": "error",
-                // Требует использование оператора свертки (spread) вместо метода apply
-                "prefer-spread": "error"
-            }
-        }
-    ];
+    {
+        files: ["**/*.js", "**/*.jsx"],
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: "module",
+        },
+    }
+];

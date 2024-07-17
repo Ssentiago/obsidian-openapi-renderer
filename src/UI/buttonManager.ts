@@ -124,7 +124,7 @@ export class ButtonManager {
      *
      * @param config The configuration object for the button.
      */
-    toggleVisibility(config: ButtonConfig) {
+    toggleVisibility(config: ButtonConfig): void {
         config.htmlElements?.forEach((element, location) => {
             config.state(location) ? element.show() : element.hide();
         })

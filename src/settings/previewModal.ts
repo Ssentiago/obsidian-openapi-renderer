@@ -18,24 +18,27 @@ export class PreviewModal extends Modal {
      * Handles the opening of a preview in the plugin UI.
      * Displays a predefined HTML file in an iframe.
      */
-    onOpen() {
-        let {contentEl} = this;
+    onOpen(): void {
+        const {contentEl} = this;
         contentEl.setText('Preview');
-        const previewPath = path.join(this.plugin.manifest.dir + '/assets/swagger-pet-store-example.html')
-        const iframe = this.plugin.openAPI.createIframe({
-            htmlPath: previewPath,
-            width: this.plugin.settings.iframeWidth,
-            height: this.plugin.settings.iframeHeight,
-        } as Params)
-        contentEl.appendChild(iframe)
-        contentEl.show()
+        const pluginPath = this.plugin.manifest.dir
+        if (pluginPath) {
+            const previewPath = path.join(pluginPath, '/swagger-pet-store-example.html')
+            const iframe = this.plugin.openAPI.createIframe({
+                htmlPath: previewPath,
+                width: this.plugin.settings.iframeWidth,
+                height: this.plugin.settings.iframeHeight,
+            } as Params)
+            contentEl.appendChild(iframe)
+            contentEl.show()
+        }
     }
 
     /**
      * Clears the content element upon closing the plugin UI.
      */
-    onClose() {
-        let {contentEl} = this;
+    onClose(): void {
+        const {contentEl} = this;
         contentEl.empty();
     }
 }

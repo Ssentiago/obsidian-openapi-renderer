@@ -15,6 +15,7 @@ const developmentConfig = {
         sourcemap: false,
         format: 'cjs',
         exports: 'auto',
+        name
     },
     plugins: [
         json(),
@@ -23,8 +24,10 @@ const developmentConfig = {
         typescript({tsconfig: './tsconfig.devs.json'}),
         copy({
             targets: [
-                {src: './styles.css',
-                dest: 'test-vault/.obsidian/plugins/openapi-renderer/',},
+                {
+                    src: './styles.css',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
                 {
                     src: './assets',
                     dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
@@ -47,6 +50,7 @@ const productionConfig = {
         sourcemapExcludeSources: true,
         format: 'cjs',
         exports: 'auto',
+        name
     },
     plugins: [
         json(),
@@ -55,10 +59,12 @@ const productionConfig = {
         typescript({tsconfig: './tsconfig.prod.json'}),
         copy({
             targets: [
-                {src: './styles.css',
-                dest: 'dist/',},
                 {
-                    src: './assets',
+                    src: './styles.css',
+                    dest: 'dist/',
+                },
+                {
+                    src: './swagger-pet-store-example.html',
                     dest: 'dist/',
                 },
                 {
@@ -68,9 +74,7 @@ const productionConfig = {
             ],
         }),
         terser({
-            compress: {
-                drop_console: true,
-            },
+            compress: true,
             mangle: true
         }),
     ],
