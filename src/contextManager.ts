@@ -3,7 +3,8 @@ import {App} from "obsidian";
 import OpenAPIRendererPlugin from "./main";
 
 /**
- * Represents the context shared by instances of other classes within the OpenAPI Renderer plugin.
+ * Represents the context object for the OpenAPI plugin, providing access to the main
+ * application and the plugin instance.
  */
 export class OpenAPIPluginContext implements OpenAPIPluginContextInterface {
     app: App;
@@ -13,5 +14,5 @@ export class OpenAPIPluginContext implements OpenAPIPluginContextInterface {
         this.app = app;
         this.plugin = plugin;
     }
-};
+}
 

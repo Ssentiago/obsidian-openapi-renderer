@@ -1,10 +1,12 @@
-import {ButtonConfig, ChangeServerButtonStateEvent, ToggleButtonVisibilityEvent} from "../typing/interfaces";
-import {eventID} from "../typing/types";
+import {ButtonConfig} from "../typing/interfaces";
 import {ButtonManager} from "./buttonManager";
-import {setIcon} from "obsidian";
+import {eventID} from "../typing/constants";
 
+/**
+ * Abstract base class for button objects.
+ */
 abstract class AbstractButtonObject {
-    constructor(public config: ButtonConfig, public buttonManager: ButtonManager) {
+    protected constructor(public config: ButtonConfig, public buttonManager: ButtonManager) {
         this.config = config
         this.buttonManager = buttonManager
     }
@@ -17,65 +19,34 @@ abstract class AbstractButtonObject {
     abstract subscribe(): void;
 }
 
+/**
+ * Represents a button object that interacts with the UI and manages its configuration.
+ */
 export class Button extends AbstractButtonObject {
     constructor(config: ButtonConfig, buttonManager: ButtonManager) {
         super(config, buttonManager);
     }
 
     /**
-     * Subscribes to various events for button behavior management.
-     * - Subscribes to `ChangeButtonLocation` event to handle button location changes.
-     * - Subscribes to `ToggleButtonVisibility` event to handle button visibility toggles.
-     * - Subscribes to `ChangeServerButtonState` event if `buttonType` is 'server-button',
+     * Subscribes the button instance to relevant events based on its configuration.
+     * - Subscribes to `ToggleButtonVisibility` event to manage button visibility.
+     * - Subscribes to `ServerStarted` event if the button type is 'server-button',
      *   to handle server button state changes.
      */
     subscribe() {
-        const {observer} = this.buttonManager.uiManager.appContext.plugin
+        const {eventsHandler, observer} = this.buttonManager.uiManager.appContext.plugin;
+
         observer.subscribe(
             this.buttonManager.uiManager.appContext.app.workspace,
             eventID.ToggleButtonVisibility,
-            this.toggleButtonVisibilityHandler.bind(this)
+            eventsHandler.handleButtonVisibility(this)
         )
-
         if (this.config.buttonType === 'server-button') {
             this.buttonManager.uiManager.appContext.plugin.observer.subscribe(
                 this.buttonManager.uiManager.appContext.app.workspace,
                 eventID.ServerStarted,
-                this.serverButtonChangeStateHandler.bind(this)
+                eventsHandler.handleServerButtonState(this)
             )
         }
     }
-
-    /**
-     * Handles the event when the server button state changes.
-     * If the event data location matches the configured location,
-     * updates the icon of the specified HTML element with the configured icon.
-     * @param event The `ChangeServerButtonStateEvent` containing the event data.
-     */
-    private async serverButtonChangeStateHandler(event: ChangeServerButtonStateEvent) {
-        debugger
-        const elements = this.config.htmlElements?.values()
-        if (elements) {
-            for (const element of elements) {
-                setIcon(element, this.config.icon)
-            }
-        }
-    }
-
-
-    /**
-     * Handles the event when the button visibility is toggled.
-     * Updates button visibility based on the event's location and button ID.
-     * @param event The `ToggleButtonVisibilityEvent` containing the event data.
-     */
-    private async toggleButtonVisibilityHandler(event: ToggleButtonVisibilityEvent) {
-        debugger
-        if (event.data.buttonID !== this.config.id) return;
-        const button = this.buttonManager.buttons.get(this.config.id)
-        if (button) {
-            this.buttonManager.toggleVisibility(button.config)
-        }
-    }
-
-
 }

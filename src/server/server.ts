@@ -1,21 +1,14 @@
 import express from 'express';
 import {IncomingMessage, Server, ServerResponse} from 'http';
 import {OpenAPIPluginContext} from "../contextManager";
-import {
-    ChangeServerButtonStateEvent,
-    OpenAPIRendererServerInterface,
-    PowerOffEvent,
-    ToggleButtonVisibilityEvent
-} from "../typing/interfaces";
+import {ChangeServerButtonStateEvent, OpenAPIRendererServerInterface, PowerOffEvent} from "../typing/interfaces";
 import * as net from "node:net";
 import path from 'path'
-import {eventID, eventPublisher, SERVER_BUTTON_ID, Subject} from "../typing/types";
+import {eventID, eventPublisher, SERVER_BUTTON_ID, Subject} from "../typing/constants";
 
 
 /**
- * The `OpenAPIRendererServer` class manages an Express server instance.
- * It provides methods to start, stop, and reload the server, along with various utilities
- * to handle port management and request validation.
+ * Represents an Express server instance configured for OpenAPI rendering.
  */
 export default class OpenAPIRendererServer implements OpenAPIRendererServerInterface {
     app!: express.Application;
@@ -33,18 +26,19 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         )
     }
 
-    async onunload(event: PowerOffEvent) {
-        console.log('got onunload in server class')
+    /**
+     * Asynchronous method called when unloading the server class, typically in response to a PowerOffEvent.
+     * Stops the server if it is running.
+     * @param event - The PowerOffEvent object.
+     */
+    private async onunload(event: PowerOffEvent) {
         this.server && await this.stop()
     }
 
 
     /**
-     * Starts the server if it is not already listening.
-     *
-     * @returns A promise that resolves to `true` if the server was started successfully,
-     * or `false` if the server was already running.
-     * @throws Will log an error and return `false` if the server fails to start.
+     * Starts the server if it's not already listening.
+     * @returns A promise that resolves to true if the server starts successfully, otherwise false.
      */
     async start(): Promise<boolean> {
         if (this.server?.listening) {
@@ -57,16 +51,16 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
             return new Promise<boolean>((resolve, reject) => {
                 const newServer =
                     this.app.listen(port, this.appContext.plugin.settings.serverHostName, () => {
-                    if (port !== this.appContext.plugin.settings.serverPort) {
-                        this.updatePortSettings(port);
-                    }
+                        if (port !== this.appContext.plugin.settings.serverPort) {
+                            this.updatePortSettings(port);
+                        }
 
-                    this.server = newServer;
+                        this.server = newServer;
 
-                    this.publishServerStartEvent();
+                        this.publishServerChangeStateEvent();
 
-                    resolve(true);
-                });
+                        resolve(true);
+                    });
 
                 newServer.on('error', (error) => {
                     this.appContext.plugin.logger.error(`Failed to start the server: ${error}`);
@@ -78,7 +72,11 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
             return false;
         }
     }
-    publishServerStartEvent() {
+
+    /**
+     * Publishes a server state change event when the server is either started or stopped.
+     */
+    private publishServerChangeStateEvent() {
         const event = {
             eventID: eventID.ServerStarted,
             timestamp: new Date(),
@@ -92,35 +90,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         this.appContext.plugin.publisher.publish(event)
     }
 
-    // async stop(): Promise<boolean> {
-    //         try {
-    //             if (this.server && this.server.listening) {
-    //                 await new Promise<void>((resolve, reject) => {
-    //                     this.server?.close((err: any) => {
-    //                         if (err) {
-    //                             this.appContext.plugin.logger.error(err);
-    //                             reject(err);
-    //                         } else {
-    //                             resolve();
-    //                         }
-    //                     });
-    //                 });
-    //                 return true; // Return true if the server was stopped successfully
-    //             } else {
-    //                 return false; // Return false if the server has not already been started or is not in listening state
-    //             }
-    //         } catch (err) {
-    //             const msg = Failed to stop the server: ${err}
-    //             this.appContext.plugin.logger.debug('Failed to stop the server. Check the log file for more information.');
-    //             this.appContext.plugin.showNotice(msg)
-    //             return false; // Return false if an error occurs when stopping the server
-    //         }
-    //     }
-
     /**
-     * Asynchronously stops the server.
-     *
-     * @returns A promise that resolves to true if the server is successfully stopped, otherwise false.
+     * Stops the server if it is currently running and listening.
+     * @returns A promise that resolves to true if the server stops successfully, otherwise false.
      */
     async stop(): Promise<boolean> {
         if (this.server && this.server.listening) {
@@ -134,6 +106,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                     }
                 });
             }).then(() => {
+                this.publishServerChangeStateEvent()
                 return true
             }).catch((err: Error) => {
                 this.appContext.plugin.logger.debug(`Failed to stop the server: ${err.message}`);
@@ -147,10 +120,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
 
     /**
      * Reloads the server by stopping it and then starting it again.
-     *
-     * @returns  A promise that resolves to `true` if the server was reloaded successfully,
-     * or `false` if an error occurred during the process.
-     * @throws Will log an error message and return `false` if the server fails to reload.
+     * @returns A promise that resolves to true if the server reloads successfully, otherwise false.
      */
     async reload() {
         try {
@@ -174,12 +144,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     }
 
     /**
-     * Finds a free port starting from the given port.
-     *
-     * @param startPort - The port number to start checking from.
-     * @returns  A promise that resolves to a free port number.
-     * @throws Will log an error message and reject the promise if an error occurs while checking port availability.
-     * @private
+     * Finds a free port starting from the given port number.
+     * @param startPort - The starting port number to check.
+     * @returns A Promise that resolves with the first available port number found.
      */
     private findFreePort(startPort: number): Promise<number> {
         return new Promise((resolve, reject) => {
@@ -197,11 +164,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     }
 
     /**
-     * Checks if a specific port is available for use.
-     *
-     * @param  port - The port number to check.
-     * @returns A promise that resolves to `true` if the port is available, or `false` if it is in use.
-     * @throws Will reject the promise with an error if an unexpected error occurs.
+     * Checks if a given port is available for listening.
+     * @param port - The port number to check.
+     * @returns A promise that resolves to true if the port is available, otherwise false.
      */
     isPortAvailable(port: number): Promise<boolean> {
         return new Promise((resolve, reject) => {
@@ -226,13 +191,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     };
 
     /**
-     * Updates the server port settings to a new port and saves the updated settings.
-     * Also, displays a notice to the user about the port change.
-     *
-     * @param newPort - The new port number to be set.
-     * @returns A promise that resolves when the settings have been saved.
-     * @throws Will log and display a notice about the port change.
-     * @private
+     * Updates the server port setting with a new port number.
+     * Saves the updated settings and notifies the user with a notice.
+     * @param newPort - The new port number to set.
      */
     private async updatePortSettings(newPort: number) {
         const oldPort = this.appContext.plugin.settings.serverPort;
@@ -242,11 +203,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     };
 
     /**
-     * Validates a URL by decoding, normalizing, and checking its existence in the vault adapter.
-     *
-     * @async
-     * @param {string} url - The URL to validate.
-     * @returns A promise that resolves to true if the URL exists and has a '.html' extension, false otherwise.
+     * Validates a URL by decoding and normalizing it, and checking if the corresponding file exists.
+     * @param url The URL to validate.
+     * @returns A promise that resolves to true if the URL points to an existing HTML file, otherwise false.
      */
     private async validateUrl(url: string): Promise<boolean> {
         try {
@@ -265,10 +224,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     }
 
     /**
-     * Sets up the middlewares for the server, including URL validation, static file serving,
-     * and handling of undefined routes.
-     *
-     * @private
+     * Sets up middleware functions for the Express application.
+     * Includes URL validation middleware, serving static files from the vault,
+     * and handling undefined routes with a 404 response.
      */
     private setupMiddlewares() {
         const vaultPath = this.appContext.app.vault.getRoot().vault.adapter
@@ -281,7 +239,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                 if (isValid) {
                     next();
                 } else {
-                    res.status(404).send('Не найдено');
+                    res.status(404).send('Not found');
                 }
             } catch (error: any) {
                 this.appContext.plugin.logger.debug('Middleware error:', error.message);
@@ -299,10 +257,8 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     }
 
     /**
-     * Gets the server address.
-     *
-     * @returns The server address as a string, or `undefined` if the server is not running.
-     * If the address is an object, it returns the address in the format "address:port".
+     * Retrieves the server address in the format "address:port".
+     * Returns `undefined` if the server address cannot be determined.
      */
     get serverAddress(): string | undefined {
         const address = this.server?.address()

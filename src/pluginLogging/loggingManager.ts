@@ -6,14 +6,13 @@ import {OpenAPIRendererPluginLoggerInterface} from "../typing/interfaces";
 export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPluginLoggerInterface {
     appContext;
     private maxFileSize = 1024 * 1024; // Maximum log file size in bytes (1 MB)
-    private logDir;
+    private readonly logDir ;
 
 
     constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
         this.logDir = path.join(this.appContext.app.vault.adapter.basePath, '.obsidian/plugins/openapi-renderer/logs');
         this.ensureLogDirExists()
-        ;
     }
 
     private ensureLogDirExists() {

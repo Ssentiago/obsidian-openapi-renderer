@@ -1,14 +1,20 @@
 import {App, DropdownComponent, Setting, TAbstractFile, TextComponent} from "obsidian";
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
-import {SettingsSection} from "../typing/interfaces";
+import {PowerOffEvent, SettingsSection} from "../typing/interfaces";
 import {PreviewModal} from "./previewModal";
 
+import {eventID} from "../typing/constants";
+
+/**
+ * Settings section for configuring the OpenAPI Renderer plugin.
+ * Manages settings related to rendering, HTML file generation, iframe dimensions,
+ * auto-update behavior on file changes, and timeout settings.
+ */
 export class RenderSettings implements SettingsSection {
     app: App
     plugin: OpenAPIRendererPlugin
     publisher: OpenAPIRendererEventPublisher
-
     private modifySpecEvent: ((file: TAbstractFile) => Promise<void>) | null = null;
 
     constructor(app: App,
@@ -17,7 +23,13 @@ export class RenderSettings implements SettingsSection {
         this.app = app;
         this.plugin = plugin
         this.publisher = publisher
+        this.plugin.observer.subscribe(
+            this.app.workspace,
+            eventID.PowerOff,
+            this.onunload.bind(this),
+        )
     }
+
 
     display(containerEl: HTMLElement) {
 
@@ -33,7 +45,7 @@ export class RenderSettings implements SettingsSection {
                 text.setPlaceholder('openapi-spec.html')
                     .setValue(this.plugin.settings.htmlFileName);
 
-                let handler = this.plugin.eventsHandler.settingsTabInputHtmlBlur.bind(this.plugin.eventsHandler, text)
+                let handler = this.plugin.eventsHandler.handleSettingsTabHTMLFileNameBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, "blur", handler);
             });
 
@@ -44,7 +56,7 @@ export class RenderSettings implements SettingsSection {
             .addText((text: TextComponent) => {
                 text.setPlaceholder('openapi-spec.yaml')
                     .setValue(this.plugin.settings.openapiSpecFileName)
-                let handler = this.plugin.eventsHandler.settingsTabInputIframeBlur.bind(this.plugin.eventsHandler, text)
+                let handler = this.plugin.eventsHandler.handleSettingsTabOpenAPISpecBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
             });
 
@@ -56,13 +68,13 @@ export class RenderSettings implements SettingsSection {
                 text.setPlaceholder('100%')
                     .setValue(this.plugin.settings.iframeWidth);
 
-                let handler = this.plugin.eventsHandler.settingsTabInputIframeWidthBlur.bind(this.plugin.eventsHandler, text)
+                let handler = this.plugin.eventsHandler.handleSettingsTabIframeWidthBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
             })
             .addText(text => {
                 text.setPlaceholder('600px')
                     .setValue(this.plugin.settings.iframeHeight);
-                let handler = this.plugin.eventsHandler.settingsTabInputIframeHeightBlur.bind(this.plugin.eventsHandler, text)
+                let handler = this.plugin.eventsHandler.handleSettingsTabIframeHeightBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
             })
             .addExtraButton(button => {
@@ -72,10 +84,10 @@ export class RenderSettings implements SettingsSection {
                         this.plugin.showNotice('Width and height determine the size of the iframe in your notes. Use CSS units like px, %, or vh.', 5000)
                     });
             }).addButton(button => {
-            button.onClick(cb => {
+            button.onClick(() => {
                 new PreviewModal(this.app, this.plugin).open()
-                // todo preview swagger petstore in assets
-            }).setTooltip('Show the preview of the iframe with current settings. Check the server state first', {delay: 100})
+            })
+                .setTooltip('Show the preview of the iframe with current settings. Check the server state first', {delay: 100})
                 .setIcon('scan-eye')
         });
 
@@ -109,7 +121,7 @@ export class RenderSettings implements SettingsSection {
                 text.setPlaceholder('2000')
                     .setValue(this.plugin.settings.timeout.toString())
 
-                let handler = this.plugin.eventsHandler.settingsTabTimeoutInput.bind(this.plugin.eventsHandler, text)
+                let handler = this.plugin.eventsHandler.handleSettingsTabTimeoutBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler)
             })
             .addDropdown((dropdown: DropdownComponent) => {
@@ -124,5 +136,17 @@ export class RenderSettings implements SettingsSection {
                     })
             })
 
+    }
+
+    /**
+     * Asynchronous method called when loading the plugin or handling a PowerOffEvent.
+     * If there is a registered modification event for the OpenAPI Spec file, it is unregistered.
+     * @param event The PowerOffEvent object.
+     */
+    private async onunload(event: PowerOffEvent) {
+        if (this.modifySpecEvent) {
+            this.app.vault.off('modify', this.modifySpecEvent);
+            this.modifySpecEvent = null;
+        }
     }
 }

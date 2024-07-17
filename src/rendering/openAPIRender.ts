@@ -2,8 +2,8 @@ import {OpenAPIRendererInterface, Params, ParsedParams, PowerOffEvent, PreviewHa
 import {OpenAPIPluginContext} from "../contextManager";
 import path from "path";
 import {MarkdownView, WorkspaceLeaf} from "obsidian";
-import {eventID, RenderingMode} from "../typing/types";
 import {SwaggerUIModal} from 'rendering/swaggerUIModal'
+import {eventID, RenderingMode} from "../typing/constants";
 
 /**
  * Class representing an OpenAPI renderer.
@@ -17,13 +17,9 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
     };
 
     /**
-     * Renders OpenAPI resources to a Markdown view asynchronously.
-     * Generates HTML and specification files based on the rendered HTML view.
-     * Displays a notice to refresh preview upon successful rendering.
-     * Shows an error notice if rendering fails.
-     *
-     * @param view - The MarkdownView to render OpenAPI resources into.
-     * @param mode - the chosen way to render preview: inline or modal
+     * Renders OpenAPI resources based on the specified rendering mode.
+     * @param view - The MarkdownView to render into.
+     * @param mode - The rendering mode (Inline or Modal).
      */
     async renderOpenAPIResources(view: MarkdownView, mode: RenderingMode) {
         this.renderHTML(view).then((result) => {
@@ -51,10 +47,9 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
     }
 
     /**
-     * Renders HTML and OpenAPI specification file for Swagger UI based on the current Markdown view.
-     *
-     * @param view - The MarkdownView where the Swagger UI will be rendered.
-     * @returns An object containing paths to the generated HTML and specification files.
+     * Renders HTML content for OpenAPI Swagger UI based on the current MarkdownView.
+     * @param view - The MarkdownView to render into.
+     * @returns An object containing paths to the generated spec and HTML files.
      * @throws Error if no file is currently open or if there's an issue with file operations.
      */
     private async renderHTML(view: MarkdownView) {
@@ -76,8 +71,6 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
         const htmlContent = this.generateSwaggerUI(specContent!);
 
         const htmlFileName = this.appContext.plugin.settings.htmlFileName;
-        const width = this.appContext.plugin.settings.iframeWidth;
-        const height = this.appContext.plugin.settings.iframeHeight;
 
         const htmlFilePath = path.join(currentDir, htmlFileName)
 
@@ -89,11 +82,10 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
     };
 
     /**
-     * Retrieves the content of an OpenAPI specification file.
-     *
-     * @param specFilePath - The path to the OpenAPI specification file.
+     * Retrieves and processes the content of an OpenAPI specification file.
+     * @param specFilePath - The file path of the OpenAPI specification.
      * @param specFileName - The name of the OpenAPI specification file.
-     * @returns The content of the OpenAPI specification file as a string.
+     * @returns The processed content of the OpenAPI specification.
      * @throws Error if the specification file is not found or if there's an issue reading the file.
      */
     private async getOpenAPISpec(specFilePath: string, specFileName: string) {
@@ -106,8 +98,7 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
         switch (extension) {
             case 'yaml':
             case 'yml' :
-                const yamlContent = content.replace(/\t/g, '    ');
-                return yamlContent;
+                return content.replace(/\t/g, '    ');
             case 'json':
                 return content;
         }
@@ -115,10 +106,9 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
 
 
     /**
-     * Generates an HTML page with Swagger UI embedded, displaying the provided OpenAPI specification content.
-     *
-     * @param specContent - The content of the OpenAPI specification as a string (JSON or YAML).
-     * @returns The generated HTML content as a string.
+     * Generates HTML content for displaying Swagger UI based on the provided OpenAPI specification content.
+     * @param specContent - The content of the OpenAPI specification.
+     * @returns The generated HTML content with embedded Swagger UI.
      */
     private generateSwaggerUI(specContent: string) {
         return `
@@ -158,10 +148,9 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
     }
 
     /**
-     * Creates an <iframe> element configured with specified parameters.
-     * @private
-     * @param params - The parsed parameters containing HTML path, width, and height.
-     * @returns <iframe> element configured with the specified parameters.
+     * Creates an iframe element for embedding content based on provided parameters.
+     * @param params - Parameters containing HTML path, width, and height for the iframe.
+     * @returns The created iframe element.
      */
     createIframe(params: ParsedParams | Params) {
         let iframe = document.createElement("iframe");
@@ -190,15 +179,21 @@ export class PreviewHandler implements PreviewHandlerInterface {
         )
     }
 
-    async onunload(event: PowerOffEvent) {
+    /**
+     * Asynchronous method called when unloading due to a power-off event.
+     * Clears any existing update timeout if present.
+     * @param event - The PowerOffEvent triggering the unload.
+     */
+    private async onunload(event: PowerOffEvent) {
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }
     }
 
     /**
-     * Schedules an automatic update for previewing based on a timeout.
-     * Clears any existing update timeout if present.
+     * Schedules an auto-update based on configured timeout settings.
+     * Clears any existing update timeout before scheduling a new one.
+     * @remarks If the timeout unit is in milliseconds, the unit to multiply is 1; otherwise, it's 1000 (milliseconds).
      */
     async scheduleAutoUpdate() {
         if (this.updateTimeout) {
@@ -215,9 +210,8 @@ export class PreviewHandler implements PreviewHandlerInterface {
     }
 
     /**
-     * Automatically updates the preview of OpenAPI resources in a Markdown view if auto-update is enabled.
-     *
-     * @param view - The MarkdownView to update the preview for.
+     * Performs an automatic update of the OpenAPI preview for a given MarkdownView.
+     * @param view - The MarkdownView to update with OpenAPI resources.
      */
     private async previewAutoUpdate(view: MarkdownView) {
         if (view && this.appContext.plugin.settings.isAutoUpdate) {
@@ -228,10 +222,8 @@ export class PreviewHandler implements PreviewHandlerInterface {
     }
 
     /**
-     * Rerenders the preview mode of a MarkdownView instance.
-     * This method triggers a re-rendering of the preview content in the MarkdownView.
-     *
-     * @param view - The MarkdownView instance for which to rerender the preview.
+     * Rerender the preview mode of a MarkdownView.
+     * @param view - The MarkdownView to rerender.
      */
     rerenderPreview(view: MarkdownView) {
         view.previewMode.rerender(true);

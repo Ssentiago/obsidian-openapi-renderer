@@ -1,6 +1,9 @@
-import {TAbstractFile, TextComponent} from "obsidian";
-import {OpenAPIRendererEventsHandlerInterface} from "../typing/interfaces";
+import {MarkdownView, setIcon, TAbstractFile, TextComponent} from "obsidian";
+import {ChangeServerButtonStateEvent, OpenAPIRendererEventsHandlerInterface, ToggleButtonVisibilityEvent} from "../typing/interfaces";
 import {OpenAPIPluginContext} from "../contextManager";
+import {Button} from "../UI/Button";
+
+import {eventPublisher} from "../typing/constants";
 
 /**
  * Handler for managing events and settings related to OpenAPI rendering.
@@ -16,13 +19,10 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
     }
 
     /**
-     * Track file modifications and verify for the current OpenAPI spec.
-     *
-     * This function checks if the provided file path ends with the specified OpenAPI spec file name.
-     * If it does, it schedules an auto-update for the preview handler.
-     *
-     * @param file - The file object representing the OpenAPI spec file.
-     * @returns A promise that resolves when the function completes.
+     * Modifies the OpenAPI specification file.
+     * If the file path ends with the configured OpenAPI spec file name,
+     * schedules an automatic update of the preview handler.
+     * @param file - The abstract file object to modify.
      */
     async modifyOpenAPISPec(file: TAbstractFile) {
         if (file.path.endsWith(this.appContext.plugin.settings.openapiSpecFileName)) {
@@ -31,15 +31,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
     };
 
     /**
-     * Updates the plugin settings with the provided HTML filename.
-     *
-     * This function validates whether the value entered in the text component for the HTML filename ends with one of the allowed extensions:
-     * .html or .htm. If the filename does not have one of these extensions, it is considered invalid.
-     *
-     * @param textComponent - Object containing information about the input element.
-     * @returns A promise that resolves when the function completes.
+     * Handles blur event for input in settings tab related to OpenAPI spec file name.
+     * Validates and updates the OpenAPI spec file name setting.
+     * @param textComponent - The TextComponent for input handling.
      */
-    async settingsTabInputIframeBlur(textComponent: TextComponent) {
+    async handleSettingsTabOpenAPISpecBlur(textComponent: TextComponent) {
         const value = textComponent.getValue()
         if (value.match(/\.(yaml|yml|json)$/i)) {
             this.appContext.plugin.settings.openapiSpecFileName = value;
@@ -55,16 +51,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
     };
 
     /**
-     * Checks if the HTML filename is valid.
-     *
-     * This function validates whether the value entered in the text component for the HTML filename ends with one of the allowed extensions:
-     * .html or .htm. If the filename does not have one of these extensions, it is considered invalid.
-     *
-     * @param textComponent - Object containing information about the input element.
-     * @returns A promise that resolves when the function completes.
+     * Handles blur event for input in settings tab related to HTML file name.
+     * Validates and updates the HTML file name setting.
+     * @param textComponent - The TextComponent for input handling.
      */
-
-    async settingsTabInputHtmlBlur(textComponent: TextComponent) {
+    async handleSettingsTabHTMLFileNameBlur(textComponent: TextComponent) {
         const value = textComponent.getValue()
         if (value.match(/\.html?$/)) {
             this.appContext.plugin.settings.htmlFileName = value;
@@ -80,17 +71,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
     };
 
     /**
-     * Checks if the iframe width value is valid.
-     *
-     * This function validates whether the value entered in the text component for iframe width is in a correct format.
-     * It allows values that are either a number followed by '%' or 'px', or just a number. Other formats are considered
-     * incorrect. If a valid width value is entered, it updates the plugin settings, saves them, and attempts to reload
-     * the server on the new port if it is currently running.
-     *
-     * @param textComponent - Object containing information about the input element.
-     * @returns A promise that resolves when the function completes.
+     * Handles blur event for input in settings tab related to iframe width.
+     * Validates and updates the iframe width setting.
+     * @param textComponent - The TextComponent for input handling.
      */
-    async settingsTabInputIframeWidthBlur(textComponent: TextComponent) {
+    async handleSettingsTabIframeWidthBlur(textComponent: TextComponent) {
         const value = textComponent.getValue()
         if (value.match(/^\d+?(%|px)?$/)) {
             this.appContext.plugin.settings.iframeHeight = value;
@@ -106,17 +91,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
     };
 
     /**
-     * Checks if the iframe height value is valid.
-     *
-     * This function validates whether the value entered in the text component for iframe height is in a correct format.
-     * It allows values that are either a number followed by '%' or 'px', or just a number. Other formats are considered
-     * incorrect. If a valid height value is entered, it updates the plugin settings, saves them, and attempts to reload
-     * the server on the new port if it is currently running.
-     *
-     * @param textComponent - Object containing information about the input element.
-     * @returns A promise that resolves when the function completes.
+     * Handles blur event for input in settings tab related to iframe height.
+     * Validates and updates the iframe height setting.
+     * @param textComponent - The TextComponent for input handling.
      */
-    async settingsTabInputIframeHeightBlur(textComponent: TextComponent) {
+    async handleSettingsTabIframeHeightBlur(textComponent: TextComponent) {
         const value = textComponent.getValue()
         if (value.match(/^\d+?(%|px)?$/)) {
             this.appContext.plugin.settings.iframeHeight = value;
@@ -132,15 +111,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
     }
 
     /**
-     * Handles the blur event for the server port input in the settings tab.
-     *
-     * This method checks the validity of the entered server port value. If the value is invalid or the port is already in use,
-     * it reverts to the previous valid port value after displaying a notification. If a valid and available port is entered,
-     * it updates the plugin settings, saves them, and attempts to reload the server on the new port if it is currently running.
-     *
-     * @param textComponent - Obsidian object containing information about the input element.
+     * Handles blur event for input in settings tab related to server port.
+     * Validates and updates the server port setting.
+     * @param textComponent - The TextComponent for input handling.
      */
-    async settingsTabServerPortBlur(textComponent: TextComponent) {
+    async handleSettingsTabServerPortBlur(textComponent: TextComponent) {
         const value = textComponent.getValue()
         const oldPort = this.appContext.plugin.settings.serverPort;
         if (!value.match(/^\d+$/)) {
@@ -169,7 +144,6 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
                             }
                         })
                     }
-                    ;
                 } else {
                     this.appContext.plugin.showNotice(`This port was occupied. Returning to ${oldPort} in 2 seconds`)
                     setTimeout(() => {
@@ -188,7 +162,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
 
     }
 
-    async settingsTabTimeoutInput(textComponent: TextComponent) {
+    /**
+     * Handles timeout input in a settings tab.
+     * @param textComponent - The TextComponent for timeout input.
+     */
+    async handleSettingsTabTimeoutBlur(textComponent: TextComponent) {
         const value = textComponent.getValue()
         const oldTimeout = this.appContext.plugin.settings.timeout
         if (value.match(/^\d+$/)) {
@@ -203,5 +181,59 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
                 this.appContext.plugin.showNotice(`Reverted to ${oldTimeout}`)
             }, 2000)
         }
+    }
+
+    /**
+     * Creates a handler for changing the server button state.
+     * @param button The Button instance.
+     * @returns A function that handles ChangeServerButtonStateEvent.
+     */
+    handleServerButtonState(button: Button) {
+        return async (event: ChangeServerButtonStateEvent) => {
+            const elements = button.config.htmlElements?.values();
+            if (elements) {
+                for (const element of elements) {
+                    setIcon(element, button.config.icon);
+                }
+            }
+        };
+    }
+
+    /**
+     * Creates a handler for toggling button visibility.
+     * @param button The Button instance to handle visibility for.
+     * @returns An async function that handles ToggleButtonVisibilityEvent.
+     */
+    handleButtonVisibility(button: Button) {
+        return async (event: ToggleButtonVisibilityEvent) => {
+            if (event.publisher === eventPublisher.App || event.data.buttonID === button.config.id) {
+                const btn = button.buttonManager.buttons.get(button.config.id)
+                if (btn) {
+                    button.buttonManager.toggleVisibility(btn.config)
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Toggles the OpenAPI Renderer server based on its current state.
+     * @param event The mouse event triggering the toggle action.
+     */
+    async handleServerButtonClick(event: MouseEvent) {
+        const isRunning = this.appContext.plugin.uiManager.appContext.plugin.server.isRunning();
+        const view = this.appContext.plugin.uiManager.appContext.app.workspace.getActiveViewOfType(MarkdownView);
+        let msg = '';
+
+        if (isRunning) {
+            const isStopped = await this.appContext.plugin.server.stop();
+            msg = isStopped ? `Server stopped.` : 'Cannot stop the server...\nTry again and check the logs for more info'
+        } else {
+            const isStarted = await this.appContext.plugin.server.start();
+            msg = isStarted ? 'Server started' : 'Cannot start the server...\nTry again and check the logs for more info';
+        }
+
+        this.appContext.plugin.showNotice(msg);
+        view && this.appContext.plugin.previewHandler.rerenderPreview(view);
     }
 }

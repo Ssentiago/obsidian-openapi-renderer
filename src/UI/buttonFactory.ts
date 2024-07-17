@@ -1,85 +1,80 @@
 import {ButtonConfig} from "../typing/interfaces";
-import {ButtonLocation, ButtonStateType, RenderingMode, SERVER_ICON_NAME_OFF, SERVER_ICON_NAME_ON} from "../typing/types";
-import {MarkdownView, Stat} from "obsidian";
-import UIManager from "./UIManager";
+import {MarkdownView} from "obsidian";
+import {ButtonManager} from "./buttonManager";
+import {ButtonLocation, RenderingMode, SERVER_ICON_NAME_OFF, SERVER_ICON_NAME_ON} from "../typing/constants";
 
 /**
- * ButtonFactory class handles the creation of button configurations
- * for different locations (ribbon, statusbar, toolbar) in UIManager.
+ * The ButtonFactory class manages the creation of button configurations for OpenAPI Renderer plugin buttons.
  */
 export class ButtonFactory {
-    uiManager: UIManager;
+    buttonManager: ButtonManager;
 
-    constructor(uiManager: UIManager) {
-        this.uiManager = uiManager;
+    constructor(buttonManager: ButtonManager) {
+        this.buttonManager = buttonManager;
     }
 
     /**
-     * Creates an array of all button configurations for different locations.
-     *
-     * @returns An array of ButtonConfig objects representing all button configurations.
+     * Generates an array of button configurations representing all buttons managed by the button factory.
+     * @returns An array of ButtonConfig objects representing various button configurations.
      */
     createAllButtonConfigs(): ButtonConfig[] {
-        const allConfigs: ButtonConfig[] = [];
-        allConfigs.push(this.createServerButtonConfig(this));
-        allConfigs.push(this.createRenderButtonConfig(this));
-        allConfigs.push(this.createRefreshButtonConfig(this));
-        return allConfigs;
+        return [
+            this.createServerButtonConfig(),
+            this.createRenderButtonConfig(),
+            this.createRefreshButtonConfig()
+        ];
     }
 
     /**
      * Creates a configuration object for the server toggle button.
-     *
-     * @param location - The location where the button will be placed (e.g., 'ribbon', 'statusbar', 'toolbar').
-     * @param buttonFactory - The ButtonFactory instance managing button creation.
-     * @returns A ButtonConfig object representing the server toggle button configuration.
+     * @returns The ButtonConfig object representing the server toggle button configuration.
      */
-    private createServerButtonConfig(buttonFactory: ButtonFactory): ButtonConfig {
+    private createServerButtonConfig(): ButtonConfig {
+        const {plugin} = this.buttonManager.uiManager.appContext;
         return {
             id: `openapi-renderer-server`,
             get icon() {
-                return buttonFactory.uiManager.appContext.plugin.server.isRunning() ? SERVER_ICON_NAME_ON : SERVER_ICON_NAME_OFF;
+                return plugin.server.isRunning() ? SERVER_ICON_NAME_ON : SERVER_ICON_NAME_OFF;
             },
             title: 'Toggle OpenAPI Renderer Server',
-            onClick: (event: MouseEvent) => this.uiManager.toggleServer(event),
-            get locations(){
-                return buttonFactory.uiManager.appContext.plugin.settings.serverButtonLocations
+            onClick: (event: MouseEvent) => plugin.eventsHandler.handleServerButtonClick(event),
+
+            get locations() {
+                return plugin.settings.serverButtonLocations
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = buttonFactory.uiManager.appContext.app.workspace.getLeaf()?.view instanceof MarkdownView;
-                const isCreationAllowedNow = buttonFactory.uiManager.appContext.plugin.settings.isCreateServerButton
+                const isMarkdownView = plugin.app.workspace.getLeaf()?.view instanceof MarkdownView;
+                const isCreationAllowedNow = plugin.settings.isCreateServerButton
                 const isCorrectLocation = this.locations.has(location);
                 const isVisibleInCurrentView = location === 'ribbon' || isMarkdownView
                 return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
-            } ,
+            },
             buttonType: 'server-button'
         };
     }
 
     /**
-     * Creates a configuration object for the render Swagger UI button.
-     *
-     * @param location - The location where the button will be placed (e.g., 'ribbon', 'statusbar', 'toolbar').
-     * @param buttonFactory - The ButtonFactory instance managing button creation.
-     * @returns A ButtonConfig object representing the render Swagger UI button configuration.
+     * Creates a configuration object for the render button.
+     * @returns The ButtonConfig object representing the render button configuration.
      */
-    private createRenderButtonConfig(buttonFactory: ButtonFactory): ButtonConfig {
+    private createRenderButtonConfig(): ButtonConfig {
+        const {plugin} = this.buttonManager.uiManager.appContext
         return {
             id: `openapi-renderer`,
             icon: 'file-scan',
             title: 'Render Swagger UI',
             onClick: async () => {
-                const view = buttonFactory.uiManager.appContext.app.workspace.getActiveViewOfType(MarkdownView);
-                await this.uiManager.appContext.plugin.renderOpenAPI(view!, RenderingMode.Inline);
+                const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                await plugin.renderOpenAPI(view!, RenderingMode.Inline);
             },
             get locations() {
-                return buttonFactory.uiManager.appContext.plugin.settings.renderButtonLocation
+                return plugin.settings.renderButtonLocation
             },
             htmlElements: undefined,
             state(location: ButtonLocation) {
-                const isMarkdownView = buttonFactory.uiManager.appContext.app.workspace.getLeaf()?.view instanceof MarkdownView;
-                const isCreationAllowedNow = buttonFactory.uiManager.settings.isCreateCommandButtons
+                const isMarkdownView = plugin.app.workspace.getLeaf()?.view instanceof MarkdownView;
+                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons
                 const isCorrectLocation = this.locations.has(location)
                 const isVisibleInCurrentView = location === 'ribbon' || isMarkdownView
                 return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
@@ -89,28 +84,26 @@ export class ButtonFactory {
     }
 
     /**
-     * Creates a configuration object for the refresh Swagger UI button.
-     *
-     * @param location - The location where the button will be placed (e.g., 'ribbon', 'statusbar', 'toolbar').
-     * @param buttonFactory - The ButtonFactory instance managing button creation.
-     * @returns A ButtonConfig object representing the refresh Swagger UI button configuration.
+     * Creates a configuration object for the refresh button.
+     * @returns The ButtonConfig object representing the refresh button configuration.
      */
-    private createRefreshButtonConfig(buttonFactory: ButtonFactory): ButtonConfig {
+    private createRefreshButtonConfig(): ButtonConfig {
+        const {plugin} = this.buttonManager.uiManager.appContext
         return {
             id: `openapi-refresher`,
             icon: 'refresh-ccw',
             title: 'Refresh Swagger UI',
             onClick: async () => {
-                const view = buttonFactory.uiManager.appContext.app.workspace.getActiveViewOfType(MarkdownView);
-                await this.uiManager.appContext.plugin.refreshOpenAPI(view!);
+                const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                await plugin.refreshOpenAPI(view!);
             },
-            get locations(){
-                 return buttonFactory.uiManager.appContext.plugin.settings.refreshButtonLocation
-             },
+            get locations() {
+                return plugin.settings.refreshButtonLocation
+            },
             htmlElements: undefined,
             state(location: ButtonLocation) {
-                const isMarkdownView = buttonFactory.uiManager.appContext.app.workspace.getLeaf()?.view instanceof MarkdownView;
-                const isCreationAllowedNow = buttonFactory.uiManager.settings.isCreateCommandButtons
+                const isMarkdownView = plugin.app.workspace.getLeaf()?.view instanceof MarkdownView;
+                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons
                 const isCorrectLocation = this.locations.has(location);
                 const isVisibleInCurrentView = location === 'ribbon' || isMarkdownView
                 return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;

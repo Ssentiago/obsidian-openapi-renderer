@@ -3,7 +3,8 @@ import {
     ChangeServerButtonStateEvent, PowerOffEvent,
     ToggleButtonVisibilityEvent
 } from "./src/typing/interfaces";
-import {eventID} from "./src/typing/types";
+
+import {eventID} from "./src/typing/constants";
 
 declare module "obsidian" {
     interface DataAdapter {

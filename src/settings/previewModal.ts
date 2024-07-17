@@ -3,6 +3,9 @@ import OpenAPIRendererPlugin from "../main";
 import path from "path";
 import {Params} from "../typing/interfaces";
 
+/**
+ * Modal class for displaying a preview of a predefined HTML file in an iframe within the plugin UI.
+ */
 export class PreviewModal extends Modal {
     plugin: OpenAPIRendererPlugin
 
@@ -11,25 +14,26 @@ export class PreviewModal extends Modal {
         this.plugin = plugin;
     }
 
+    /**
+     * Handles the opening of a preview in the plugin UI.
+     * Displays a predefined HTML file in an iframe.
+     */
     onOpen() {
         let {contentEl} = this;
         contentEl.setText('Preview');
-        const serverAddress = this.plugin.server.serverAddress
-        if (serverAddress) {
-            const previewPath = path.join(this.plugin.manifest.dir + '/assets/swagger-petstore-example.html')
-            if (previewPath) {
-                const iframe = this.plugin.openAPI.createIframe({
-                    htmlPath: previewPath,
-                    width: this.plugin.settings.iframeWidth,
-                    height: this.plugin.settings.iframeHeight,
-                } as Params)
-                contentEl.appendChild(iframe)
-                contentEl.show()
-            }
-        }
-
+        const previewPath = path.join(this.plugin.manifest.dir + '/assets/swagger-pet-store-example.html')
+        const iframe = this.plugin.openAPI.createIframe({
+            htmlPath: previewPath,
+            width: this.plugin.settings.iframeWidth,
+            height: this.plugin.settings.iframeHeight,
+        } as Params)
+        contentEl.appendChild(iframe)
+        contentEl.show()
     }
 
+    /**
+     * Clears the content element upon closing the plugin UI.
+     */
     onClose() {
         let {contentEl} = this;
         contentEl.empty();

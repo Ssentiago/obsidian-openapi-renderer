@@ -1,10 +1,14 @@
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {App, Setting} from "obsidian";
-import {ButtonLocation, REFRESHER_BUTTON_ID, RENDERER_BUTTON_ID, SERVER_BUTTON_ID} from "../typing/types";
 import {SettingsUtils} from "./utils";
+import {ButtonLocation, REFRESHER_BUTTON_ID, RENDERER_BUTTON_ID, SERVER_BUTTON_ID} from "../typing/constants";
 
 
+/**
+ * Represents the UI settings section within the OpenAPI Renderer plugin settings.
+ * Allows users to customize UI elements such as server start buttons and command buttons.
+ */
 export class UISettings {
     app: App;
     plugin: OpenAPIRendererPlugin

@@ -1,7 +1,6 @@
 import {OpenAPIPluginContext} from "../contextManager";
-import {OpenAPIMarkdownProcessorInterface, Params, ParsedParams, ParseResult} from "../typing/interfaces";
+import {OpenAPIMarkdownProcessorInterface, ParseResult} from "../typing/interfaces";
 import {CachedMetadata, Editor, MarkdownPostProcessorContext, MarkdownView, SectionCache} from 'obsidian';
-import path from 'path'
 
 /**
  * Class representing an OpenAPI Markdown processor.
@@ -13,6 +12,10 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
         this.appContext = appContext;
     }
 
+    /**
+     * Registers a Markdown code block processor for OpenAPI.
+     * Binds the processing function to the current instance.
+     */
     async registerProcessor() {
         this.appContext.plugin.registerMarkdownCodeBlockProcessor("openapi", this.process.bind(this));
     }
@@ -111,6 +114,11 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
         return [isValidWidth, isValidHeight].every(Boolean);
     }
 
+    /**
+     * Creates an error result for parsing.
+     * @param error - The error message.
+     * @returns A ParseResult object indicating failure with the specified error message.
+     */
     private createErrorResult(error: string): ParseResult {
         return {
             success: false,

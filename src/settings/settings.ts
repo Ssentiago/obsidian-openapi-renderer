@@ -1,5 +1,5 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import {DEFAULT_SETTINGS_Interface, SettingsSection,} from "../typing/interfaces";
+import {SettingsSection} from "../typing/interfaces";
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher,} from "../pluginEvents/eventEmitter";
 import {UISettings} from "./UISettings";
@@ -9,7 +9,10 @@ import {RenderSettings} from "./renderSettings";
 
 
 
-
+/**
+ * Represents the settings tab for OpenAPI Renderer plugin settings.
+ * Extends PluginSettingTab to handle display and management of plugin settings sections.
+ */
 export class OpenAPISettingTab extends PluginSettingTab {
     protected publisher: OpenAPIRendererEventPublisher
     protected plugin: OpenAPIRendererPlugin
@@ -41,7 +44,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
             .addButton(button => {
                 button.setIcon('refresh-ccw')
                     .setTooltip('Reset settings to default', {delay: 100})
-                    .onClick(async (cb) => {
+                    .onClick(async () => {
                         try {
                             await this.plugin.resetSettings()
                             this.plugin.showNotice('Settings have been reset to default')
@@ -60,5 +63,5 @@ export class OpenAPISettingTab extends PluginSettingTab {
 
 
     }
-};
+}
 

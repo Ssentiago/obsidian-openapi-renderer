@@ -8,8 +8,8 @@ import OpenAPIRendererServer from "../server/server";
 import OpenAPIMarkdownProcessor from "../rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "../pluginLogging/loggingManager";
 import UIManager from "../UI/UIManager";
-import {ButtonID, eventID, eventPublisher, RenderingMode, Subject} from "./types";
-import {ButtonLocation} from 'typing/types'
+import {ButtonID} from "./types";
+import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./constants";
 
 
 export interface DEFAULT_SETTINGS_Interface {
@@ -87,15 +87,17 @@ export interface OpenAPIRendererEventsHandlerInterface {
 
     modifyOpenAPISPec(file: TFile): Promise<void>;
 
-    settingsTabInputIframeBlur(textComponent: TextComponent): Promise<void>;
+    handleSettingsTabOpenAPISpecBlur(textComponent: TextComponent): Promise<void>;
 
-    settingsTabInputHtmlBlur(textComponent: TextComponent): Promise<void>;
+    handleSettingsTabHTMLFileNameBlur(textComponent: TextComponent): Promise<void>;
 
-    settingsTabInputIframeWidthBlur(textComponent: TextComponent): Promise<void>;
+    handleSettingsTabIframeWidthBlur(textComponent: TextComponent): Promise<void>;
 
-    settingsTabInputIframeHeightBlur(textComponent: TextComponent): Promise<void>;
+    handleSettingsTabIframeHeightBlur(textComponent: TextComponent): Promise<void>;
 
-    settingsTabServerPortBlur(textComponent: TextComponent): Promise<void>;
+    handleSettingsTabServerPortBlur(textComponent: TextComponent): Promise<void>;
+
+    handleSettingsTabTimeoutBlur(textComponent: TextComponent): Promise<void>;
 }
 
 export interface OpenAPIRendererServerInterface {
@@ -179,17 +181,10 @@ interface ButtonEvent extends OpenAPIRendererEvent {
     data?: Record<string, any>;
 }
 
-// export interface ChangeButtonLocationEvent extends ButtonEvent {
-//     data: {
-//         buttonID: ButtonID,
-//         location: ButtonLocation,
-//         oldLocation: ButtonLocation
-//     }
-// }
 
 export interface ToggleButtonVisibilityEvent extends ButtonEvent {
     data: {
-        buttonID: ButtonID,
+        buttonID: ButtonID | null,
     }
 }
 

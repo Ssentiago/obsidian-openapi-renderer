@@ -3,6 +3,10 @@ import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {App, Setting} from "obsidian";
 import {SettingsSection} from "../typing/interfaces";
 
+/**
+ * Represents the server settings section within the OpenAPI Renderer plugin settings.
+ * Allows users to configure server-related options such as status checking, autostart, and port settings.
+ */
 export class ServerSettings implements SettingsSection {
     app: App;
     plugin: OpenAPIRendererPlugin
@@ -69,7 +73,7 @@ export class ServerSettings implements SettingsSection {
                     text.setPlaceholder('8080')
                         .setValue(this.plugin.settings.serverPort.toString())
 
-                    let handler = this.plugin.eventsHandler.settingsTabServerPortBlur.bind(this.plugin.eventsHandler, text)
+                    let handler = this.plugin.eventsHandler.handleSettingsTabServerPortBlur.bind(this.plugin.eventsHandler, text)
                     this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
                     text.inputEl.id = 'openapi-input-port'
                 }
@@ -78,6 +82,5 @@ export class ServerSettings implements SettingsSection {
                 .setTooltip('Valid port numbers are between 1024 and 65535', {delay: 100})
         })
     }
-
 
 }

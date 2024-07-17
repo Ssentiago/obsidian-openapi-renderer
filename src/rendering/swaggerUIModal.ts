@@ -2,6 +2,9 @@ import {App, Modal} from 'obsidian';
 import {Params} from "../typing/interfaces";
 import {IframeCreator} from 'typing/types'
 
+/**
+ * Represents a modal for displaying Swagger UI.
+ */
 export class SwaggerUIModal extends Modal {
     htmlPath: string
     specPath: string
@@ -23,6 +26,10 @@ export class SwaggerUIModal extends Modal {
         this.iframeCreator = iframeCreator;
     }
 
+    /**
+     * Asynchronous method called when opening the modal component.
+     * Initializes the modal with Swagger UI content.
+     */
     async onOpen() {
         let {contentEl} = this
         contentEl.setText('Swagger UI');
@@ -39,6 +46,10 @@ export class SwaggerUIModal extends Modal {
         contentEl.show()
     }
 
+    /**
+     * Method called when closing the modal component.
+     * Clears the content element of the modal.
+     */
     onClose() {
         let {contentEl} = this
         contentEl.empty()
