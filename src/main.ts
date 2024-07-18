@@ -143,13 +143,12 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
     async loadSettings(): Promise<void> {
         const userSettings = await this.loadData();
         const defaultSettings = this.getDefaultSettings();
-
+        const settings = Object.assign({}, defaultSettings, userSettings);
         this.settings = {
-            ...defaultSettings,
-            ...userSettings,
-            renderButtonLocation: new Set(userSettings.renderButtonLocation),
-            refreshButtonLocation: new Set(userSettings.refreshButtonLocation),
-            serverButtonLocations: new Set(userSettings.serverButtonLocations),
+            ...settings,
+            renderButtonLocation: new Set(settings.renderButtonLocation),
+            refreshButtonLocation: new Set(settings.refreshButtonLocation),
+            serverButtonLocations: new Set(settings.serverButtonLocations),
         }
     }
 
