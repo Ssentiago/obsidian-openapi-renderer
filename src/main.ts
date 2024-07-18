@@ -42,6 +42,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
     private async initializePlugin(): Promise<void> {
         await this.loadSettings();
         this.appContext = new OpenAPIPluginContext(this.app, this);
+        this.logger = new OpenAPIRendererPluginLogger(this.appContext)
         this.publisher = new OpenAPIRendererEventPublisher(this.appContext)
         this.observer = new OpenAPIRendererEventObserver(this.appContext)
         this.settingsTab = new OpenAPISettingTab(this.app, this, this.publisher);
@@ -50,7 +51,6 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.eventsHandler = new OpenAPIRendererEventsHandler(this.appContext);
         this.server = new OpenAPIRendererServer(this.appContext)
         this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext)
-        this.logger = new OpenAPIRendererPluginLogger(this.appContext)
 
 
         this.uiManager = new UIManager(this.appContext)
@@ -141,15 +141,20 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @async
      */
     async loadSettings(): Promise<void> {
+
         const userSettings = await this.loadData();
+
         const defaultSettings = this.getDefaultSettings();
+
         const settings = Object.assign({}, defaultSettings, userSettings);
+
         this.settings = {
             ...settings,
             renderButtonLocation: new Set(settings.renderButtonLocation),
             refreshButtonLocation: new Set(settings.refreshButtonLocation),
             serverButtonLocations: new Set(settings.serverButtonLocations),
         }
+
     }
 
     /**
@@ -158,13 +163,17 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @async
      */
     async saveSettings(): Promise<void> {
+
+
         const saveData = {
             ...this.settings,
             renderButtonLocation: Array.from(this.settings.renderButtonLocation),
             refreshButtonLocation: Array.from(this.settings.refreshButtonLocation),
             serverButtonLocations: Array.from(this.settings.serverButtonLocations)
         };
+
         await this.saveData(saveData);
+
     }
 
     /**
@@ -227,7 +236,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         try {
             await this.openAPI.renderOpenAPIResources(view, mode)
         } catch (e: any) {
-            this.logger.debug(e)
+
             this.showNotice('Something went wrong while rendering open API. Maybe check the logs?')
         }
     }
