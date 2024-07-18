@@ -38,6 +38,7 @@
     "nodemon": "^3.1.4",
     "ps-list": "^8.1.1",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-strip": "^1.2.2",
     "tslib": "^2.6.3"
   }
 }
