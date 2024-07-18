@@ -4,5 +4,7 @@ dist
 main.js
 data.json
 
+test-vault/.obsidian/community-plugins.json
 test-vault/.obsidian/workspace.json
+
 /test-vault/.obsidian/plugins/openapi-renderer/

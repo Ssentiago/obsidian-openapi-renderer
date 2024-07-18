@@ -127,7 +127,7 @@ export class ButtonManager {
     async toggleVisibility(config: ButtonConfig): Promise<void> {
         if (!config.htmlElements) {return}
         for (const [location, element] of config.htmlElements) {
-            config.state(location) ? element.show() : element.hide()
+            setTimeout(() => config.state(location) ? element.show() : element.hide())
         }
     }
 
