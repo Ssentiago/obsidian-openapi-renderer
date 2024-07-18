@@ -56,10 +56,11 @@ export class UISettings {
 
         this.utils.createLocationToggle(serverDetails, 'Ribbon Button',
             ButtonLocation.Ribbon, SERVER_BUTTON_ID, settings.serverButtonLocations)
-        this.utils.createLocationToggle(serverDetails, 'Statusbar Button',
-            ButtonLocation.Statusbar, SERVER_BUTTON_ID, settings.serverButtonLocations)
         this.utils.createLocationToggle(serverDetails, 'Toolbar Button',
             ButtonLocation.Toolbar, SERVER_BUTTON_ID, settings.serverButtonLocations)
+        this.utils.createLocationToggle(serverDetails, 'Statusbar Button',
+            ButtonLocation.Statusbar, SERVER_BUTTON_ID, settings.serverButtonLocations)
+
 
         new Setting(containerEl)
 
@@ -82,10 +83,11 @@ export class UISettings {
 
         this.utils.createLocationToggle(renderDetails, 'Ribbon Button',
             ButtonLocation.Ribbon, RENDERER_BUTTON_ID, settings.renderButtonLocation)
-        this.utils.createLocationToggle(renderDetails, 'Statusbar Button',
-            ButtonLocation.Statusbar, RENDERER_BUTTON_ID, settings.renderButtonLocation)
         this.utils.createLocationToggle(renderDetails, 'Toolbar Button',
             ButtonLocation.Toolbar, RENDERER_BUTTON_ID, settings.renderButtonLocation)
+        this.utils.createLocationToggle(renderDetails, 'Statusbar Button',
+            ButtonLocation.Statusbar, RENDERER_BUTTON_ID, settings.renderButtonLocation)
+
 
         const refreshGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
         const refreshDetails = refreshGroup.createEl('details', {cls: 'openapi-renderer-details'})
@@ -93,9 +95,10 @@ export class UISettings {
 
         this.utils.createLocationToggle(refreshDetails, 'Ribbon Button',
             ButtonLocation.Ribbon, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
-        this.utils.createLocationToggle(refreshDetails, 'Statusbar Button',
-            ButtonLocation.Statusbar, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
         this.utils.createLocationToggle(refreshDetails, 'Toolbar Button',
             ButtonLocation.Toolbar, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
+        this.utils.createLocationToggle(refreshDetails, 'Statusbar Button',
+            ButtonLocation.Statusbar, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
+
     }
 }

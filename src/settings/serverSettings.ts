@@ -29,8 +29,10 @@ export class ServerSettings implements SettingsSection {
 
         new Setting(containerEl)
             .setName('Server Status')
-            .setDesc('Check if the server is running')
+            .setDesc('Check if the server is running and toggle it')
             .addButton(button => {
+                let timeout: NodeJS.Timeout | null = null
+
                 const updateButtonState = () => {
                     if (this.plugin.server.isRunning()) {
                         button.setIcon('check-circle').setTooltip('Server is running');
@@ -42,35 +44,27 @@ export class ServerSettings implements SettingsSection {
                 updateButtonState();
 
                 button.onClick(async () => {
+                    if (timeout) {return;}
+
                     if (this.plugin.server.isRunning()) {
                         this.plugin.showNotice('Pong! Server is running. Click again if you want to stop it');
-                        setTimeout(async () => {
+                        timeout = setTimeout(async () => {
                             if (this.plugin.server.isRunning()) {
                                 this.plugin.showNotice('Stopping the server...')
-                                const stopServer = await this.plugin.server.stop();
-                                if (stopServer) {
+                                const isServerStopped = await this.plugin.server.stop();
+                                if (isServerStopped) {
                                     this.plugin.showNotice('Server stopped successfully!');
                                 } else {
                                     this.plugin.showNotice('Failed to stop server. Check logs for details.');
                                 }
                                 updateButtonState();
+                                timeout = null
                             }
                         }, 3000);
                     } else {
                         const startServer = await this.plugin.server.start();
                         if (startServer) {
-                            setTimeout(async (): Promise<void> => {
-                                if (this.plugin.server.isRunning()) {
-                                    this.plugin.showNotice('Stopping the server...')
-                                    const stopServer = await this.plugin.server.stop();
-                                    if (stopServer) {
-                                        this.plugin.showNotice('Server stopped successfully!');
-                                    } else {
-                                        this.plugin.showNotice('Failed to stop server. Check logs for details.');
-                                    }
-                                    updateButtonState();
-                                }
-                            }, 3000);
+                            ;
                             this.plugin.showNotice('Server started successfully!');
                         } else {
                             this.plugin.showNotice('Failed to start server. Check logs for details.');
