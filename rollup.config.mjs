@@ -4,6 +4,7 @@ import cjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
+import strip from "rollup-plugin-strip";
 
 const name = 'openapi-renderer';
 
