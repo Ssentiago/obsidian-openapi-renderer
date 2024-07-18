@@ -1,4 +1,8 @@
 /node_modules/
-/test-vault/.obsidian/plugins/openapi-renderer/data.json
-/test-vault/.obsidian/plugins/openapi-renderer/main.js
-/test-vault/.obsidian/
+
+dist
+main.js
+data.json
+
+test-vault/.obsidian/workspace.json
+/test-vault/.obsidian/plugins/openapi-renderer/
