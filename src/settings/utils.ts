@@ -34,20 +34,28 @@ export class SettingsUtils {
                          location: ButtonLocation,
                          buttonId: ButtonID,
                          buttonContainer: Set<ButtonLocation>): Setting {
+        this.plugin.logger.debug(`Creating toggle for ${name}, location: ${location}, buttonId: ${buttonId}`);
+        this.plugin.logger.debug(`Current button container:`, Array.from(buttonContainer));
         return new Setting(container)
             .setName(name)
             .addToggle(toggle => {
-                toggle.setValue(this.plugin.settings.serverButtonLocations.has(location))
+                const initialValue = buttonContainer.has(location);
+                this.plugin.logger.debug(`Initial value for ${name}: ${initialValue}`);
+                toggle.setValue(initialValue)
                     .onChange(async (value) => {
-                        value ?
-                            buttonContainer.add(location)
-                            : buttonContainer.delete(location)
-                        await this.plugin.saveSettings()
-                        this.publishToggleVisibilityEvent(buttonId, this.app.workspace, this.publisher)
+                        this.plugin.logger.debug(`Toggle changed for ${name}: ${value}`);
+                        if (value) {
+                            buttonContainer.add(location);
+                        } else {
+                            buttonContainer.delete(location);
+                        }
+                        this.plugin.logger.debug(`Updated button container:`, Array.from(buttonContainer));
+                        await this.plugin.saveSettings();
+                        this.publishToggleVisibilityEvent(buttonId, this.app.workspace, this.publisher);
+                        this.plugin.logger.debug(`Toggle visibility event published for ${buttonId}`);
                     })
             })
     }
-
     /**
      * Publishes a toggle button visibility event using the specified event publisher.
      * @param id The identifier of the button for which visibility is toggled.

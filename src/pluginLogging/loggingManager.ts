@@ -48,6 +48,7 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
         });
     }
 
+
     /**
      * Writes a log entry to the log file.
      *
@@ -61,7 +62,7 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
             timestamp: new Date().toLocaleString("ru"),
             level: level,
             message: message,
-            context: context
+            context: {...context}
         };
 
         const logMessage = JSON.stringify(logEntry) + '\n';
@@ -109,7 +110,7 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
         this.log('ERROR', message, context);
     }
 
-    warning(message: string, context = {}) {
+    warn(message: string, context = {}) {
         this.log('WARNING', message, context);
     }
 

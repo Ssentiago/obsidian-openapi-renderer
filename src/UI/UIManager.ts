@@ -30,7 +30,7 @@ export default class UIManager {
      * This method should be called after the workspace layout is ready.
      */
     private async initializeUIManager(): Promise<void> {
-        await this.buttonManager.createAllButtons();
+        await this.buttonManager.initializeButtons();
         this.registerEvents();
         this.appContext.plugin.observer.subscribe(
             this.appContext.app.workspace,

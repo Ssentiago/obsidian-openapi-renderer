@@ -44,11 +44,13 @@ export class ButtonFactory {
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView)
+                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
                 const isCreationAllowedNow = plugin.settings.isCreateServerButton
                 const isCorrectLocation = this.locations.has(location);
                 const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
-                return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+                const result = isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+
+                return result;
             },
             buttonType: 'server-button'
         };
@@ -73,11 +75,13 @@ export class ButtonFactory {
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView)
-                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons
-                const isCorrectLocation = this.locations.has(location)
+                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons;
+                const isCorrectLocation = this.locations.has(location);
                 const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
-                return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+                const result = isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+
+                return result;
             },
             buttonType: 'command-button'
         };
@@ -102,11 +106,14 @@ export class ButtonFactory {
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView)
-                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons
+                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons;
                 const isCorrectLocation = this.locations.has(location);
                 const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
-                return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+                const result = isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+
+
+                return result;
             },
             buttonType: 'command-button'
         };

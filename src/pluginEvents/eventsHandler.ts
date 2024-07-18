@@ -208,11 +208,9 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      */
     handleButtonVisibility(button: Button) {
         return async (event: ToggleButtonVisibilityEvent): Promise<void> => {
+            debugger
             if (event.publisher === eventPublisher.App || event.data.buttonID === button.config.id) {
-                const btn = button.buttonManager.buttons.get(button.config.id)
-                if (btn) {
-                    await button.buttonManager.toggleVisibility(btn.config)
-                }
+                await button.buttonManager.toggleVisibility(button.config)
             }
         }
     }

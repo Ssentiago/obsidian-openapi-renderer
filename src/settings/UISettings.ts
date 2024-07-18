@@ -41,6 +41,7 @@ export class UISettings {
                 .onChange(async (value) => {
                         this.plugin.settings.isCreateServerButton = value;
                         await this.plugin.saveSettings();
+                        console.log(this.plugin.settings)
                         this.utils.publishToggleVisibilityEvent(SERVER_BUTTON_ID, this.app.workspace, this.publisher)
                     }
                 )

@@ -14,10 +14,85 @@ export class ButtonManager {
     buttons: Map<ButtonID, Button> = new Map();
     uiManager!: UIManager;
     buttonFactory = new ButtonFactory(this);
+    private periodicCheckInterval: NodeJS.Timeout | null = null;
 
     constructor(uiManager: UIManager) {
         this.uiManager = uiManager;
     }
+
+    async initializeButtons(): Promise<void> {
+        await this.createAllButtons();
+        // this.__test__checkButtonStates();
+        // this.__test__startPeriodicCheck();
+        // this.__test__listenForObsidianChanges();
+    }
+
+    // private __test__setButtonVisibility(button: HTMLElement, shouldBeVisible: boolean): void {
+    //     requestAnimationFrame(() => {
+    //         if (shouldBeVisible) {
+    //             button.show();
+    //         } else {
+    //             button.hide();
+    //         }
+    //         setTimeout(() => {
+    //             const isVisible = button.hidden
+    //             if (isVisible !== shouldBeVisible) {
+    //                 this.uiManager.appContext.plugin.logger.warn('Button should be visible: ', shouldBeVisible);
+    //                 this.uiManager.appContext.plugin.logger.warn('Button is:', isVisible)
+    //                 this.uiManager.appContext.plugin.logger.warn(`Button visibility mismatch detected.`);
+    //                 shouldBeVisible ? button.show() : button.hide();
+    //             }
+    //         }, 50);
+    //     });
+    // }
+    //
+    // __test__checkButtonStates(): void {
+    //     requestAnimationFrame(() => {
+    //         this.buttons.forEach((button, id) => {
+    //             button.config.htmlElements?.forEach((element, location) => {
+    //                 const shouldBeVisible = button.config.state(location);
+    //                 const isVisible = element.isShown()
+    //                 this.uiManager.appContext.plugin.logger.debug(`Button ${id} at ${location}: should be ${shouldBeVisible ? 'visible' : 'hidden'}, is ${isVisible ? 'visible' : 'hidden'}`);
+    //                 if (shouldBeVisible !== isVisible) {
+    //                     this.uiManager.appContext.plugin.logger.warn(`Mismatch in button ${id} visibility`);
+    //                 }
+    //             });
+    //         });
+    //     });
+    // }
+
+    // private __test__startPeriodicCheck(): void {
+    //     if (this.periodicCheckInterval) {
+    //         clearInterval(this.periodicCheckInterval);
+    //     }
+    //     this.periodicCheckInterval = setInterval(() => {
+    //         this.__test__checkButtonStates();
+    //     }, 20000);
+    // }
+    //
+    // private __test__listenForObsidianChanges(): void {
+    //     this.uiManager.appContext.app.workspace.on('layout-change', this.__test__onObsidianChange.bind(this));
+    //     this.uiManager.appContext.app.workspace.on('active-leaf-change', this.__test__onObsidianChange.bind(this));
+    //     this.uiManager.appContext.app.workspace.on('file-open', this.__test__onObsidianChange.bind(this));
+    // }
+    //
+    // private __test__onObsidianChange(): void {
+    //     // Используем debounce, чтобы не вызывать проверку слишком часто
+    //     this.debouncedCheckButtonStates();
+    // }
+    //
+    // private debouncedCheckButtonStates = this.__test__debounce(() => {
+    //     this.__test__checkButtonStates();
+    // }, 100);
+    //
+    // private __test__debounce(func: Function, wait: number): Function {
+    //     let timeout: NodeJS.Timeout | null = null;
+    //     return (...args: any[]) => {
+    //         if (timeout) {clearTimeout(timeout);}
+    //         timeout = setTimeout(() => func(...args), wait);
+    //     };
+    // }
+
 
     /**
      * Asynchronously creates a button based on the provided configuration.
@@ -29,7 +104,6 @@ export class ButtonManager {
         config.htmlElements = await this.createButtonElements(config);
         const button = new Button(config, this)
         this.buttons.set(config.id, button);
-       await this.toggleVisibility(button.config);
     }
 
     /**
@@ -56,6 +130,7 @@ export class ButtonManager {
         return buttons
     }
 
+
     /**
      * Creates an HTML element for a ribbon button based on the provided configuration.
      *
@@ -65,6 +140,7 @@ export class ButtonManager {
     private createRibbonButtonHTMLElement(config: ButtonConfig): HTMLElement {
         const button = this.uiManager.appContext.plugin.addRibbonIcon(config.icon, config.title, config.onClick);
         button.setAttribute('id', config.id);
+        config.state(ButtonLocation.Ribbon) ? button.show() : button.hide();
         return button;
     }
 
@@ -80,6 +156,7 @@ export class ButtonManager {
         button.setAttribute('aria-label', config.title);
         button.setAttribute('id', config.id);
         button.addEventListener('click', config.onClick);
+        config.state(ButtonLocation.Statusbar) ? button.show() : button.hide();
         return button;
     }
 
@@ -102,6 +179,7 @@ export class ButtonManager {
         if (toolbarContainer) {
             toolbarContainer.prepend(button);
         }
+        config.state(ButtonLocation.Toolbar) ? button.show() : button.hide();
         return button;
     }
 
@@ -127,9 +205,15 @@ export class ButtonManager {
     async toggleVisibility(config: ButtonConfig): Promise<void> {
         if (!config.htmlElements) {return}
         for (const [location, element] of config.htmlElements) {
-            setTimeout(() => config.state(location) ? element.show() : element.hide())
+            const shouldItBeVisible = config.state(location)
+            if (shouldItBeVisible) {
+                element.show();
+            } else {
+                element.hide();
+            }
         }
     }
+
 
     /**
      * This method asynchronously creates all buttons based on configurations generated by the button factory.
@@ -137,6 +221,7 @@ export class ButtonManager {
     async createAllButtons(): Promise<void> {
         const configs = this.buttonFactory.createAllButtonConfigs();
         await Promise.all(configs.map(config => this.createButton(config)))
+        // this.__test__checkButtonStates()
     }
 
 
