@@ -29,8 +29,8 @@ const developmentConfig = {
                     dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
                 },
                 {
-                    src: './assets',
-                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                    src: './swagger-pet-store-example.html',
+                    dest: 'dist/',
                 },
                 {
                     src: './manifest.json',
