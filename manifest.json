@@ -1,8 +1,8 @@
 {
   "id": "openapi-renderer",
   "name": "OpenAPI Renderer",
-  "version": "2.0.0",
-  "minAppVersion": "0.15.0",
+  "version": "3.0.0",
+  "minAppVersion": "1.6.5",
   "author": "Sentiago",
   "authorUrl": "https://github.com/Ssentiago",
   "description": "Generates a Swagger-UI interface and embeds it as an iframe",
