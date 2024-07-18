@@ -68,24 +68,25 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.addCommand({
             id: 'render-openapi-inline',
             name: 'Render Swagger UI inline',
-            editorCallback: (editor, view) => {
-                this.renderOpenAPI(view as MarkdownView, RenderingMode.Inline)
+            editorCallback: async (editor, view) => {
+                await this.renderOpenAPI(view as MarkdownView, RenderingMode.Inline)
             },
         });
 
         this.addCommand({
             id: 'refresh-openapi',
             name: 'Refresh Swagger UI',
-            editorCallback: (editor, view) => {
-                this.refreshOpenAPI(view as MarkdownView)
+            editorCallback: async (editor, view) => {
+                debugger
+                await this.refreshOpenAPI(view as MarkdownView)
             },
         });
 
         this.addCommand({
             id: 'render-openapi-modal',
             name: 'Render Swagger UI modal',
-            editorCallback: (editor, view) => {
-                this.renderOpenAPI(view as MarkdownView, RenderingMode.Modal)
+            editorCallback: async (editor, view) => {
+                await this.renderOpenAPI(view as MarkdownView, RenderingMode.Modal)
             },
         });
     }
@@ -96,7 +97,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @async
      * @returns A promise that resolves when the UI initialization is complete.
      */
-    private async initializeUI() {
+    private async initializeUI(): Promise<void> {
         await this.uiManager.initializeUI()
     }
 
@@ -107,7 +108,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * and registering event listener for auto-update functionality.
      * @async
      */
-    async onload() {
+    async onload(): Promise<void> {
         await this.initializePlugin()
         await this.initializeCommands()
         this.settings.isServerAutoStart && await this.server.start()
@@ -122,7 +123,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * Lifecycle method called when the plugin is unloaded.
      * Publishes a `PowerOff` event indicating the plugin is shutting down.
      */
-    async onunload() {
+    async onunload(): Promise<void> {
         const event = {
             eventID: eventID.PowerOff,
             timestamp: new Date(),
@@ -139,13 +140,12 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * Converts array-based locations to Set objects for efficient lookup.
      * @async
      */
-    async loadSettings() {
-        const userSettings: DEFAULT_SETTINGS_Interface = await this.loadData()
-        if (!userSettings) {
-            this.settings = this.getDefaultSettings()
-            return;
-        }
+    async loadSettings(): Promise<void> {
+        const userSettings = await this.loadData();
+        const defaultSettings = this.getDefaultSettings();
+
         this.settings = {
+            ...defaultSettings,
             ...userSettings,
             renderButtonLocation: new Set(userSettings.renderButtonLocation),
             refreshButtonLocation: new Set(userSettings.refreshButtonLocation),
@@ -158,7 +158,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * Converts Set-based button locations to arrays for serialization.
      * @async
      */
-    async saveSettings() {
+    async saveSettings(): Promise<void> {
         const saveData = {
             ...this.settings,
             renderButtonLocation: Array.from(this.settings.renderButtonLocation),
@@ -172,7 +172,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * Resets plugin settings to default values by removing the configuration file.
      * @async
      */
-    async resetSettings() {
+    async resetSettings(): Promise<void> {
         const pluginPath = this.manifest.dir
         if (pluginPath) {
             const configPath = path.join(pluginPath, '/data.json')
@@ -224,16 +224,12 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @param mode - The rendering mode (Inline or Modal).
      * @returns A promise that resolves when rendering is complete.
      */
-    async renderOpenAPI(view: MarkdownView, mode: RenderingMode) {
-        if (view) {
-            try {
-                await this.openAPI.renderOpenAPIResources(view, mode)
-            } catch (e: any) {
-                this.logger.debug(e)
-                this.showNotice('Something went wrong while rendering open API. Maybe check the logs?')
-            }
-        } else {
-            this.showNotice('No active view')
+    async renderOpenAPI(view: MarkdownView, mode: RenderingMode): Promise<void> {
+        try {
+            await this.openAPI.renderOpenAPIResources(view, mode)
+        } catch (e: any) {
+            this.logger.debug(e)
+            this.showNotice('Something went wrong while rendering open API. Maybe check the logs?')
         }
     }
 
@@ -243,12 +239,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @param view - The Markdown view where the OpenAPI preview should be refreshed.
      * @returns A promise that resolves when the refresh operation is complete.
      */
-    async refreshOpenAPI(view: MarkdownView) {
-        if (view) {
-            this.previewHandler.previewManualUpdate(view)
-        } else {
-            this.showNotice('No active view')
-        }
+    async refreshOpenAPI(view: MarkdownView): Promise<void> {
+        this.previewHandler.previewManualUpdate(view)
     }
 
     /**
@@ -256,7 +248,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @param message - The message to display in the notice.
      * @param duration - Optional. The duration in milliseconds for which the notice should be displayed.
      */
-    showNotice(message: string, duration?: number) {
+    showNotice(message: string, duration?: number): void {
         new Notice(message, duration);
     }
 };

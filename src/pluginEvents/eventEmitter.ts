@@ -85,7 +85,7 @@ export class OpenAPIRendererEventObserver extends Observer {
      * Asynchronous method called when unloading.
      * Unsubscribes from all events.
      */
-    private async onunload() {
+    private async onunload(): Promise<void> {
         this.unsubscribeAll()
     }
 
@@ -108,7 +108,7 @@ export class OpenAPIRendererEventObserver extends Observer {
      * @param emitter - The event emitter object.
      * @param eventRef - The reference or identifier of the event to unsubscribe from.
      */
-    unsubscribe(emitter: Events, eventRef: EventRef) {
+    unsubscribe(emitter: Events, eventRef: EventRef): void {
         emitter.offref(eventRef)
     }
 
@@ -116,7 +116,7 @@ export class OpenAPIRendererEventObserver extends Observer {
      * Unsubscribes from all subscribed events.
      * Clears all subscriptions.
      */
-    unsubscribeAll() {
+    unsubscribeAll(): void {
         this.subscriptions.forEach(subscription => {
             this.unsubscribe(subscription.emitter, subscription.eventRef);
         });

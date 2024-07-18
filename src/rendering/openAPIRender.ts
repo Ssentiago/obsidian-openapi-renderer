@@ -21,29 +21,27 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @param view - The MarkdownView to render into.
      * @param mode - The rendering mode (Inline or Modal).
      */
-    async renderOpenAPIResources(view: MarkdownView, mode: RenderingMode) {
-        this.renderHTML(view).then((result) => {
-            if (result!.htmlFilePath && result!.specFilePath) {
-
+    async renderOpenAPIResources(view: MarkdownView, mode: RenderingMode): Promise<void> {
+        try {
+            const result = await this.renderHTML(view);
+            if (result.htmlFilePath && result.specFilePath) {
                 switch (mode) {
                     case RenderingMode.Inline:
-                        this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(view, result!.htmlFilePath, result!.specFilePath)
-                        this.appContext.plugin.showNotice('New OpenAPI Swagger UI was rendered')
+                        await this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(view, result.htmlFilePath, result.specFilePath);
+                        this.appContext.plugin.showNotice('New OpenAPI Swagger UI was rendered');
                         break;
                     case RenderingMode.Modal:
-                        const width = this.appContext.plugin.settings.iframeWidth
-                        const height = this.appContext.plugin.settings.iframeHeight
-                        const iframeCreator = this.createIframe.bind(this.appContext.plugin)
-                        debugger
+                        const width = this.appContext.plugin.settings.iframeWidth;
+                        const height = this.appContext.plugin.settings.iframeHeight;
+                        const iframeCreator = this.createIframe.bind(this.appContext.plugin);
                         new SwaggerUIModal(this.appContext.app, result.htmlFilePath,
-                            result.specFilePath, width, height, iframeCreator).open()
+                            result.specFilePath, width, height, iframeCreator).open();
+                        break;
                 }
-
-
             }
-        }).catch((error: Error) => {
-            this.appContext.plugin.showNotice(error.message)
-        })
+        } catch (error: any) {
+            this.appContext.plugin.showNotice(error.message);
+        }
     }
 
     /**
@@ -52,7 +50,7 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @returns An object containing paths to the generated spec and HTML files.
      * @throws Error if no file is currently open or if there's an issue with file operations.
      */
-    private async renderHTML(view: MarkdownView) {
+    private async renderHTML(view: MarkdownView): Promise<{ specFilePath: string; htmlFilePath: string }> {
 
         const currentFile = view.file;
 
@@ -88,7 +86,7 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @returns The processed content of the OpenAPI specification.
      * @throws Error if the specification file is not found or if there's an issue reading the file.
      */
-    private async getOpenAPISpec(specFilePath: string, specFileName: string) {
+    private async getOpenAPISpec(specFilePath: string, specFileName: string): Promise<string> {
         const existSpec = await this.appContext.app.vault.adapter.exists(specFilePath);
         if (!existSpec) {
             throw new Error('The specification file was not found');
@@ -101,6 +99,8 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
                 return content.replace(/\t/g, '    ');
             case 'json':
                 return content;
+            default:
+                throw new Error('The specification file was not found')
         }
     };
 
@@ -110,7 +110,7 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @param specContent - The content of the OpenAPI specification.
      * @returns The generated HTML content with embedded Swagger UI.
      */
-    private generateSwaggerUI(specContent: string) {
+    private generateSwaggerUI(specContent: string): string {
         return `
 <!DOCTYPE html>
 <html lang="en">
@@ -152,8 +152,8 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @param params - Parameters containing HTML path, width, and height for the iframe.
      * @returns The created iframe element.
      */
-    createIframe(params: ParsedParams | Params) {
-        let iframe = document.createElement("iframe");
+    createIframe(params: ParsedParams | Params): HTMLIFrameElement {
+        const iframe = document.createElement("iframe");
         iframe.id = 'openapi-iframe';
         iframe.src = path.normalize(`http://${this.appContext.plugin.server.serverAddress}/${params!.htmlPath}`)
         iframe.width = params!.width;
@@ -184,10 +184,8 @@ export class PreviewHandler implements PreviewHandlerInterface {
      * Clears any existing update timeout if present.
      * @param event - The PowerOffEvent triggering the unload.
      */
-    private async onunload(event: PowerOffEvent) {
-        if (this.updateTimeout) {
-            clearTimeout(this.updateTimeout);
-        }
+    private async onunload(event: PowerOffEvent): Promise<void> {
+        clearTimeout(this.updateTimeout);
     }
 
     /**
@@ -195,26 +193,27 @@ export class PreviewHandler implements PreviewHandlerInterface {
      * Clears any existing update timeout before scheduling a new one.
      * @remarks If the timeout unit is in milliseconds, the unit to multiply is 1; otherwise, it's 1000 (milliseconds).
      */
-    async scheduleAutoUpdate() {
-        if (this.updateTimeout) {
-            clearTimeout(this.updateTimeout);
-        }
-        debugger
+    async scheduleAutoUpdate(): Promise<void> {
+        clearTimeout(this.updateTimeout);
+
         const unit = this.appContext.plugin.settings.timeoutUnit === 'milliseconds' ? 1 : 1000
         const timeout = this.appContext.plugin.settings.timeout * unit
         this.updateTimeout = setTimeout(async () => {
             const view = this.appContext.app.workspace.getActiveViewOfType(MarkdownView)
-            view && await this.appContext.plugin.previewHandler.previewAutoUpdate(view);
+            if (view) {
+                await this.appContext.plugin.previewHandler.previewAutoUpdate(view);
+            }
         }, timeout);
-        console.log(this.updateTimeout)
+
+
     }
 
     /**
      * Performs an automatic update of the OpenAPI preview for a given MarkdownView.
      * @param view - The MarkdownView to update with OpenAPI resources.
      */
-    private async previewAutoUpdate(view: MarkdownView) {
-        if (view && this.appContext.plugin.settings.isAutoUpdate) {
+    private async previewAutoUpdate(view: MarkdownView): Promise<void> {
+        if (this.appContext.plugin.settings.isAutoUpdate) {
             await this.appContext.plugin.openAPI.renderOpenAPIResources(view, RenderingMode.Inline);
             this.rerenderPreview(view)
             this.appContext.plugin.showNotice('OpenAPI preview was automatically updated');
@@ -225,7 +224,7 @@ export class PreviewHandler implements PreviewHandlerInterface {
      * Rerender the preview mode of a MarkdownView.
      * @param view - The MarkdownView to rerender.
      */
-    rerenderPreview(view: MarkdownView) {
+    rerenderPreview(view: MarkdownView): void {
         view.previewMode.rerender(true);
     }
 
@@ -234,11 +233,7 @@ export class PreviewHandler implements PreviewHandlerInterface {
      *
      * @param view - The MarkdownView to refresh the preview for.
      */
-    previewManualUpdate(view: MarkdownView) {
-        if (!view) {
-            this.appContext.plugin.showNotice('No active Markdown view');
-            return;
-        }
+    previewManualUpdate(view: MarkdownView): void {
         this.rerenderPreview(view)
         this.appContext.plugin.showNotice('OpenAPI preview refreshed manually');
     }
@@ -249,7 +244,7 @@ export class PreviewHandler implements PreviewHandlerInterface {
      * @param leaf - The WorkspaceLeaf to set the mode for.
      * @param mode - The mode to set (`source` or `preview`).
      */
-    async setViewMode(leaf: WorkspaceLeaf, mode: string) {
+    async setViewMode(leaf: WorkspaceLeaf, mode: string): Promise<void> {
         const state = leaf.getViewState();
         state.state.mode = mode;
         state.state.source = mode === 'source';

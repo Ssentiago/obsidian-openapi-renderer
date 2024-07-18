@@ -16,7 +16,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * Registers a Markdown code block processor for OpenAPI.
      * Binds the processing function to the current instance.
      */
-    async registerProcessor() {
+    async registerProcessor(): Promise<void> {
         this.appContext.plugin.registerMarkdownCodeBlockProcessor("openapi", this.process.bind(this));
     }
 
@@ -28,7 +28,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param ctx - The context object providing additional information for processing.
      * @returns A promise that resolves when processing is complete.
      */
-    async process(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
+    async process(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
         const params = await this.parseParams(source)
         if (!params.success) {
             if (params.error) {
@@ -96,7 +96,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param sectionParts - An array of parameter sections, each containing [name, value].
      * @returns True if the parameter names and order are valid; otherwise, false.
      */
-    private isValidParamsNames(sectionParts: string[][]) {
+    private isValidParamsNames(sectionParts: string[][]): boolean {
         const paramsNames = sectionParts.map(line => line[0].trim())
         const expectedParamNames = ['openapi-spec', 'openapi-html', 'width', 'height'];
         return paramsNames.every((name, index) => name === expectedParamNames[index])
@@ -108,7 +108,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param height - The height dimension to validate.
      * @returns True - if both width and height dimensions are valid; otherwise, false.
      */
-    private isValidDimensions(width: string, height: string) {
+    private isValidDimensions(width: string, height: string): boolean {
         const [isValidWidth, isValidHeight] = [width, height]
             .map(value => value ? value.match(/^\d+(%|px)?$/) !== null : false);
         return [isValidWidth, isValidHeight].every(Boolean);
@@ -137,7 +137,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param specFilePath - The file path to the OpenAPI specification file.
      * @returns A promise that resolves when the block is inserted.
      */
-    async insertOpenAPIBlock(view: MarkdownView, htmlFilePath: string, specFilePath: string) {
+    async insertOpenAPIBlock(view: MarkdownView, htmlFilePath: string, specFilePath: string): Promise<void> {
         const file = view.file;
         const editor = view.editor;
 
@@ -154,7 +154,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param specFilePath - The file path to the OpenAPI specification file.
      * @returns A promise that resolves when the block is inserted.
      */
-    private async insertNewBlock(editor: Editor, htmlFilePath: string, specFilePath: string) {
+    private async insertNewBlock(editor: Editor, htmlFilePath: string, specFilePath: string): Promise<void> {
         const width = this.appContext.plugin.settings.iframeWidth
         const height = this.appContext.plugin.settings.iframeHeight
         const newBlock = `\`\`\`openapi\nopenapi-spec: ${specFilePath}\nopenapi-html: ${htmlFilePath}\nwidth: ${width}\nheight: ${height}\n\`\`\``
@@ -170,9 +170,7 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @returns True if the Markdown file contains at least one OpenAPI code block; otherwise, false.
      */
     private hasOpenAPIBlock(cache: CachedMetadata | null, editor: Editor): boolean {
-        if (!cache || !cache.sections) return false;
-
-        return cache.sections.some(section =>
+        return !!cache?.sections?.some(section =>
             section.type === 'code' &&
             this.isOpenAPIBlockContent(editor, section)
         );

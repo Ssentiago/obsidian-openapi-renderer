@@ -33,21 +33,21 @@ export class ButtonFactory {
         const {plugin} = this.buttonManager.uiManager.appContext;
         return {
             id: `openapi-renderer-server`,
-            get icon() {
+            get icon(): string {
                 return plugin.server.isRunning() ? SERVER_ICON_NAME_ON : SERVER_ICON_NAME_OFF;
             },
             title: 'Toggle OpenAPI Renderer Server',
             onClick: (event: MouseEvent) => plugin.eventsHandler.handleServerButtonClick(event),
 
-            get locations() {
+            get locations(): Set<ButtonLocation> {
                 return plugin.settings.serverButtonLocations
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = plugin.app.workspace.getLeaf()?.view instanceof MarkdownView;
+                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView)
                 const isCreationAllowedNow = plugin.settings.isCreateServerButton
                 const isCorrectLocation = this.locations.has(location);
-                const isVisibleInCurrentView = location === 'ribbon' || isMarkdownView
+                const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
                 return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
             },
             buttonType: 'server-button'
@@ -64,19 +64,19 @@ export class ButtonFactory {
             id: `openapi-renderer`,
             icon: 'file-scan',
             title: 'Render Swagger UI',
-            onClick: async () => {
+            onClick: async (): Promise<void> => {
                 const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-                await plugin.renderOpenAPI(view!, RenderingMode.Inline);
+               view && await plugin.renderOpenAPI(view, RenderingMode.Inline);
             },
-            get locations() {
+            get locations(): Set<ButtonLocation> {
                 return plugin.settings.renderButtonLocation
             },
             htmlElements: undefined,
-            state(location: ButtonLocation) {
-                const isMarkdownView = plugin.app.workspace.getLeaf()?.view instanceof MarkdownView;
+            state(location: ButtonLocation): boolean {
+                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView)
                 const isCreationAllowedNow = plugin.settings.isCreateCommandButtons
                 const isCorrectLocation = this.locations.has(location)
-                const isVisibleInCurrentView = location === 'ribbon' || isMarkdownView
+                const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
                 return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
             },
             buttonType: 'command-button'
@@ -93,19 +93,19 @@ export class ButtonFactory {
             id: `openapi-refresher`,
             icon: 'refresh-ccw',
             title: 'Refresh Swagger UI',
-            onClick: async () => {
+            onClick: async (): Promise<void> => {
                 const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
                 await plugin.refreshOpenAPI(view!);
             },
-            get locations() {
+            get locations(): Set<ButtonLocation> {
                 return plugin.settings.refreshButtonLocation
             },
             htmlElements: undefined,
-            state(location: ButtonLocation) {
-                const isMarkdownView = plugin.app.workspace.getLeaf()?.view instanceof MarkdownView;
+            state(location: ButtonLocation): boolean {
+                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView)
                 const isCreationAllowedNow = plugin.settings.isCreateCommandButtons
                 const isCorrectLocation = this.locations.has(location);
-                const isVisibleInCurrentView = location === 'ribbon' || isMarkdownView
+                const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
                 return isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
             },
             buttonType: 'command-button'

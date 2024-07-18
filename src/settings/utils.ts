@@ -33,7 +33,7 @@ export class SettingsUtils {
                          name: string,
                          location: ButtonLocation,
                          buttonId: ButtonID,
-                         buttonContainer: Set<ButtonLocation>) {
+                         buttonContainer: Set<ButtonLocation>): Setting {
         return new Setting(container)
             .setName(name)
             .addToggle(toggle => {
@@ -54,8 +54,7 @@ export class SettingsUtils {
      * @param emitter The event emitter responsible for triggering the event.
      * @param publisher The event publisher used to publish the event.
      */
-    publishToggleVisibilityEvent(id: ButtonID, emitter: Events, publisher: OpenAPIRendererEventPublisher) {
-        console.log('published')
+    publishToggleVisibilityEvent(id: ButtonID, emitter: Events, publisher: OpenAPIRendererEventPublisher): void {
         const event = {
             eventID: eventID.ToggleButtonVisibility,
             timestamp: new Date(),

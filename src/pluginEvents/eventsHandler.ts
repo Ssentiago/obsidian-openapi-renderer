@@ -24,7 +24,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * schedules an automatic update of the preview handler.
      * @param file - The abstract file object to modify.
      */
-    async modifyOpenAPISPec(file: TAbstractFile) {
+    async modifyOpenAPISPec(file: TAbstractFile): Promise<void> {
         if (file.path.endsWith(this.appContext.plugin.settings.openapiSpecFileName)) {
             await this.appContext.plugin.previewHandler.scheduleAutoUpdate();
         }
@@ -35,7 +35,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * Validates and updates the OpenAPI spec file name setting.
      * @param textComponent - The TextComponent for input handling.
      */
-    async handleSettingsTabOpenAPISpecBlur(textComponent: TextComponent) {
+    async handleSettingsTabOpenAPISpecBlur(textComponent: TextComponent): Promise<void> {
         const value = textComponent.getValue()
         if (value.match(/\.(yaml|yml|json)$/i)) {
             this.appContext.plugin.settings.openapiSpecFileName = value;
@@ -55,7 +55,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * Validates and updates the HTML file name setting.
      * @param textComponent - The TextComponent for input handling.
      */
-    async handleSettingsTabHTMLFileNameBlur(textComponent: TextComponent) {
+    async handleSettingsTabHTMLFileNameBlur(textComponent: TextComponent): Promise<void> {
         const value = textComponent.getValue()
         if (value.match(/\.html?$/)) {
             this.appContext.plugin.settings.htmlFileName = value;
@@ -75,7 +75,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * Validates and updates the iframe width setting.
      * @param textComponent - The TextComponent for input handling.
      */
-    async handleSettingsTabIframeWidthBlur(textComponent: TextComponent) {
+    async handleSettingsTabIframeWidthBlur(textComponent: TextComponent): Promise<void> {
         const value = textComponent.getValue()
         if (value.match(/^\d+?(%|px)?$/)) {
             this.appContext.plugin.settings.iframeHeight = value;
@@ -95,7 +95,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * Validates and updates the iframe height setting.
      * @param textComponent - The TextComponent for input handling.
      */
-    async handleSettingsTabIframeHeightBlur(textComponent: TextComponent) {
+    async handleSettingsTabIframeHeightBlur(textComponent: TextComponent): Promise<void> {
         const value = textComponent.getValue()
         if (value.match(/^\d+?(%|px)?$/)) {
             this.appContext.plugin.settings.iframeHeight = value;
@@ -115,7 +115,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * Validates and updates the server port setting.
      * @param textComponent - The TextComponent for input handling.
      */
-    async handleSettingsTabServerPortBlur(textComponent: TextComponent) {
+    async handleSettingsTabServerPortBlur(textComponent: TextComponent): Promise<void> {
         const value = textComponent.getValue()
         const oldPort = this.appContext.plugin.settings.serverPort;
         if (!value.match(/^\d+$/)) {
@@ -126,7 +126,9 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
             }, 2000)
         } else {
             const port = parseInt(value, 10)
-            if (oldPort === port) return;
+            if (oldPort === port) {
+                return;
+            }
 
 
             if (port > 1024 && port < 65536) {
@@ -135,8 +137,8 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
                     textComponent.setValue(port.toString())
                     await this.appContext.plugin.saveSettings();
 
-                    if (this.appContext.plugin.server && this.appContext.plugin.server.isRunning()) {
-                        this.appContext.plugin.server.reload().then((isReloaded) => {
+                    if (this.appContext.plugin.server.server && this.appContext.plugin.server.isRunning()) {
+                        await this.appContext.plugin.server.reload().then((isReloaded) => {
                             if (isReloaded) {
                                 this.appContext.plugin.showNotice(`The server was reloaded on the port: ${port}`);
                             } else {
@@ -145,10 +147,10 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
                         })
                     }
                 } else {
-                    this.appContext.plugin.showNotice(`This port was occupied. Returning to ${oldPort} in 2 seconds`)
+                    this.appContext.plugin.showNotice(`This port was occupied. Reverting to ${oldPort} in 2 seconds`)
                     setTimeout(() => {
                         textComponent.setValue(oldPort.toString())
-                        this.appContext.plugin.showNotice('Reverted to ${oldPort}')
+                        this.appContext.plugin.showNotice(`Reverted to ${oldPort}`)
                     }, 2000)
                 }
             } else {
@@ -189,7 +191,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * @returns A function that handles ChangeServerButtonStateEvent.
      */
     handleServerButtonState(button: Button) {
-        return async (event: ChangeServerButtonStateEvent) => {
+        return async (event: ChangeServerButtonStateEvent): Promise<void> => {
             const elements = button.config.htmlElements?.values();
             if (elements) {
                 for (const element of elements) {
@@ -205,11 +207,11 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * @returns An async function that handles ToggleButtonVisibilityEvent.
      */
     handleButtonVisibility(button: Button) {
-        return async (event: ToggleButtonVisibilityEvent) => {
+        return async (event: ToggleButtonVisibilityEvent): Promise<void> => {
             if (event.publisher === eventPublisher.App || event.data.buttonID === button.config.id) {
                 const btn = button.buttonManager.buttons.get(button.config.id)
                 if (btn) {
-                    button.buttonManager.toggleVisibility(btn.config)
+                    await button.buttonManager.toggleVisibility(btn.config)
                 }
             }
         }
@@ -220,7 +222,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
      * Toggles the OpenAPI Renderer server based on its current state.
      * @param event The mouse event triggering the toggle action.
      */
-    async handleServerButtonClick(event: MouseEvent) {
+    async handleServerButtonClick(event: MouseEvent): Promise<void> {
         const isRunning = this.appContext.plugin.uiManager.appContext.plugin.server.isRunning();
         const view = this.appContext.plugin.uiManager.appContext.app.workspace.getActiveViewOfType(MarkdownView);
         let msg = '';

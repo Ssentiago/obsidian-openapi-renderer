@@ -20,7 +20,7 @@ export default class UIManager {
     /**
      * Initializes the UI components and managers after the workspace layout is ready.
      */
-    async initializeUI() {
+    async initializeUI(): Promise<void> {
         this.appContext.app.workspace.onLayoutReady(this.initializeUIManager.bind(this))
     }
 
@@ -29,7 +29,7 @@ export default class UIManager {
      * Initializes the UI manager by creating buttons, registering events, and subscribing to power off events.
      * This method should be called after the workspace layout is ready.
      */
-    private async initializeUIManager() {
+    private async initializeUIManager(): Promise<void> {
         await this.buttonManager.createAllButtons();
         this.registerEvents();
         this.appContext.plugin.observer.subscribe(
@@ -44,7 +44,7 @@ export default class UIManager {
      * Removes all buttons managed by the button manager.
      * @param event The PowerOffEvent object.
      */
-    private async onunload(event: PowerOffEvent) {
+    private async onunload(event: PowerOffEvent): Promise<void> {
         await this.buttonManager.removeAllButtons()
     }
 
@@ -71,7 +71,7 @@ export default class UIManager {
      * - Listens for active leaf changes to update the toolbar.
      * - Subscribes to button events for managing their state and behavior.
      */
-    private registerEvents() {
+    private registerEvents(): void {
         this.appContext.plugin.registerEvent(
             this.appContext.app.workspace.on('active-leaf-change', async (leaf) => {
                 if (leaf?.view instanceof MarkdownView) {

@@ -35,7 +35,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
     }
 
 
-    display() {
+    display(): void {
         const {containerEl} = this;
         containerEl.empty();
         containerEl.addClass('openapi-renderer-settings');

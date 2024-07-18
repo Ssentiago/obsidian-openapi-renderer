@@ -21,7 +21,7 @@ export class ServerSettings implements SettingsSection {
         this.publisher = publisher
     }
 
-    display(containerEl: HTMLElement) {
+    display(containerEl: HTMLElement): void {
 
         new Setting(containerEl)
             .setName('Server settings')
@@ -33,7 +33,7 @@ export class ServerSettings implements SettingsSection {
             .addButton(button => {
                 let timeout: NodeJS.Timeout | null = null
 
-                const updateButtonState = () => {
+                const updateButtonState: () => void = () => {
                     if (this.plugin.server.isRunning()) {
                         button.setIcon('check-circle').setTooltip('Server is running');
                     } else {
@@ -64,7 +64,6 @@ export class ServerSettings implements SettingsSection {
                     } else {
                         const startServer = await this.plugin.server.start();
                         if (startServer) {
-                            ;
                             this.plugin.showNotice('Server started successfully!');
                         } else {
                             this.plugin.showNotice('Failed to start server. Check logs for details.');
@@ -91,7 +90,7 @@ export class ServerSettings implements SettingsSection {
                     text.setPlaceholder('8080')
                         .setValue(this.plugin.settings.serverPort.toString())
 
-                    let handler = this.plugin.eventsHandler.handleSettingsTabServerPortBlur.bind(this.plugin.eventsHandler, text)
+                    const handler = this.plugin.eventsHandler.handleSettingsTabServerPortBlur.bind(this.plugin.eventsHandler, text)
                     this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
                     text.inputEl.id = 'openapi-input-port'
                 }

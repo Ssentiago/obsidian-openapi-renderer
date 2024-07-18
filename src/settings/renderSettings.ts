@@ -31,7 +31,7 @@ export class RenderSettings implements SettingsSection {
     }
 
 
-    display(containerEl: HTMLElement) {
+    display(containerEl: HTMLElement): void {
 
         new Setting(containerEl)
             .setName('Rendering settings')
@@ -45,7 +45,7 @@ export class RenderSettings implements SettingsSection {
                 text.setPlaceholder('openapi-spec.html')
                     .setValue(this.plugin.settings.htmlFileName);
 
-                let handler = this.plugin.eventsHandler.handleSettingsTabHTMLFileNameBlur.bind(this.plugin.eventsHandler, text)
+                const handler = this.plugin.eventsHandler.handleSettingsTabHTMLFileNameBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, "blur", handler);
             });
 
@@ -56,7 +56,7 @@ export class RenderSettings implements SettingsSection {
             .addText((text: TextComponent) => {
                 text.setPlaceholder('openapi-spec.yaml')
                     .setValue(this.plugin.settings.openapiSpecFileName)
-                let handler = this.plugin.eventsHandler.handleSettingsTabOpenAPISpecBlur.bind(this.plugin.eventsHandler, text)
+                const handler = this.plugin.eventsHandler.handleSettingsTabOpenAPISpecBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
             });
 
@@ -68,13 +68,13 @@ export class RenderSettings implements SettingsSection {
                 text.setPlaceholder('100%')
                     .setValue(this.plugin.settings.iframeWidth);
 
-                let handler = this.plugin.eventsHandler.handleSettingsTabIframeWidthBlur.bind(this.plugin.eventsHandler, text)
+                const handler = this.plugin.eventsHandler.handleSettingsTabIframeWidthBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
             })
             .addText(text => {
                 text.setPlaceholder('600px')
                     .setValue(this.plugin.settings.iframeHeight);
-                let handler = this.plugin.eventsHandler.handleSettingsTabIframeHeightBlur.bind(this.plugin.eventsHandler, text)
+                const handler = this.plugin.eventsHandler.handleSettingsTabIframeHeightBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
             })
             .addExtraButton(button => {
@@ -121,7 +121,7 @@ export class RenderSettings implements SettingsSection {
                 text.setPlaceholder('2000')
                     .setValue(this.plugin.settings.timeout.toString())
 
-                let handler = this.plugin.eventsHandler.handleSettingsTabTimeoutBlur.bind(this.plugin.eventsHandler, text)
+                const handler = this.plugin.eventsHandler.handleSettingsTabTimeoutBlur.bind(this.plugin.eventsHandler, text)
                 this.plugin.registerDomEvent(text.inputEl, 'blur', handler)
             })
             .addDropdown((dropdown: DropdownComponent) => {
@@ -143,7 +143,7 @@ export class RenderSettings implements SettingsSection {
      * If there is a registered modification event for the OpenAPI Spec file, it is unregistered.
      * @param event The PowerOffEvent object.
      */
-    private async onunload(event: PowerOffEvent) {
+    private async onunload(event: PowerOffEvent): Promise<void> {
         if (this.modifySpecEvent) {
             this.app.vault.off('modify', this.modifySpecEvent);
             this.modifySpecEvent = null;

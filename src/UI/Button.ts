@@ -33,7 +33,7 @@ export class Button extends AbstractButtonObject {
      * - Subscribes to `ServerStarted` event if the button type is 'server-button',
      *   to handle server button state changes.
      */
-    subscribe() {
+    subscribe(): void {
         const {eventsHandler, observer} = this.buttonManager.uiManager.appContext.plugin;
 
         observer.subscribe(

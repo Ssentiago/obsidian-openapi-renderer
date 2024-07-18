@@ -31,7 +31,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * Stops the server if it is running.
      * @param event - The PowerOffEvent object.
      */
-    private async onunload(event: PowerOffEvent) {
+    private async onunload(event: PowerOffEvent): Promise<void> {
         this.server && await this.stop()
     }
 
@@ -50,9 +50,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
 
             return new Promise<boolean>((resolve, reject) => {
                 const newServer =
-                    this.app.listen(port, this.appContext.plugin.settings.serverHostName, () => {
+                    this.app.listen(port, this.appContext.plugin.settings.serverHostName, async () => {
                         if (port !== this.appContext.plugin.settings.serverPort) {
-                            this.updatePortSettings(port);
+                           await this.updatePortSettings(port);
                         }
 
                         this.server = newServer;
@@ -76,7 +76,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     /**
      * Publishes a server state change event when the server is either started or stopped.
      */
-    private publishServerChangeStateEvent() {
+    private publishServerChangeStateEvent(): void {
         const event = {
             eventID: eventID.ServerStarted,
             timestamp: new Date(),
@@ -95,7 +95,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * @returns A promise that resolves to true if the server stops successfully, otherwise false.
      */
     async stop(): Promise<boolean> {
-        if (this.server && this.server.listening) {
+        if (this.server?.listening) {
             await new Promise<void>((resolve, reject) => {
                 this.server?.close((err: any) => {
                     if (err) {
@@ -122,7 +122,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * Reloads the server by stopping it and then starting it again.
      * @returns A promise that resolves to true if the server reloads successfully, otherwise false.
      */
-    async reload() {
+    async reload(): Promise<boolean> {
         try {
             await this.stop();
             await this.start();
@@ -139,8 +139,8 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      *
      * @returns true if the server is running and listening, false otherwise.
      */
-    isRunning() {
-        return this.server?.listening;
+    isRunning(): boolean  {
+        return !!this.server?.listening;
     }
 
     /**
@@ -195,7 +195,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * Saves the updated settings and notifies the user with a notice.
      * @param newPort - The new port number to set.
      */
-    private async updatePortSettings(newPort: number) {
+    private async updatePortSettings(newPort: number): Promise<void> {
         const oldPort = this.appContext.plugin.settings.serverPort;
         this.appContext.plugin.settings.serverPort = newPort;
         await this.appContext.plugin.saveSettings();
@@ -228,7 +228,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * Includes URL validation middleware, serving static files from the vault,
      * and handling undefined routes with a 404 response.
      */
-    private setupMiddlewares() {
+    private setupMiddlewares(): void {
         const vaultPath = this.appContext.app.vault.getRoot().vault.adapter
         // URL validation middleware: it must end with .html
         this.app.use(async (req, res, next) => {

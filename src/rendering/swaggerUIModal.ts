@@ -30,8 +30,8 @@ export class SwaggerUIModal extends Modal {
      * Asynchronous method called when opening the modal component.
      * Initializes the modal with Swagger UI content.
      */
-    async onOpen() {
-        let {contentEl} = this
+    async onOpen(): Promise<void> {
+        const {contentEl} = this
         contentEl.setText('Swagger UI');
         const iframe  = this.iframeCreator(
             {
@@ -50,8 +50,8 @@ export class SwaggerUIModal extends Modal {
      * Method called when closing the modal component.
      * Clears the content element of the modal.
      */
-    onClose() {
-        let {contentEl} = this
+    onClose(): void {
+        const {contentEl} = this
         contentEl.empty()
     }
 }

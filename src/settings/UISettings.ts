@@ -26,7 +26,7 @@ export class UISettings {
         this.utils = new SettingsUtils(this.app, this.plugin, this.publisher)
     }
 
-    display(containerEl: HTMLElement) {
+    display(containerEl: HTMLElement): void {
         const {settings} = this.plugin
 
         new Setting(containerEl)

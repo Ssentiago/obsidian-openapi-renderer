@@ -130,6 +130,12 @@ export interface OpenAPIRendererPluginLoggerInterface {
     appContext: OpenAPIPluginContext;
 }
 
+export interface ParsedParams {
+    specPath: string;
+    htmlPath: string;
+    width: string;
+    height: string;
+}
 
 export interface ParseResult {
     success: boolean;
@@ -137,12 +143,6 @@ export interface ParseResult {
     error: string | null;
 }
 
-export interface ParsedParams {
-    specPath: string;
-    htmlPath: string;
-    width: string;
-    height: string;
-}
 
 export interface Params extends ParsedParams {
 
