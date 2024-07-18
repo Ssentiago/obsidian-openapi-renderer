@@ -5,7 +5,7 @@
   "description": "Generates a Swagger-UI interface and embeds it as an iframe",
   "main": "src/main.ts",
   "scripts": {
-    "dev": "npx rollup -c rollup.config.mjs -w --environment PRODUCTION:0",
+    "dev": "concurrently \"npx rollup -c rollup.config.mjs -w --environment PRODUCTION:0\" \"npm run start-obsidian\"",
     "build": "npx rollup -c rollup.config.mjs --environment PRODUCTION:1",
     "lint": "eslint src --ext .ts",
     "start-obsidian": "node scripts/start-obsidian.mjs"
@@ -20,7 +20,7 @@
     "typescript": "^5.5.3"
   },
   "devDependencies": {
-    "ps-list": "^8.1.1",
+    "@eslint-community/eslint-utils": "^4.4.0",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -31,9 +31,12 @@
     "@types/node": "^20.14.10",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.16.1",
+    "@typescript-eslint/utils": "^7.16.1",
+    "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
-    "eslint": "^9.7.0",
+    "eslint": "^8.57.0",
     "nodemon": "^3.1.4",
+    "ps-list": "^8.1.1",
     "rollup-plugin-copy": "^3.5.0",
     "tslib": "^2.6.3"
   }
