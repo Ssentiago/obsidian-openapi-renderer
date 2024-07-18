@@ -48,7 +48,7 @@ export class UISettings {
 
         const serverGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
         new Setting(serverGroup)
-            .setName('Server button location')
+            .setName('Server button locations')
             .setDesc('What location of button do you need? Choose below. You can choose more than one')
 
         const serverDetails = serverGroup.createEl('details', {cls: 'openapi-renderer-details'})
@@ -63,7 +63,6 @@ export class UISettings {
 
 
         new Setting(containerEl)
-
             .setName('Command buttons')
             .setDesc('Add buttons for OpenAPI Renderer commands in the Obsidian interface?')
             .addToggle(toggle => toggle
@@ -77,7 +76,13 @@ export class UISettings {
                 )
             )
 
+
         const renderGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
+        new Setting(renderGroup)
+            .setName('Command button locations')
+            .setDesc('What location of button do you need? Choose below. You can choose more than one')
+
+
         const renderDetails = renderGroup.createEl('details', {cls: 'openapi-renderer-details'})
         renderDetails.createEl('summary', {text: 'Render Button Locations', cls: 'openapi-renderer-summary'})
 

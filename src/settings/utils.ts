@@ -45,7 +45,7 @@ export class SettingsUtils {
                         await this.plugin.saveSettings()
                         this.publishToggleVisibilityEvent(buttonId, this.app.workspace, this.publisher)
                     })
-            });
+            })
     }
 
     /**
@@ -67,8 +67,6 @@ export class SettingsUtils {
         } as ToggleButtonVisibilityEvent;
         publisher.publish(event)
     }
-
-
 }
 
 
