@@ -59,6 +59,7 @@ Customize the plugin in the settings:
 ## Known Issues
 
 - When using the "VSCode Editor" plugin to edit YAML/JSON specification files, there may be issues with automatic updates. Use manual update or edit specifications in an external tool.
+- Buttons may be buggy. If you noticed this, please, create an issue
 
 ## Demonstration
 
