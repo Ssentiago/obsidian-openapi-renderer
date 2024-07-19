@@ -10,6 +10,7 @@ import OpenAPIRendererPluginLogger from "../pluginLogging/loggingManager";
 import UIManager from "../UI/UIManager";
 import {ButtonID} from "./types";
 import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./constants";
+import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 
 
 export interface DEFAULT_SETTINGS_Interface {
@@ -205,4 +206,10 @@ export interface ObserverEventData {
 
 export interface SettingsSection {
     display(containerEl: HTMLElement): void;
+}
+
+export interface SettingSectionParams{
+    app: App,
+    plugin: OpenAPIRendererPlugin,
+    publisher: OpenAPIRendererEventPublisher
 }

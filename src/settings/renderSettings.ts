@@ -1,7 +1,8 @@
 import {App, DropdownComponent, Setting, TAbstractFile, TextComponent} from "obsidian";
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
-import {PowerOffEvent, SettingsSection} from "../typing/interfaces";
+import {PowerOffEvent, SettingSectionParams, SettingsSection} from "../typing/interfaces";
+import {PreviewModal} from "./previewModal";
 
 import {eventID} from "../typing/constants";
 
@@ -16,9 +17,7 @@ export class RenderSettings implements SettingsSection {
     publisher: OpenAPIRendererEventPublisher
     private modifySpecEvent: ((file: TAbstractFile) => Promise<void>) | null = null;
 
-    constructor(app: App,
-                plugin: OpenAPIRendererPlugin,
-                publisher: OpenAPIRendererEventPublisher) {
+    constructor({app, plugin, publisher}: SettingSectionParams) {
         this.app = app;
         this.plugin = plugin
         this.publisher = publisher
@@ -33,7 +32,7 @@ export class RenderSettings implements SettingsSection {
     display(containerEl: HTMLElement): void {
 
         new Setting(containerEl)
-            .setName('Rendering settings')
+            .setName('Rendering')
             .setHeading()
 
 
@@ -82,7 +81,13 @@ export class RenderSettings implements SettingsSection {
                     .onClick(() => {
                         this.plugin.showNotice('Width and height determine the size of the iframe in your notes. Use CSS units like px, %, or vh.', 5000)
                     });
+            }).addButton(button => {
+            button.onClick(() => {
+                new PreviewModal(this.app, this.plugin).open()
             })
+                .setTooltip('Show the preview of the iframe with current settings. Check the server state first', {delay: 100})
+                .setIcon('scan-eye')
+        });
 
 
         new Setting(containerEl)
@@ -108,8 +113,8 @@ export class RenderSettings implements SettingsSection {
 
 
         new Setting(containerEl)
-            .setName('Timeout of auto-update on file change')
-            .setDesc('Enter the timeout in unit you  chosen for auto-update when files are changed.')
+            .setName('Timeout of autoupdate on file change')
+            .setDesc('Enter the timeout in unit you chosen for auto-update when files are changed.')
             .addText((text: TextComponent) => {
                 text.setPlaceholder('2000')
                     .setValue(this.plugin.settings.timeout.toString())

@@ -3,6 +3,7 @@ import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {App, Setting} from "obsidian";
 import {SettingsUtils} from "./utils";
 import {ButtonLocation, REFRESHER_BUTTON_ID, RENDERER_BUTTON_ID, SERVER_BUTTON_ID} from "../typing/constants";
+import {SettingSectionParams} from "../typing/interfaces";
 
 
 /**
@@ -15,11 +16,7 @@ export class UISettings {
     publisher: OpenAPIRendererEventPublisher
     utils: SettingsUtils
 
-    constructor(
-        app: App,
-        plugin: OpenAPIRendererPlugin,
-        publisher: OpenAPIRendererEventPublisher,
-    ) {
+    constructor({app, plugin, publisher}: SettingSectionParams) {
         this.app = app
         this.plugin = plugin
         this.publisher = publisher
@@ -30,7 +27,7 @@ export class UISettings {
         const {settings} = this.plugin
 
         new Setting(containerEl)
-            .setName('UI Customization')
+            .setName('UI customization')
             .setHeading()
 
         new Setting(containerEl)
@@ -41,7 +38,7 @@ export class UISettings {
                 .onChange(async (value) => {
                         this.plugin.settings.isCreateServerButton = value;
                         await this.plugin.saveSettings();
-                        console.log(this.plugin.settings)
+
                         this.utils.publishToggleVisibilityEvent(SERVER_BUTTON_ID, this.app.workspace, this.publisher)
                     }
                 )
@@ -53,13 +50,13 @@ export class UISettings {
             .setDesc('What location of button do you need? Choose below. You can choose more than one')
 
         const serverDetails = serverGroup.createEl('details', {cls: 'openapi-renderer-details'})
-        serverDetails.createEl('summary', {text: 'Server Button Locations', cls: 'openapi-renderer-summary'})
+        serverDetails.createEl('summary', {text: 'Server button Locations', cls: 'openapi-renderer-summary'})
 
-        this.utils.createLocationToggle(serverDetails, 'Ribbon Button',
+        this.utils.createLocationToggle(serverDetails, 'Ribbon button',
             ButtonLocation.Ribbon, SERVER_BUTTON_ID, settings.serverButtonLocations)
-        this.utils.createLocationToggle(serverDetails, 'Toolbar Button',
+        this.utils.createLocationToggle(serverDetails, 'Toolbar button',
             ButtonLocation.Toolbar, SERVER_BUTTON_ID, settings.serverButtonLocations)
-        this.utils.createLocationToggle(serverDetails, 'Statusbar Button',
+        this.utils.createLocationToggle(serverDetails, 'Statusbar button',
             ButtonLocation.Statusbar, SERVER_BUTTON_ID, settings.serverButtonLocations)
 
 
@@ -85,25 +82,25 @@ export class UISettings {
 
 
         const renderDetails = renderGroup.createEl('details', {cls: 'openapi-renderer-details'})
-        renderDetails.createEl('summary', {text: 'Render Button Locations', cls: 'openapi-renderer-summary'})
+        renderDetails.createEl('summary', {text: 'Render button Locations', cls: 'openapi-renderer-summary'})
 
-        this.utils.createLocationToggle(renderDetails, 'Ribbon Button',
+        this.utils.createLocationToggle(renderDetails, 'Ribbon button',
             ButtonLocation.Ribbon, RENDERER_BUTTON_ID, settings.renderButtonLocation)
-        this.utils.createLocationToggle(renderDetails, 'Toolbar Button',
+        this.utils.createLocationToggle(renderDetails, 'Toolbar button',
             ButtonLocation.Toolbar, RENDERER_BUTTON_ID, settings.renderButtonLocation)
-        this.utils.createLocationToggle(renderDetails, 'Statusbar Button',
+        this.utils.createLocationToggle(renderDetails, 'Statusbar button',
             ButtonLocation.Statusbar, RENDERER_BUTTON_ID, settings.renderButtonLocation)
 
 
         const refreshGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
         const refreshDetails = refreshGroup.createEl('details', {cls: 'openapi-renderer-details'})
-        refreshDetails.createEl('summary', {text: 'Refresh Button Locations', cls: 'openapi-renderer-summary'})
+        refreshDetails.createEl('summary', {text: 'Refresh button Locations', cls: 'openapi-renderer-summary'})
 
-        this.utils.createLocationToggle(refreshDetails, 'Ribbon Button',
+        this.utils.createLocationToggle(refreshDetails, 'Ribbon button',
             ButtonLocation.Ribbon, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
-        this.utils.createLocationToggle(refreshDetails, 'Toolbar Button',
+        this.utils.createLocationToggle(refreshDetails, 'Toolbar button',
             ButtonLocation.Toolbar, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
-        this.utils.createLocationToggle(refreshDetails, 'Statusbar Button',
+        this.utils.createLocationToggle(refreshDetails, 'Statusbar button',
             ButtonLocation.Statusbar, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
 
     }

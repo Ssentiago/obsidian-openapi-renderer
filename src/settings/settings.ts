@@ -1,5 +1,5 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import {SettingsSection} from "../typing/interfaces";
+import {SettingSectionParams, SettingsSection} from "../typing/interfaces";
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher,} from "../pluginEvents/eventEmitter";
 import {UISettings} from "./UISettings";
@@ -25,12 +25,12 @@ export class OpenAPISettingTab extends PluginSettingTab {
         this.plugin = plugin
         this.publisher = publisher
 
-        const params = {app, plugin, publisher}
+        const params: SettingSectionParams = {app, plugin, publisher}
 
         this.sections = [
-            new ServerSettings(params.app, params.plugin, params.publisher),
-            new RenderSettings(params.app, params.plugin, params.publisher),
-            new UISettings(params.app, params.plugin, params.publisher)
+            new ServerSettings(params),
+            new RenderSettings(params),
+            new UISettings(params)
         ]
     }
 

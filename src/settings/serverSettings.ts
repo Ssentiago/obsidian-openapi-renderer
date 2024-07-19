@@ -1,7 +1,7 @@
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {App, Setting} from "obsidian";
-import {SettingsSection} from "../typing/interfaces";
+import {SettingSectionParams, SettingsSection} from "../typing/interfaces";
 
 /**
  * Represents the server settings section within the OpenAPI Renderer plugin settings.
@@ -12,10 +12,7 @@ export class ServerSettings implements SettingsSection {
     plugin: OpenAPIRendererPlugin
     publisher: OpenAPIRendererEventPublisher
 
-    constructor(
-        app: App,
-        plugin: OpenAPIRendererPlugin,
-        publisher: OpenAPIRendererEventPublisher) {
+    constructor({app, plugin, publisher}: SettingSectionParams) {
         this.app = app
         this.plugin = plugin
         this.publisher = publisher
@@ -24,11 +21,11 @@ export class ServerSettings implements SettingsSection {
     display(containerEl: HTMLElement): void {
 
         new Setting(containerEl)
-            .setName('Server settings')
+            .setName('Server')
             .setHeading()
 
         new Setting(containerEl)
-            .setName('Server Status')
+            .setName('Server status')
             .setDesc('Check if the server is running and toggle it')
             .addButton(button => {
                 let timeout: NodeJS.Timeout | null = null
@@ -44,7 +41,9 @@ export class ServerSettings implements SettingsSection {
                 updateButtonState();
 
                 button.onClick(async () => {
-                    if (timeout) {return;}
+                    if (timeout) {
+                        return;
+                    }
 
                     if (this.plugin.server.isRunning()) {
                         this.plugin.showNotice('Pong! Server is running. Click again if you want to stop it');
