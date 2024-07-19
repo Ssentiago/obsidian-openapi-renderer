@@ -27,7 +27,7 @@ export class UISettings {
         const {settings} = this.plugin
 
         new Setting(containerEl)
-            .setName('UI customization')
+            .setName('UI')
             .setHeading()
 
         new Setting(containerEl)

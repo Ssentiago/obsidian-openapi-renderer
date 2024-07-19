@@ -77,7 +77,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
             id: 'refresh-openapi',
             name: 'Refresh Swagger UI',
             editorCallback: async (editor, view) => {
-                debugger
+
                 await this.refreshOpenAPI(view as MarkdownView)
             },
         });
@@ -127,7 +127,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         const event = {
             eventID: eventID.PowerOff,
             timestamp: new Date(),
-            publisher: eventPublisher.App,
+            publisher: eventPublisher.Plugin,
             subject: Subject.classes,
             emitter: this.app.workspace,
         } as PowerOffEvent;
@@ -163,8 +163,6 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @async
      */
     async saveSettings(): Promise<void> {
-
-
         const saveData = {
             ...this.settings,
             renderButtonLocation: Array.from(this.settings.renderButtonLocation),

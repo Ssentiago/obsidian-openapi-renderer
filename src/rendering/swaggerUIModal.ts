@@ -41,7 +41,7 @@ export class SwaggerUIModal extends Modal {
                 height: this.height,
             } as Params
         )
-        debugger
+
         contentEl.appendChild(iframe)
         contentEl.show()
     }
