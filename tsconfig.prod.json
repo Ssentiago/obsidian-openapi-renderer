@@ -21,7 +21,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "obsidian-extensions.d.ts",
+    "Globals.d.ts"
   ],
   "buildOptions": {
     "incremental": true

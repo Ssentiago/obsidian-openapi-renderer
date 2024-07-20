@@ -11,10 +11,12 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
-    "lib": ["DOM", "ES5", "ES6", "ES7"]
+    "lib": ["DOM", "ES5", "ES6", "ES7"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "include": [
     "src/**/*.ts",
-    "obsidian-extensions.d.ts"
+    "obsidian-extensions.d.ts",
+    "Globals.d.ts"
   ]
 }
