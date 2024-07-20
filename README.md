@@ -74,3 +74,10 @@ Special thanks to [mnaoumov](https://github.com/mnaoumov/) for valuable insights
 - The plugin searches for YAML or JSON files in the current folder of the opened note.
 - Ensure that the specification filename matches your plugin settings.
 - Internet access is required for now to download Swagger UI and js-yaml from CDNs.
+
+## Third-Party Resources
+
+This project uses the following third-party resources:
+
+- [Swagger UI](https://github.com/swagger-api/swagger-ui) - Licensed under the [Apache License 2.0](./path-to-swagger-ui-folder/LICENSE).
+- [js-yaml](https://github.com/nodeca/js-yaml) - Licensed under the [MIT License](./path-to-js-yaml-folder/LICENSE).
