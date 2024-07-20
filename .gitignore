@@ -7,5 +7,4 @@ data.json
 test-vault/.obsidian/community-plugins.json
 test-vault/.obsidian/workspace.json
 
-/test-vault/.obsidian/plugins/openapi-renderer/
-/test-vault/.obsidian/
+/test-vault/
