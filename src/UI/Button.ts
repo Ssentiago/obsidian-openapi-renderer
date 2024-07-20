@@ -30,7 +30,7 @@ export class Button extends AbstractButtonObject {
     /**
      * Subscribes the button instance to relevant events based on its configuration.
      * - Subscribes to `ToggleButtonVisibility` event to manage button visibility.
-     * - Subscribes to `ServerStarted` event if the button type is 'server-button',
+     * - Subscribes to `ServerChangedState` event if the button type is 'server-button',
      *   to handle server button state changes.
      */
     subscribe(): void {
@@ -44,7 +44,7 @@ export class Button extends AbstractButtonObject {
         if (this.config.buttonType === 'server-button') {
             this.buttonManager.uiManager.appContext.plugin.observer.subscribe(
                 this.buttonManager.uiManager.appContext.app.workspace,
-                eventID.ServerStarted,
+                eventID.ServerChangeButtonState,
                 eventsHandler.handleServerButtonState(this)
             )
         }

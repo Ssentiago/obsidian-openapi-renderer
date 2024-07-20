@@ -21,6 +21,8 @@ export interface DEFAULT_SETTINGS_Interface {
     isAutoUpdate: boolean,
     serverHostName: string,
     serverPort: number,
+    proxyHostName: string,
+    proxyPort: number,
     isServerAutoStart: boolean,
     isCreateServerButton: boolean,
     isCreateCommandButtons: boolean,
@@ -193,6 +195,13 @@ export interface ChangeServerButtonStateEvent extends ButtonEvent {
     data: {
         buttonID: ButtonID,
     }
+}
+
+export interface ChangeServerStateEvent extends OpenAPIRendererEvent{
+}
+
+export interface ChangedServerSettingsEvent extends OpenAPIRendererEvent {
+
 }
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {

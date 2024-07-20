@@ -12,6 +12,7 @@ import OpenAPIRendererPluginLogger from "./pluginLogging/loggingManager";
 import UIManager from './UI/UIManager'
 import path from "path";
 import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./typing/constants";
+import OpenAPIRendererProxyServer from "./server/proxy";
 
 
 /**
@@ -31,6 +32,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
     uiManager!: UIManager
     publisher!: OpenAPIRendererEventPublisher
     observer!: OpenAPIRendererEventObserver
+    proxy!: OpenAPIRendererProxyServer
 
 
     /**
@@ -50,6 +52,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.previewHandler = new PreviewHandler(this.appContext);
         this.eventsHandler = new OpenAPIRendererEventsHandler(this.appContext);
         this.server = new OpenAPIRendererServer(this.appContext)
+        this.proxy = new OpenAPIRendererProxyServer(this.appContext)
         this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext)
 
 
@@ -211,6 +214,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
             isAutoUpdate: false,
             serverHostName: '127.0.0.1',
             serverPort: 8080,
+            proxyHostName: '127.0.0.1',
+            proxyPort: 47899,
             isServerAutoStart: false,
             isCreateServerButton: true,
             isCreateCommandButtons: false,

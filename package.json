@@ -15,7 +15,9 @@
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^10.4.19",
+    "clean-css": "^5.3.3",
     "express": "^4.19.2",
+    "http-proxy-middleware": "^3.0.0",
     "obsidian": "^1.5.7-1",
     "rollup-plugin-import-css": "^3.5.0"
   },
@@ -27,12 +29,17 @@
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/css": "^0.0.37",
+    "@types/csso": "^5.0.4",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
+    "@types/uglify-js": "^3.17.5",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.16.1",
     "@typescript-eslint/utils": "^7.16.1",
     "concurrently": "^8.2.2",
+    "cssnano": "^7.0.4",
+    "csso": "^5.0.5",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "nodemon": "^3.1.4",
@@ -44,8 +51,10 @@
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-strip": "^1.2.2",
     "rollup-plugin-url": "^3.0.1",
+    "terser": "^5.31.3",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3",
-    "typescript-plugin-css-modules": "^5.1.0"
+    "typescript-plugin-css-modules": "^5.1.0",
+    "uglify-js": "^3.19.0"
   }
 }

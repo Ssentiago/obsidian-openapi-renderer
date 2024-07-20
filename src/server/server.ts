@@ -1,10 +1,11 @@
 import express from 'express';
 import {IncomingMessage, Server, ServerResponse} from 'http';
 import {OpenAPIPluginContext} from "../contextManager";
-import {ChangeServerButtonStateEvent, OpenAPIRendererServerInterface, PowerOffEvent} from "../typing/interfaces";
+import {ChangeServerButtonStateEvent, ChangeServerStateEvent, OpenAPIRendererServerInterface, PowerOffEvent} from "../typing/interfaces";
 import * as net from "node:net";
 import path from 'path'
 import {eventID, eventPublisher, SERVER_BUTTON_ID, Subject} from "../typing/constants";
+import {JSYAML, swaggerUICSS, swaggerUIJS} from "../assets/shared resources";
 
 
 /**
@@ -17,13 +18,25 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
 
     constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
-        this.app = express();
-        this.setupMiddlewares()
-        this.appContext.plugin.observer.subscribe(
-            this.appContext.app.workspace,
-            eventID.PowerOff,
-            this.onunload.bind(this)
-        )
+        this.initialize()
+    }
+
+    initialize(): void {
+        if (this.shouldInitialize()) {
+            this.app = express();
+            this.setupRouters()
+            this.setupMiddlewares()
+            this.appContext.plugin.observer.subscribe(
+                this.appContext.app.workspace,
+                eventID.PowerOff,
+                this.onunload.bind(this)
+            )
+        }
+
+    }
+
+    shouldInitialize(): boolean {
+        return true;
     }
 
     /**
@@ -31,7 +44,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * Stops the server if it is running.
      * @param event - The PowerOffEvent object.
      */
-    private async onunload(event: PowerOffEvent): Promise<void> {
+    protected async onunload(event: PowerOffEvent): Promise<void> {
         this.server && await this.stop()
     }
 
@@ -52,12 +65,13 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                 const newServer =
                     this.app.listen(port, this.appContext.plugin.settings.serverHostName, async () => {
                         if (port !== this.appContext.plugin.settings.serverPort) {
-                           await this.updatePortSettings(port);
+                            await this.updatePortSettings(port);
                         }
 
                         this.server = newServer;
 
-                        this.publishServerChangeStateEvent();
+                        this.publishServerButtonsChangeStateEvent();
+                        this.publishServerChangeStateEvent()
 
                         resolve(true);
                     });
@@ -76,17 +90,29 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     /**
      * Publishes a server state change event when the server is either started or stopped.
      */
-    private publishServerChangeStateEvent(): void {
+    private publishServerButtonsChangeStateEvent(): void {
         const event = {
-            eventID: eventID.ServerStarted,
+            eventID: eventID.ServerChangeButtonState,
             timestamp: new Date(),
-            publisher: eventPublisher.Settings,
+            publisher: eventPublisher.Plugin,
             subject: Subject.Button,
             emitter: this.appContext.app.workspace,
             data: {
                 buttonID: SERVER_BUTTON_ID,
             }
         } as ChangeServerButtonStateEvent;
+        this.appContext.plugin.publisher.publish(event)
+
+    }
+
+    publishServerChangeStateEvent(): void {
+        const event = {
+            eventID: eventID.ServerChangedState,
+            timestamp: new Date(),
+            publisher: eventPublisher.Plugin,
+            subject: Subject.Plugin,
+            emitter: this.appContext.app.workspace,
+        } as ChangeServerStateEvent
         this.appContext.plugin.publisher.publish(event)
     }
 
@@ -106,6 +132,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                     }
                 });
             }).then(() => {
+                this.publishServerButtonsChangeStateEvent()
                 this.publishServerChangeStateEvent()
                 return true
             }).catch((err: Error) => {
@@ -139,7 +166,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      *
      * @returns true if the server is running and listening, false otherwise.
      */
-    isRunning(): boolean  {
+   public isRunning(): boolean {
         return !!this.server?.listening;
     }
 
@@ -250,9 +277,25 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         // Serving static files
         this.app.use(express.static(vaultPath.basePath));
 
+
         // Process all undefined routes
         this.app.use((req, res) => {
             res.status(404).send('Not found');
+        });
+    }
+
+    setupRouters() {
+        this.app.get('/swagger-ui.css', (req, res) => {
+            res.setHeader('Content-Type', 'text/css');
+            res.end(swaggerUICSS);
+        });
+        this.app.get('/swagger-ui.js', (req, res) => {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.end(swaggerUIJS);
+        });
+        this.app.get('/js-yaml', (req, res) => {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.end(JSYAML);
         });
     }
 

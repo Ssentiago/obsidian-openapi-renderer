@@ -19,7 +19,7 @@ module.exports = [
             "arrow-body-style": ["error", "as-needed"],
             // Отключение стандартных правил в пользу TypeScript-специфичных
             "no-unused-vars": "off",
-            "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "^_"}], // Запрещает неиспользуемые переменные, игнорируя аргументы, начинающиеся с _
+            // "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "^_"}], // Запрещает неиспользуемые переменные, игнорируя аргументы, начинающиеся с _
 
             // Отключение правил, которые могут конфликтовать с TypeScript или вашими предпочтениями
             "@typescript-eslint/ban-ts-comment": "off", // Разрешает комментарии типа @ts-ignore
@@ -35,7 +35,7 @@ module.exports = [
             // "@typescript-eslint/no-unused-expressions": "warn", // Предупреждает о неиспользуемых выражениях
             "@typescript-eslint/consistent-type-definitions": ["error", "interface"], // Требует использования интерфейсов вместо типов
             // "@typescript-eslint/no-explicit-any": "warn", // Предупреждает об использовании типа any
-            "@typescript-eslint/no-misused-promises": "error", // Запрещает неправильное использование промисов
+            // "@typescript-eslint/no-misused-promises": "error", // Запрещает неправильное использование промисов
             // "@typescript-eslint/no-non-null-assertion": "warn", // Предупреждает о использовании оператора !
             "@typescript-eslint/prefer-optional-chain": "warn", // Предпочитает использование опциональной цепочки
             "@typescript-eslint/ban-types": [

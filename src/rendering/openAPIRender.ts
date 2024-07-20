@@ -4,8 +4,7 @@ import path from "path";
 import {MarkdownView, WorkspaceLeaf} from "obsidian";
 import {SwaggerUIModal} from 'rendering/swaggerUIModal'
 import {eventID, RenderingMode} from "../typing/constants";
-import swaggerUICSS from '../assets/swagger-ui/swagger-ui.module.css'
-import swaggerUIJS from '../assets/swagger-ui/swagger-ui-bundle.module.js'
+
 
 /**
  * Class representing an OpenAPI renderer.
@@ -113,45 +112,41 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @returns The generated HTML content with embedded Swagger UI.
      */
     private generateSwaggerUI(specContent: string): string {
-        debugger
-        console.log(swaggerUICSS)
-        console.log(swaggerUIJS)
-        return `
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <meta charset="UTF-8">
-       <title>Swagger UI</title>
-       <style>
-       ${swaggerUICSS}
-           html { box-sizing: border-box; overflow-moz-scrollbars-vertical; overflow-y: scroll; }
-           *, *:before, *:after { box-sizing: inherit; }
-           body { margin: 0; background: #fafafa; }
-       </style>
-   </head>
-   <body>
-       <div id="swagger-ui"></div>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-       <script>
-            ${swaggerUIJS}
-           window.onload = function() {
-               const spec = jsyaml.load(${JSON.stringify(specContent)});
-               const ui = SwaggerUIBundle({
-                   spec: spec,
-                   dom_id: '#swagger-ui',
-                   presets: [
-                       SwaggerUIBundle.presets.apis,
-                       SwaggerUIBundle.SwaggerUIStandalonePreset
-                   ],
-                   layout: "BaseLayout"
-               });
-           }
-       </script>
-   </body>
-   </html>
-           `;
-    }
-
+         return `
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <title>Swagger UI</title>
+     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css">
+     <style>
+         html { box-sizing: border-box; overflow-moz-scrollbars-vertical; overflow-y: scroll; }
+         *, *:before, *:after { box-sizing: inherit; }
+         body { margin: 0; background: #fafafa; }
+     </style>
+ </head>
+ <body>
+     <div id="swagger-ui"></div>
+     <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+     <script>
+         window.onload = function() {
+             const spec = jsyaml.load(${JSON.stringify(specContent)});
+             const ui = SwaggerUIBundle({
+                 spec: spec,
+                 dom_id: '#swagger-ui',
+                 presets: [
+                     SwaggerUIBundle.presets.apis,
+                     SwaggerUIBundle.SwaggerUIStandalonePreset
+                 ],
+                 layout: "BaseLayout"
+             });
+         }
+     </script>
+ </body>
+ </html>
+         `;
+     }
     /**
      * Creates an iframe element for embedding content based on provided parameters.
      * @param params - Parameters containing HTML path, width, and height for the iframe.

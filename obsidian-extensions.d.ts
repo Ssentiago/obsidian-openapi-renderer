@@ -1,5 +1,6 @@
 import {EventRef} from 'obsidian'
 import {
+    ChangedServerSettingsEvent,
     ChangeServerButtonStateEvent, PowerOffEvent,
     ToggleButtonVisibilityEvent
 } from "./src/typing/interfaces";
@@ -16,13 +17,16 @@ declare module "obsidian" {
 
         trigger(name: eventID.ToggleButtonVisibility, event: ToggleButtonVisibilityEvent): void;
         
-        on(name: eventID.ServerStarted, callback: (event: ChangeServerButtonStateEvent) => any): EventRef;
+        on(name: eventID.ServerChangedState, callback: (event: ChangeServerButtonStateEvent) => any): EventRef;
 
-        trigger(name: eventID.ServerStarted, event: ChangeServerButtonStateEvent): void;
+        trigger(name: eventID.ServerChangedState, event: ChangeServerButtonStateEvent): void;
 
         on(name: eventID.PowerOff, callback: (event: PowerOffEvent) => any): EventRef;
 
         trigger(name: eventID.PowerOff, event: PowerOffEvent): void;
+
+        on(name: eventID.ServerChangedSettings, callback: (event: ChangedServerSettingsEvent) => any): EventRef;
+        trigger(name: eventID.ServerChangedSettings, event: ChangedServerSettingsEvent): void;
     }
 
 }

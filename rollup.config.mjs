@@ -4,7 +4,11 @@ import cjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import strip from "rollup-plugin-strip";
+import postcss from 'rollup-plugin-postcss';
+import autoprefixer from 'autoprefixer';
+import {string} from 'rollup-plugin-string';
+import url from "rollup-plugin-url";
+
 
 const name = 'openapi-renderer';
 
@@ -19,12 +23,26 @@ const developmentConfig = {
         name
     },
     plugins: [
+        string({
+            include: [
+                '**/swagger-ui.module.css',
+                '**/swagger-ui-bundle.module.js',
+                '**/js-yaml.module.js'
+            ],
+        }),
+        // postcss({
+        //     extensions: ['.css'],
+        //     inject: false,
+        //     extract: false,
+        //     exclude: '**/swagger-ui.module.css', // Исключаем файл из обработки PostCSS
+        // }),
         json(),
         nodeResolve({preferBuiltins: true}),
         cjs({include: 'node_modules/**'}),
         typescript({tsconfig: './tsconfig.devs.json'}),
         copy({
             targets: [
+<<<<<<< HEAD
                 {
                     src: './styles.css',
                     dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
@@ -33,11 +51,15 @@ const developmentConfig = {
                     src: './manifest.json',
                     dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
                 },
+=======
+                {src: './styles.css', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
+                {src: './swagger-pet-store-example.html', dest: 'dist/'},
+                {src: './manifest.json', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
+>>>>>>> 4f8b677 (added proxy)
             ],
         }),
     ],
 };
-
 const productionConfig = {
     input: 'src/main.ts',
     external: ['obsidian'],
