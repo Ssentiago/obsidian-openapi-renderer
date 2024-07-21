@@ -1,10 +1,10 @@
-import {App, DropdownComponent, Setting, TAbstractFile, TextComponent} from "obsidian";
+import {App, DropdownComponent, ExtraButtonComponent, Setting, TAbstractFile, TextComponent, ToggleComponent} from "obsidian";
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {PowerOffEvent, SettingSectionParams, SettingsSection} from "../typing/interfaces";
-import {PreviewModal} from "./previewModal";
 
 import {eventID} from "../typing/constants";
+import {SettingsUtils} from "./utils";
 
 /**
  * Settings section for configuring the OpenAPI Renderer plugin.
@@ -16,6 +16,7 @@ export class RenderSettings implements SettingsSection {
     plugin: OpenAPIRendererPlugin
     publisher: OpenAPIRendererEventPublisher
     private modifySpecEvent: ((file: TAbstractFile) => Promise<void>) | null = null;
+    utils: SettingsUtils
 
     constructor({app, plugin, publisher}: SettingSectionParams) {
         this.app = app;
@@ -26,6 +27,7 @@ export class RenderSettings implements SettingsSection {
             eventID.PowerOff,
             this.onunload.bind(this),
         )
+        this.utils = new SettingsUtils(this.app, this.plugin, this.publisher)
     }
 
 
@@ -81,14 +83,7 @@ export class RenderSettings implements SettingsSection {
                     .onClick(() => {
                         this.plugin.showNotice('Width and height determine the size of the iframe in your notes. Use CSS units like px, %, or vh.', 5000)
                     });
-            }).addButton(button => {
-            button.onClick(() => {
-                new PreviewModal(this.app, this.plugin).open()
             })
-                .setTooltip('Show the preview of the iframe with current settings. Check the server state first', {delay: 100})
-                .setIcon('scan-eye')
-        });
-
 
         new Setting(containerEl)
             .setName('Autoupdate on file change')
@@ -134,6 +129,34 @@ export class RenderSettings implements SettingsSection {
                     })
             })
 
+        // todo
+        this.utils.createLinkedComponents({
+            containerEl: containerEl,
+            name: 'Swagger resources storage method',
+            desc: 'Select how Swagger resources should be stored in your generated swagger-ui files',
+            type: 'dropdown',
+            options: {
+                'full-local-storing': 'Full-local-storing',
+                'local-server-storing': 'Local-server-storing',
+                'cdn': 'CDN'
+            },
+            tooltips: {
+                'full-local-storing': 'Best for offline use or high security needs. ' +
+                    'All resources, including code and CSS, will be embedded in the HTML file.' +
+                    'This results in larger file sizes, but ensures complete offline functionality.',
+                'local-server-storing': 'Balanced option. ' +
+                    'Resources are stored on a local server. ' +
+                    'The generated HTML file will contain links to this plugin`s local server ' +
+                    'This requires a enable plugin`s local proxy with a fixed address to redirect resource requests to ' +
+                    'the current server address.',
+                'cdn': 'Best for most users.' +
+                    'The HTML file will link to external CDN resources. ' +
+                    'Keeps file sizes small but needs an internet connection to load resources.'
+            },
+            onChange: (value) => console.log('Selected value:', value)
+        });
+
+
     }
 
     /**
@@ -148,3 +171,7 @@ export class RenderSettings implements SettingsSection {
         }
     }
 }
+
+
+
+

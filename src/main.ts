@@ -224,7 +224,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
             serverButtonLocations: new Set([ButtonLocation.Ribbon]),
             theme: 'light',
             timeoutUnit: 'milliseconds',
-            timeout: 2000
+            timeout: 2000,
+            swaggerStoringType: 'partial-local'
         }
     }
 

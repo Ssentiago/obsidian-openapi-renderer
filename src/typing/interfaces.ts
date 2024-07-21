@@ -8,7 +8,7 @@ import OpenAPIRendererServer from "../server/server";
 import OpenAPIMarkdownProcessor from "../rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "../pluginLogging/loggingManager";
 import UIManager from "../UI/UIManager";
-import {ButtonID} from "./types";
+import {ButtonID, swaggerStoringType} from "./types";
 import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./constants";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 
@@ -32,6 +32,7 @@ export interface DEFAULT_SETTINGS_Interface {
     theme: string,
     timeoutUnit: string,
     timeout: number
+    swaggerStoringType: swaggerStoringType
 }
 
 
@@ -221,4 +222,14 @@ export interface SettingSectionParams{
     app: App,
     plugin: OpenAPIRendererPlugin,
     publisher: OpenAPIRendererEventPublisher
+}
+
+export interface LinkedComponentOptions {
+    containerEl: HTMLElement;
+    name: string;
+    desc: string;
+    type: 'dropdown' | 'text' | 'toggle';
+    options?: { [key: string]: string };
+    tooltips: { [key: string]: string };
+    onChange?: (value: string) => void;
 }

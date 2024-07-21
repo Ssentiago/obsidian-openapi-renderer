@@ -4,7 +4,7 @@ import path from "path";
 import {MarkdownView, WorkspaceLeaf} from "obsidian";
 import {SwaggerUIModal} from 'rendering/swaggerUIModal'
 import {eventID, RenderingMode} from "../typing/constants";
-
+import * as swaggerResources from '../assets/shared resources'
 
 /**
  * Class representing an OpenAPI renderer.
@@ -112,13 +112,50 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @returns The generated HTML content with embedded Swagger UI.
      */
     private generateSwaggerUI(specContent: string): string {
-         return `
+        const { proxyPort, proxyHostName } = this.appContext.plugin.settings;
+        const proxyAddress = `http://${proxyHostName}:${proxyPort}`;
+
+        const cdnCSS = '<link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css">\n';
+        const cdnJS = '<script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>';
+        const cdnJSYAML = '<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>\n';
+        const embedCSS = `<style>${swaggerResources.swaggerUICSS}</style>`;
+        const embedJS = `<script>${swaggerResources.swaggerUIJS}</script>`;
+        const embedJSYAML = `<script>${swaggerResources.JSYAML}</script>`;
+        const partialCSS = `<link rel="stylesheet" type="text/css" href="${proxyAddress}/swagger-ui.css">\n`;
+        const partialJS = `<script src="${proxyAddress}/swagger-ui.js"></script>`;
+        const partialJSYAML = `<script src="${proxyAddress}/js-yaml"></script>\n`;
+
+        let resultCSS: string;
+        let resultJS: string;
+        let resultJSYAML: string;
+
+        switch (this.appContext.plugin.settings.swaggerStoringType) {
+            case 'fully-local':
+                resultCSS = embedCSS;
+                resultJS = embedJS;
+                resultJSYAML = embedJSYAML;
+                break;
+            case 'partial-local':
+                resultCSS = partialCSS;
+                resultJS = partialJS;
+                resultJSYAML = partialJSYAML;
+                break;
+            case 'cdn':
+                resultCSS = cdnCSS;
+                resultJS = cdnJS;
+                resultJSYAML = cdnJSYAML;
+                break;
+            default:
+                throw new Error('Invalid swaggerStoringType');
+        }
+
+        return `
  <!DOCTYPE html>
  <html lang="en">
  <head>
      <meta charset="UTF-8">
      <title>Swagger UI</title>
-     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css">
+       ${resultCSS}
      <style>
          html { box-sizing: border-box; overflow-moz-scrollbars-vertical; overflow-y: scroll; }
          *, *:before, *:after { box-sizing: inherit; }
@@ -127,8 +164,8 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
  </head>
  <body>
      <div id="swagger-ui"></div>
-     <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+     ${resultJS}
+     ${resultJSYAML}
      <script>
          window.onload = function() {
              const spec = jsyaml.load(${JSON.stringify(specContent)});
@@ -146,7 +183,8 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
  </body>
  </html>
          `;
-     }
+    }
+
     /**
      * Creates an iframe element for embedding content based on provided parameters.
      * @param params - Parameters containing HTML path, width, and height for the iframe.

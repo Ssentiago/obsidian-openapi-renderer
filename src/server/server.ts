@@ -22,22 +22,17 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     }
 
     initialize(): void {
-        if (this.shouldInitialize()) {
-            this.app = express();
-            this.setupRouters()
-            this.setupMiddlewares()
-            this.appContext.plugin.observer.subscribe(
-                this.appContext.app.workspace,
-                eventID.PowerOff,
-                this.onunload.bind(this)
-            )
-        }
+        this.app = express();
+        this.setupRouters()
+        this.setupMiddlewares()
+        this.appContext.plugin.observer.subscribe(
+            this.appContext.app.workspace,
+            eventID.PowerOff,
+            this.onunload.bind(this)
+        )
 
     }
 
-    shouldInitialize(): boolean {
-        return true;
-    }
 
     /**
      * Asynchronous method called when unloading the server class, typically in response to a PowerOffEvent.
@@ -166,7 +161,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      *
      * @returns true if the server is running and listening, false otherwise.
      */
-   public isRunning(): boolean {
+    public isRunning(): boolean {
         return !!this.server?.listening;
     }
 

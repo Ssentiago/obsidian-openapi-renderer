@@ -1,7 +1,7 @@
-import {ButtonID} from "../typing/types";
-import {App, Events, Setting} from "obsidian";
+import {ButtonID, ComponentType} from "../typing/types";
+import {App, DropdownComponent, Events, ExtraButtonComponent, Setting, TextComponent, ToggleComponent} from "obsidian";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
-import {ToggleButtonVisibilityEvent} from "../typing/interfaces";
+import {LinkedComponentOptions, ToggleButtonVisibilityEvent} from "../typing/interfaces";
 import OpenAPIRendererPlugin from "../main";
 import {ButtonLocation, eventID, eventPublisher, Subject} from "../typing/constants";
 
@@ -56,6 +56,7 @@ export class SettingsUtils {
                     })
             })
     }
+
     /**
      * Publishes a toggle button visibility event using the specified event publisher.
      * @param id The identifier of the button for which visibility is toggled.
@@ -75,6 +76,82 @@ export class SettingsUtils {
         } as ToggleButtonVisibilityEvent;
         publisher.publish(event)
     }
+
+    createLinkedComponents({
+                               containerEl,
+                               name,
+                               desc,
+                               type,
+                               options,
+                               tooltips,
+                               onChange
+                           }: LinkedComponentOptions): Setting {
+        let mainComponent: ComponentType;
+        let extraButton: ExtraButtonComponent;
+
+        const updateTooltip = (value: string) => {
+            if (extraButton) {
+                extraButton.setTooltip(tooltips[value] || 'No information available');
+            }
+        };
+
+        const setting = new Setting(containerEl)
+            .setName(name)
+            .setDesc(desc);
+
+        switch (type) {
+            case 'dropdown':
+                setting.addDropdown((dropdown) => {
+                    if (options) {
+                        dropdown.addOptions(options);
+                    }
+                    dropdown.onChange((value) => {
+                        updateTooltip(value);
+                        if (onChange) onChange(value);
+                    });
+                    mainComponent = dropdown;
+                });
+                break;
+            case 'text':
+                setting.addText((text) => {
+                    text.onChange((value) => {
+                        updateTooltip(value);
+                        if (onChange) onChange(value);
+                    });
+                    mainComponent = text;
+                });
+                break;
+            case 'toggle':
+                setting.addToggle((toggle) => {
+                    toggle.onChange((value) => {
+                        updateTooltip(value.toString());
+                        if (onChange) onChange(value.toString());
+                    });
+                    mainComponent = toggle;
+                });
+                break;
+        }
+
+        setting.addExtraButton((button) => {
+            button.setIcon('info');
+            extraButton = button;
+        });
+
+        // Инициализация начального значения
+        setTimeout(() => {
+            let initialValue: string;
+            if (type === 'dropdown' || type === 'text') {
+                initialValue = (mainComponent as DropdownComponent | TextComponent).getValue();
+            } else {
+                initialValue = (mainComponent as ToggleComponent).getValue().toString();
+            }
+            updateTooltip(initialValue);
+        }, 0);
+
+        return setting;
+    }
+
+
 }
 
 
