@@ -1,4 +1,4 @@
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import {OpenAPIMarkdownProcessorInterface, ParseResult} from "../typing/interfaces";
 import {CachedMetadata, Editor, MarkdownPostProcessorContext, MarkdownView, SectionCache} from 'obsidian';
 

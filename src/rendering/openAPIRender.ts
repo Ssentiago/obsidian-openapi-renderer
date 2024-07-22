@@ -1,5 +1,5 @@
 import {OpenAPIRendererInterface, ParsedParams, PowerOffEvent, PreviewHandlerInterface} from "../typing/interfaces";
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import path from "path";
 import {MarkdownView, WorkspaceLeaf} from "obsidian";
 import {eventID, RenderingMode} from "../typing/constants";
@@ -128,7 +128,7 @@ export class PreviewHandler implements PreviewHandlerInterface {
      * @param view - The MarkdownView to update with OpenAPI resources.
      */
     private async previewAutoUpdate(view: MarkdownView): Promise<void> {
-        if (this.appContext.plugin.settings.isAutoUpdate) {
+        if (this.appContext.plugin.settings.isHTMLAutoUpdate) {
             await this.appContext.plugin.openAPI.renderOpenAPIResources(view, RenderingMode.Inline);
             this.rerenderPreview(view)
             this.appContext.plugin.showNotice('OpenAPI preview was automatically updated');
