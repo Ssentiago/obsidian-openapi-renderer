@@ -1,4 +1,4 @@
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import {MarkdownView} from "obsidian";
 import path from "path";
 import * as fs from "node:fs";
