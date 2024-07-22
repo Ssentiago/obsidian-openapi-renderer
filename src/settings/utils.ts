@@ -34,25 +34,19 @@ export class SettingsUtils {
                          location: ButtonLocation,
                          buttonId: ButtonID,
                          buttonContainer: Set<ButtonLocation>): Setting {
-        this.plugin.logger.debug(`Creating toggle for ${name}, location: ${location}, buttonId: ${buttonId}`);
-        this.plugin.logger.debug(`Current button container:`, Array.from(buttonContainer));
         return new Setting(container)
             .setName(name)
             .addToggle(toggle => {
                 const initialValue = buttonContainer.has(location);
-                this.plugin.logger.debug(`Initial value for ${name}: ${initialValue}`);
                 toggle.setValue(initialValue)
                     .onChange(async (value) => {
-                        this.plugin.logger.debug(`Toggle changed for ${name}: ${value}`);
                         if (value) {
                             buttonContainer.add(location);
                         } else {
                             buttonContainer.delete(location);
                         }
-                        this.plugin.logger.debug(`Updated button container:`, Array.from(buttonContainer));
                         await this.plugin.settingsManager.saveSettings();
                         this.publishToggleVisibilityEvent(buttonId, this.app.workspace, this.publisher);
-                        this.plugin.logger.debug(`Toggle visibility event published for ${buttonId}`);
                     })
             })
     }
