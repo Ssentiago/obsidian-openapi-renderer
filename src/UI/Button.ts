@@ -1,14 +1,17 @@
-import {ButtonConfig} from "../typing/interfaces";
-import {ButtonManager} from "./buttonManager";
-import {eventID} from "../typing/constants";
+import { ButtonConfig } from '../typing/interfaces';
+import { ButtonManager } from './buttonManager';
+import { eventID } from '../typing/constants';
 
 /**
  * Abstract base class for button objects.
  */
 abstract class AbstractButtonObject {
-    protected constructor(public config: ButtonConfig, public buttonManager: ButtonManager) {
-        this.config = config
-        this.buttonManager = buttonManager
+    protected constructor(
+        public config: ButtonConfig,
+        public buttonManager: ButtonManager
+    ) {
+        this.config = config;
+        this.buttonManager = buttonManager;
     }
 
     /**
@@ -34,19 +37,20 @@ export class Button extends AbstractButtonObject {
      *   to handle server button state changes.
      */
     subscribe(): void {
-        const {eventsHandler, observer} = this.buttonManager.uiManager.appContext.plugin;
+        const { eventsHandler, observer } =
+            this.buttonManager.uiManager.appContext.plugin;
 
         observer.subscribe(
             this.buttonManager.uiManager.appContext.app.workspace,
             eventID.ToggleButtonVisibility,
             eventsHandler.handleButtonVisibility(this)
-        )
+        );
         if (this.config.buttonType === 'server-button') {
             this.buttonManager.uiManager.appContext.plugin.observer.subscribe(
                 this.buttonManager.uiManager.appContext.app.workspace,
                 eventID.ServerChangeButtonState,
                 eventsHandler.handleServerButtonState(this)
-            )
+            );
         }
     }
 }

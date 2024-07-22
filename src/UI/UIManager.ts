@@ -1,16 +1,16 @@
-import {MarkdownView} from 'obsidian';
-import {OpenAPIPluginContext} from "../core/contextManager";
-import {PowerOffEvent, UIPluginSettings} from '../typing/interfaces'
-import {ButtonManager} from "./buttonManager";
-import {Button} from "./Button";
-import {eventID} from "../typing/constants";
+import { MarkdownView } from 'obsidian';
+import OpenAPIPluginContext from '../core/contextManager';
+import { PowerOffEvent, UIPluginSettings } from '../typing/interfaces';
+import { ButtonManager } from './buttonManager';
+import { Button } from './Button';
+import { eventID } from '../typing/constants';
 
 /**
  * UIManager class manages the user interface elements related to OpenAPI Renderer Plugin in Obsidian.
  */
 export default class UIManager {
     protected buttonManager: ButtonManager;
-    appContext!: OpenAPIPluginContext
+    appContext!: OpenAPIPluginContext;
 
     constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
@@ -21,9 +21,10 @@ export default class UIManager {
      * Initializes the UI components and managers after the workspace layout is ready.
      */
     async initializeUI(): Promise<void> {
-        this.appContext.app.workspace.onLayoutReady(this.initializeUIManager.bind(this))
+        this.appContext.app.workspace.onLayoutReady(
+            this.initializeUIManager.bind(this)
+        );
     }
-
 
     /**
      * Initializes the UI manager by creating buttons, registering events, and subscribing to power off events.
@@ -36,7 +37,7 @@ export default class UIManager {
             this.appContext.app.workspace,
             eventID.PowerOff,
             this.onunload.bind(this)
-        )
+        );
     }
 
     /**
@@ -45,7 +46,7 @@ export default class UIManager {
      * @param event The PowerOffEvent object.
      */
     private async onunload(event: PowerOffEvent): Promise<void> {
-        await this.buttonManager.removeAllButtons()
+        await this.buttonManager.removeAllButtons();
     }
 
     /**
@@ -55,14 +56,13 @@ export default class UIManager {
      * @returns The UIPluginSettings object containing the relevant UI settings.
      */
     get settings(): UIPluginSettings {
-        const {settings} = this.appContext.plugin
+        const { settings } = this.appContext.plugin;
         return {
             isCreateServerButton: settings.isCreateServerButton,
             isCreateCommandButtons: settings.isCreateCommandButtons,
             serverButtonLocations: settings.serverButtonLocations,
             renderButtonLocation: settings.renderButtonLocation,
-            refreshButtonLocation: settings.refreshButtonLocation
-
+            refreshButtonLocation: settings.refreshButtonLocation,
         } as UIPluginSettings;
     }
 
@@ -73,15 +73,17 @@ export default class UIManager {
      */
     private registerEvents(): void {
         this.appContext.plugin.registerEvent(
-            this.appContext.app.workspace.on('active-leaf-change', async (leaf) => {
-                if (leaf?.view instanceof MarkdownView) {
-                    await this.buttonManager.updateToolbar(leaf)
+            this.appContext.app.workspace.on(
+                'active-leaf-change',
+                async (leaf) => {
+                    if (leaf?.view instanceof MarkdownView) {
+                        await this.buttonManager.updateToolbar(leaf);
+                    }
                 }
-            })
+            )
         );
         this.buttonManager.buttons.forEach((button: Button) => {
-            button.subscribe()
+            button.subscribe();
         });
     }
 }
-

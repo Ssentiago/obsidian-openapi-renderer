@@ -1,9 +1,14 @@
-import {OpenAPIRendererInterface, ParsedParams, PowerOffEvent, PreviewHandlerInterface} from "../typing/interfaces";
-import {OpenAPIPluginContext} from "../core/contextManager";
-import path from "path";
-import {MarkdownView, WorkspaceLeaf} from "obsidian";
-import {eventID, RenderingMode} from "../typing/constants";
-import yaml from "js-yaml";
+import {
+    OpenAPIRendererInterface,
+    ParsedParams,
+    PowerOffEvent,
+    PreviewHandlerInterface,
+} from '../typing/interfaces';
+import OpenAPIPluginContext from '../core/contextManager';
+import path from 'path';
+import { MarkdownView, WorkspaceLeaf } from 'obsidian';
+import { eventID, RenderingMode } from '../typing/constants';
+import yaml from 'js-yaml';
 
 /**
  * Class representing an OpenAPI renderer.
@@ -11,43 +16,55 @@ import yaml from "js-yaml";
 export class OpenAPIRenderer implements OpenAPIRendererInterface {
     appContext: OpenAPIPluginContext;
 
-
     constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
-    };
+    }
 
     /**
      * Renders OpenAPI resources based on the specified rendering mode.
      * @param view - The MarkdownView to render into.
      * @param mode - The rendering mode (Inline or Modal).
      */
-    async renderOpenAPIResources(view: MarkdownView, mode: RenderingMode): Promise<void> {
-        const specPath = `/${this.appContext.plugin.settings.openapiSpecFileName}`
+    async renderOpenAPIResources(
+        view: MarkdownView,
+        mode: RenderingMode
+    ): Promise<void> {
+        const specPath = `/${this.appContext.plugin.settings.openapiSpecFileName}`;
         switch (mode) {
             case RenderingMode.Inline:
-                await this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(view, specPath);
-                this.appContext.plugin.showNotice('New OpenAPI Swagger UI was rendered');
+                await this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(
+                    view,
+                    specPath
+                );
+                this.appContext.plugin.showNotice(
+                    'New OpenAPI Swagger UI was rendered'
+                );
                 break;
         }
     }
 
     /**
      * Creates an iframe element for embedding content based on provided parameters.
-     * @param params - Parameters containing HTML path, width, and height for the iframe.
+     * @param params - Parameters containing spec path, width, and height for the iframe.
      * @returns The created iframe element.
      */
     createIframe(params: ParsedParams): HTMLIFrameElement {
-        const iframe = document.createElement("iframe");
+        const iframe = document.createElement('iframe');
         iframe.id = 'openapi-iframe';
 
         const baseURL = `http://${this.appContext.plugin.server.serverAddress}/`;
-        const templatePath = path.join(this.appContext.plugin.manifest.dir!, 'assets/template.html')
+        const templatePath = path.join(
+            this.appContext.plugin.manifest.dir!,
+            'assets/template.html'
+        );
         const specPath = encodeURIComponent(params!.specPath);
 
-        iframe.src = path.normalize(`${baseURL}${templatePath}?path=${specPath}`)
+        iframe.src = path.normalize(
+            `${baseURL}${templatePath}?path=${specPath}`
+        );
         iframe.width = params!.width;
         iframe.height = params!.height;
-        return iframe
+        return iframe;
     }
 
     /**
@@ -57,25 +74,31 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @returns The processed content of the OpenAPI specification.
      * @throws Error if the specification file is not found or if there's an issue reading the file.
      */
-    async getOpenAPISpec(specFilePath: string, specFileName: string): Promise<string> {
-        const existSpec = await this.appContext.app.vault.adapter.exists(specFilePath);
+    async getOpenAPISpec(
+        specFilePath: string,
+        specFileName: string
+    ): Promise<string> {
+        const existSpec =
+            await this.appContext.app.vault.adapter.exists(specFilePath);
         if (!existSpec) {
             throw new Error('The specification file was not found');
         }
-        const content = await this.appContext.app.vault.adapter.read(specFilePath);
-        const extension = specFileName.substring(specFileName.lastIndexOf(".") + 1,).toLowerCase();
+        const content =
+            await this.appContext.app.vault.adapter.read(specFilePath);
+        const extension = specFileName
+            .substring(specFileName.lastIndexOf('.') + 1)
+            .toLowerCase();
         switch (extension) {
             case 'yaml':
-            case 'yml' :
-                const data = yaml.load(content.replace(/\t/g, '    '))
-                return JSON.stringify(data)
+            case 'yml':
+                const data = yaml.load(content.replace(/\t/g, '    '));
+                return JSON.stringify(data);
             case 'json':
                 return content;
             default:
-                throw new Error('The specification file was not found')
+                throw new Error('The specification file was not found');
         }
-    };
-
+    }
 }
 
 /**
@@ -91,7 +114,7 @@ export class PreviewHandler implements PreviewHandlerInterface {
             this.appContext.app.workspace,
             eventID.PowerOff,
             this.onunload.bind(this)
-        )
+        );
     }
 
     /**
@@ -111,16 +134,20 @@ export class PreviewHandler implements PreviewHandlerInterface {
     async scheduleAutoUpdate(): Promise<void> {
         clearTimeout(this.updateTimeout);
 
-        const unit = this.appContext.plugin.settings.timeoutUnit === 'milliseconds' ? 1 : 1000
-        const timeout = this.appContext.plugin.settings.timeout * unit
+        const unit =
+            this.appContext.plugin.settings.timeoutUnit === 'milliseconds'
+                ? 1
+                : 1000;
+        const timeout = this.appContext.plugin.settings.timeout * unit;
         this.updateTimeout = setTimeout(async () => {
-            const view = this.appContext.app.workspace.getActiveViewOfType(MarkdownView)
+            const view =
+                this.appContext.app.workspace.getActiveViewOfType(MarkdownView);
             if (view) {
-                await this.appContext.plugin.previewHandler.previewAutoUpdate(view);
+                await this.appContext.plugin.previewHandler.previewAutoUpdate(
+                    view
+                );
             }
         }, timeout);
-
-
     }
 
     /**
@@ -129,9 +156,14 @@ export class PreviewHandler implements PreviewHandlerInterface {
      */
     private async previewAutoUpdate(view: MarkdownView): Promise<void> {
         if (this.appContext.plugin.settings.isHTMLAutoUpdate) {
-            await this.appContext.plugin.openAPI.renderOpenAPIResources(view, RenderingMode.Inline);
-            this.rerenderPreview(view)
-            this.appContext.plugin.showNotice('OpenAPI preview was automatically updated');
+            await this.appContext.plugin.openAPI.renderOpenAPIResources(
+                view,
+                RenderingMode.Inline
+            );
+            this.rerenderPreview(view);
+            this.appContext.plugin.showNotice(
+                'OpenAPI preview was automatically updated'
+            );
         }
     }
 
@@ -149,7 +181,7 @@ export class PreviewHandler implements PreviewHandlerInterface {
      * @param view - The MarkdownView to refresh the preview for.
      */
     previewManualUpdate(view: MarkdownView): void {
-        this.rerenderPreview(view)
+        this.rerenderPreview(view);
         this.appContext.plugin.showNotice('OpenAPI preview refreshed manually');
     }
 

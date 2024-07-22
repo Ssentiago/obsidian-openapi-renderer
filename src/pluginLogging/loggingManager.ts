@@ -1,29 +1,34 @@
-import * as fs from 'fs'
-import * as path from "path";
-import {OpenAPIPluginContext} from "../core/contextManager";
-import {OpenAPIRendererPluginLoggerInterface} from "../typing/interfaces";
+import * as fs from 'fs';
+import * as path from 'path';
+import OpenAPIPluginContext from '../core/contextManager';
+import { OpenAPIRendererPluginLoggerInterface } from '../typing/interfaces';
 
-export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPluginLoggerInterface {
+export default class OpenAPIRendererPluginLogger
+    implements OpenAPIRendererPluginLoggerInterface
+{
     appContext;
     private maxFileSize = 1024 * 1024; // Maximum log file size in bytes (1 MB)
     private readonly logDir;
 
-
     constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
-        const pluginDir = this.appContext.plugin.manifest.dir
+        const pluginDir = this.appContext.plugin.manifest.dir;
         if (pluginDir) {
-            this.logDir = path.join(this.appContext.app.vault.adapter.basePath, pluginDir, 'logs');
-            this.ensureLogDirExists()
+            this.logDir = path.join(
+                this.appContext.app.vault.adapter.basePath,
+                pluginDir,
+                'logs'
+            );
+            this.ensureLogDirExists();
         } else {
             throw new Error('Plugin dir not found');
         }
     }
 
-    private ensureLogDirExists() {
+    private ensureLogDirExists(): void {
         fs.access(this.logDir, fs.constants.F_OK, (err) => {
             if (err) {
-                fs.mkdir(this.logDir, {recursive: true}, (err) => {
+                fs.mkdir(this.logDir, { recursive: true }, (err) => {
                     if (err) {
                         console.error('Error creating log directory:', err);
                     }
@@ -38,11 +43,11 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
      *
      * @returns void
      */
-    private getLogFilePath() {
+    private getLogFilePath(): string {
         return path.join(this.logDir, 'logs.txt');
     }
 
-    private rotateLogs() {
+    private rotateLogs(): void {
         const logPath = this.getLogFilePath();
         const rotatedLogPath = path.join(this.logDir, `logs_${Date.now()}.txt`);
 
@@ -53,7 +58,6 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
         });
     }
 
-
     /**
      * Writes a log entry to the log file.
      *
@@ -61,16 +65,15 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
      * @param message - The message to be logged.
      * @param context - Additional contextual information for the log entry.
      */
-    private log(level: string, message: string, context = {}) {
-
+    private log(level: string, message: string, context = {}): void {
         const logEntry = {
-            timestamp: new Date().toLocaleString("ru"),
+            timestamp: new Date().toLocaleString('ru'),
             level: level,
             message: message,
-            context: {...context}
+            context: { ...context },
         };
-
-        const logMessage = JSON.stringify(logEntry) + '\n';
+        ``;
+        const logMessage = `${JSON.stringify(logEntry)}\n`;
         const logPath = this.getLogFilePath();
 
         fs.access(logPath, fs.constants.F_OK, (err) => {
@@ -91,14 +94,20 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
                         this.rotateLogs();
                         fs.writeFile(logPath, logMessage, (err) => {
                             if (err) {
-                                console.error('Error writing to new log file:', err);
+                                console.error(
+                                    'Error writing to new log file:',
+                                    err
+                                );
                             }
                         });
                     } else {
                         // Write to the current log file
                         fs.appendFile(logPath, logMessage, (err) => {
                             if (err) {
-                                console.error('Error writing to log file:', err);
+                                console.error(
+                                    'Error writing to log file:',
+                                    err
+                                );
                             }
                         });
                     }
@@ -107,20 +116,19 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
         });
     }
 
-    info(message: string, context = {}) {
+    info(message: string, context = {}): void {
         this.log('INFO', message, context);
     }
 
-    error(message: string, context = {}) {
+    error(message: string, context = {}): void {
         this.log('ERROR', message, context);
     }
 
-    warn(message: string, context = {}) {
+    warn(message: string, context = {}): void {
         this.log('WARNING', message, context);
     }
 
-    debug(message: string, context = {}) {
+    debug(message: string, context = {}): void {
         this.log('DEBUG', message, context);
     }
-
 }

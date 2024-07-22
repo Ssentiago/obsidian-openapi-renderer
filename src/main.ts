@@ -1,3 +1,3 @@
-import OpenAPIRendererPlugin from "./core/OpenAPIRendererPlugin";
+import OpenAPIRendererPlugin from './core/OpenAPIRendererPlugin';
 
 export default OpenAPIRendererPlugin;

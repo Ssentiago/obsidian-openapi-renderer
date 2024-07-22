@@ -1,14 +1,13 @@
-import {EventRef, Events} from "obsidian";
-import {OpenAPIPluginContext} from "../core/contextManager";
-import {ObserverEventData, OpenAPIRendererEvent} from "../typing/interfaces";
-import {eventID} from "../typing/constants";
-
+import { EventRef, Events } from 'obsidian';
+import OpenAPIPluginContext from '../core/contextManager';
+import { ObserverEventData, OpenAPIRendererEvent } from '../typing/interfaces';
+import { eventID } from '../typing/constants';
 
 /**
  * Abstract class representing a Publisher.
  */
 abstract class Publisher {
-    appContext: OpenAPIPluginContext
+    appContext: OpenAPIPluginContext;
 
     protected constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
@@ -19,7 +18,9 @@ abstract class Publisher {
      * @param event - The OpenAPIRendererEvent object to publish.
      * @typeparam T - The specific type of OpenAPIRendererEvent being published.
      */
-    abstract publish<T extends OpenAPIRendererEvent>(event: OpenAPIRendererEvent): void
+    abstract publish<T extends OpenAPIRendererEvent>(
+        event: OpenAPIRendererEvent
+    ): void;
 }
 
 /**
@@ -35,7 +36,7 @@ export class OpenAPIRendererEventPublisher extends Publisher {
      * @param event - The OpenAPIRendererEvent object.
      */
     public publish(event: OpenAPIRendererEvent): void {
-        event.emitter.trigger(event.eventID, event)
+        event.emitter.trigger(event.eventID, event);
     }
 }
 
@@ -47,7 +48,7 @@ abstract class Observer {
     protected subscriptions: Set<ObserverEventData>;
 
     protected constructor(appContext: OpenAPIPluginContext) {
-        this.appContext = appContext
+        this.appContext = appContext;
         this.subscriptions = new Set();
     }
 
@@ -58,14 +59,18 @@ abstract class Observer {
      * @param handler - The asynchronous callback function to handle the event.
      * @typeparam T - The type of OpenAPIRendererEvent being subscribed to.
      */
-    abstract subscribe<T extends OpenAPIRendererEvent>(emitter: Events, eventID: eventID, handler: (event: T) => Promise<void>): void
+    abstract subscribe<T extends OpenAPIRendererEvent>(
+        emitter: Events,
+        eventID: eventID,
+        handler: (event: T) => Promise<void>
+    ): void;
 
     /**
      * Abstract method to unsubscribe from an OpenAPI event.
      * @param emitter - The event emitter object.
      * @param eventRef - The reference or identifier of the event to unsubscribe from.
      */
-    abstract unsubscribe(emitter: Events, eventRef: EventRef): void
+    abstract unsubscribe(emitter: Events, eventRef: EventRef): void;
 }
 
 /**
@@ -78,7 +83,7 @@ export class OpenAPIRendererEventObserver extends Observer {
             this.appContext.app.workspace,
             eventID.PowerOff,
             this.onunload.bind(this)
-        )
+        );
     }
 
     /**
@@ -86,7 +91,7 @@ export class OpenAPIRendererEventObserver extends Observer {
      * Unsubscribes from all events.
      */
     private async onunload(): Promise<void> {
-        this.unsubscribeAll()
+        this.unsubscribeAll();
     }
 
     /**
@@ -96,11 +101,20 @@ export class OpenAPIRendererEventObserver extends Observer {
      * @param handler - The asynchronous callback function to handle the event.
      * @typeparam T - The specific type of OpenAPIRendererEvent being subscribed to.
      */
-    subscribe<T extends OpenAPIRendererEvent>(emitter: Events, eventID: eventID, handler: (event: T) => Promise<void>): void {
-        const eventRef = emitter.on(eventID,
-            async (event: OpenAPIRendererEvent) => await handler(event as T));
+    subscribe<T extends OpenAPIRendererEvent>(
+        emitter: Events,
+        eventID: eventID,
+        handler: (event: T) => Promise<void>
+    ): void {
+        const eventRef = emitter.on(
+            eventID,
+            async (event: OpenAPIRendererEvent) => await handler(event as T)
+        );
 
-        this.subscriptions.add({emitter: emitter, eventRef: eventRef} as ObserverEventData);
+        this.subscriptions.add({
+            emitter: emitter,
+            eventRef: eventRef,
+        } as ObserverEventData);
     }
 
     /**
@@ -109,7 +123,7 @@ export class OpenAPIRendererEventObserver extends Observer {
      * @param eventRef - The reference or identifier of the event to unsubscribe from.
      */
     unsubscribe(emitter: Events, eventRef: EventRef): void {
-        emitter.offref(eventRef)
+        emitter.offref(eventRef);
     }
 
     /**
@@ -117,10 +131,9 @@ export class OpenAPIRendererEventObserver extends Observer {
      * Clears all subscriptions.
      */
     unsubscribeAll(): void {
-        this.subscriptions.forEach(subscription => {
+        this.subscriptions.forEach((subscription) => {
             this.unsubscribe(subscription.emitter, subscription.eventRef);
         });
         this.subscriptions.clear();
     }
 }
-

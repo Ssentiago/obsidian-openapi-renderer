@@ -1,12 +1,14 @@
-import {OpenAPIPluginContextInterface} from "../typing/interfaces";
-import {App} from "obsidian";
-import OpenAPIRendererPlugin from "./OpenAPIRendererPlugin";
+import { OpenAPIPluginContextInterface } from '../typing/interfaces';
+import { App } from 'obsidian';
+import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
 
 /**
  * Represents the context object for the OpenAPI plugin, providing access to the main
  * application and the plugin instance.
  */
-export class OpenAPIPluginContext implements OpenAPIPluginContextInterface {
+export default class OpenAPIPluginContext
+    implements OpenAPIPluginContextInterface
+{
     app: App;
     plugin: OpenAPIRendererPlugin;
 
@@ -15,4 +17,3 @@ export class OpenAPIPluginContext implements OpenAPIPluginContextInterface {
         this.plugin = plugin;
     }
 }
-

@@ -1,7 +1,12 @@
-import {ButtonConfig} from "../typing/interfaces";
-import {MarkdownView} from "obsidian";
-import {ButtonManager} from "./buttonManager";
-import {ButtonLocation, RenderingMode, SERVER_ICON_NAME_OFF, SERVER_ICON_NAME_ON} from "../typing/constants";
+import { ButtonConfig } from '../typing/interfaces';
+import { MarkdownView } from 'obsidian';
+import { ButtonManager } from './buttonManager';
+import {
+    ButtonLocation,
+    RenderingMode,
+    SERVER_ICON_NAME_OFF,
+    SERVER_ICON_NAME_ON,
+} from '../typing/constants';
 
 /**
  * The ButtonFactory class manages the creation of button configurations for OpenAPI Renderer plugin buttons.
@@ -21,7 +26,7 @@ export class ButtonFactory {
         return [
             this.createServerButtonConfig(),
             this.createRenderButtonConfig(),
-            this.createRefreshButtonConfig()
+            this.createRefreshButtonConfig(),
         ];
     }
 
@@ -30,29 +35,38 @@ export class ButtonFactory {
      * @returns The ButtonConfig object representing the server toggle button configuration.
      */
     private createServerButtonConfig(): ButtonConfig {
-        const {plugin} = this.buttonManager.uiManager.appContext;
+        const { plugin } = this.buttonManager.uiManager.appContext;
         return {
             id: `openapi-renderer-server`,
             get icon(): string {
-                return plugin.server.isRunning() ? SERVER_ICON_NAME_ON : SERVER_ICON_NAME_OFF;
+                return plugin.server.isRunning()
+                    ? SERVER_ICON_NAME_ON
+                    : SERVER_ICON_NAME_OFF;
             },
             title: 'Toggle OpenAPI Renderer Server',
-            onClick: (event: MouseEvent) => plugin.eventsHandler.handleServerButtonClick(event),
+            onClick: (event: MouseEvent) =>
+                plugin.eventsHandler.handleServerButtonClick(event),
 
             get locations(): Set<ButtonLocation> {
-                return plugin.settings.serverButtonLocations
+                return plugin.settings.serverButtonLocations;
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
-                const isCreationAllowedNow = plugin.settings.isCreateServerButton
+                const isMarkdownView =
+                    !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const isCreationAllowedNow =
+                    plugin.settings.isCreateServerButton;
                 const isCorrectLocation = this.locations.has(location);
-                const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
-                const result = isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
-
-                return result;
+                const isVisibleInCurrentView =
+                    ['ribbon', 'statusbar'].includes(location) ||
+                    isMarkdownView;
+                return (
+                    isCreationAllowedNow &&
+                    isCorrectLocation &&
+                    isVisibleInCurrentView
+                );
             },
-            buttonType: 'server-button'
+            buttonType: 'server-button',
         };
     }
 
@@ -61,29 +75,40 @@ export class ButtonFactory {
      * @returns The ButtonConfig object representing the render button configuration.
      */
     private createRenderButtonConfig(): ButtonConfig {
-        const {plugin} = this.buttonManager.uiManager.appContext
+        const { plugin } = this.buttonManager.uiManager.appContext;
         return {
             id: `openapi-renderer`,
             icon: 'file-scan',
             title: 'Render Swagger UI',
             onClick: async (): Promise<void> => {
-                const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-                view && await plugin.openAPI.renderOpenAPIResources(view, RenderingMode.Inline);
+                const view =
+                    plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                view &&
+                    (await plugin.openAPI.renderOpenAPIResources(
+                        view,
+                        RenderingMode.Inline
+                    ));
             },
             get locations(): Set<ButtonLocation> {
-                return plugin.settings.renderButtonLocation
+                return plugin.settings.renderButtonLocation;
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
-                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons;
+                const isMarkdownView =
+                    !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const isCreationAllowedNow =
+                    plugin.settings.isCreateCommandButtons;
                 const isCorrectLocation = this.locations.has(location);
-                const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
-                const result = isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
-
-                return result;
+                const isVisibleInCurrentView =
+                    ['ribbon', 'statusbar'].includes(location) ||
+                    isMarkdownView;
+                return (
+                    isCreationAllowedNow &&
+                    isCorrectLocation &&
+                    isVisibleInCurrentView
+                );
             },
-            buttonType: 'command-button'
+            buttonType: 'command-button',
         };
     }
 
@@ -92,30 +117,37 @@ export class ButtonFactory {
      * @returns The ButtonConfig object representing the refresh button configuration.
      */
     private createRefreshButtonConfig(): ButtonConfig {
-        const {plugin} = this.buttonManager.uiManager.appContext
+        const { plugin } = this.buttonManager.uiManager.appContext;
         return {
             id: `openapi-refresher`,
             icon: 'refresh-ccw',
             title: 'Refresh Swagger UI',
             onClick: async (): Promise<void> => {
-                const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const view =
+                    plugin.app.workspace.getActiveViewOfType(MarkdownView);
                 view && plugin.previewHandler.rerenderPreview(view);
             },
             get locations(): Set<ButtonLocation> {
-                return plugin.settings.refreshButtonLocation
+                return plugin.settings.refreshButtonLocation;
             },
             htmlElements: undefined,
             state(location: ButtonLocation): boolean {
-                const isMarkdownView = !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
-                const isCreationAllowedNow = plugin.settings.isCreateCommandButtons;
+                const isMarkdownView =
+                    !!plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const isCreationAllowedNow =
+                    plugin.settings.isCreateCommandButtons;
                 const isCorrectLocation = this.locations.has(location);
-                const isVisibleInCurrentView = ['ribbon', 'statusbar'].includes(location) || isMarkdownView;
-                const result = isCreationAllowedNow && isCorrectLocation && isVisibleInCurrentView;
+                const isVisibleInCurrentView =
+                    ['ribbon', 'statusbar'].includes(location) ||
+                    isMarkdownView;
 
-
-                return result;
+                return (
+                    isCreationAllowedNow &&
+                    isCorrectLocation &&
+                    isVisibleInCurrentView
+                );
             },
-            buttonType: 'command-button'
+            buttonType: 'command-button',
         };
     }
 }

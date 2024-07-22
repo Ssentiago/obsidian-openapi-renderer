@@ -1,38 +1,47 @@
 import express from 'express';
-import {IncomingMessage, Server, ServerResponse} from 'http';
-import {OpenAPIPluginContext} from "../core/contextManager";
-import {ChangeServerButtonStateEvent, ChangeServerStateEvent, OpenAPIRendererServerInterface, PowerOffEvent} from "../typing/interfaces";
-import * as net from "node:net";
-import path from 'path'
-import {eventID, eventPublisher, SERVER_BUTTON_ID, Subject} from "../typing/constants";
-import yaml from "js-yaml";
-import fs from "node:fs";
-
+import { IncomingMessage, Server, ServerResponse } from 'http';
+import OpenAPIPluginContext from '../core/contextManager';
+import {
+    ChangeServerButtonStateEvent,
+    ChangeServerStateEvent,
+    OpenAPIRendererServerInterface,
+    PowerOffEvent,
+} from '../typing/interfaces';
+import * as net from 'node:net';
+import path from 'path';
+import {
+    eventID,
+    eventPublisher,
+    SERVER_BUTTON_ID,
+    Subject,
+} from '../typing/constants';
+import yaml from 'js-yaml';
+import fs from 'node:fs';
 
 /**
  * Represents an Express server instance configured for OpenAPI rendering.
  */
-export default class OpenAPIRendererServer implements OpenAPIRendererServerInterface {
+export default class OpenAPIRendererServer
+    implements OpenAPIRendererServerInterface
+{
     app!: express.Application;
     server?: Server<typeof IncomingMessage, typeof ServerResponse>;
     appContext: OpenAPIPluginContext;
 
     constructor(appContext: OpenAPIPluginContext) {
         this.appContext = appContext;
-        this.initialize()
+        this.initialize();
     }
 
     initialize(): void {
         this.app = express();
-        this.setupMiddlewares()
+        this.setupMiddlewares();
         this.appContext.plugin.observer.subscribe(
             this.appContext.app.workspace,
             eventID.PowerOff,
             this.onunload.bind(this)
-        )
-
+        );
     }
-
 
     /**
      * Asynchronous method called when unloading the server class, typically in response to a PowerOffEvent.
@@ -40,9 +49,8 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * @param event - The PowerOffEvent object.
      */
     protected async onunload(event: PowerOffEvent): Promise<void> {
-        this.server && await this.stop()
+        this.server && (await this.stop());
     }
-
 
     /**
      * Starts the server if it's not already listening.
@@ -54,30 +62,41 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         }
 
         try {
-            const port = await this.findFreePort(this.appContext.plugin.settings.serverPort);
+            const port = await this.findFreePort(
+                this.appContext.plugin.settings.serverPort
+            );
 
             return new Promise<boolean>((resolve, reject) => {
-                const newServer =
-                    this.app.listen(port, this.appContext.plugin.settings.serverHostName, async () => {
-                        if (port !== this.appContext.plugin.settings.serverPort) {
+                const newServer = this.app.listen(
+                    port,
+                    this.appContext.plugin.settings.serverHostName,
+                    async () => {
+                        if (
+                            port !== this.appContext.plugin.settings.serverPort
+                        ) {
                             await this.updatePortSettings(port);
                         }
 
                         this.server = newServer;
 
                         this.publishServerButtonsChangeStateEvent();
-                        this.publishServerChangeStateEvent()
+                        this.publishServerChangeStateEvent();
 
                         resolve(true);
-                    });
+                    }
+                );
 
                 newServer.on('error', (error) => {
-                    this.appContext.plugin.logger.error(`Failed to start the server: ${error}`);
+                    this.appContext.plugin.logger.error(
+                        `Failed to start the server: ${error}`
+                    );
                     reject(error);
                 });
             });
         } catch (err) {
-            this.appContext.plugin.logger.error(`Error during server start: ${err}`);
+            this.appContext.plugin.logger.error(
+                `Error during server start: ${err}`
+            );
             return false;
         }
     }
@@ -94,10 +113,9 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
             emitter: this.appContext.app.workspace,
             data: {
                 buttonID: SERVER_BUTTON_ID,
-            }
+            },
         } as ChangeServerButtonStateEvent;
-        this.appContext.plugin.publisher.publish(event)
-
+        this.appContext.plugin.publisher.publish(event);
     }
 
     publishServerChangeStateEvent(): void {
@@ -107,8 +125,8 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
             publisher: eventPublisher.Plugin,
             subject: Subject.Plugin,
             emitter: this.appContext.app.workspace,
-        } as ChangeServerStateEvent
-        this.appContext.plugin.publisher.publish(event)
+        } as ChangeServerStateEvent;
+        this.appContext.plugin.publisher.publish(event);
     }
 
     /**
@@ -126,18 +144,24 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                         resolve();
                     }
                 });
-            }).then(() => {
-                this.publishServerButtonsChangeStateEvent()
-                this.publishServerChangeStateEvent()
-                return true
-            }).catch((err: Error) => {
-                this.appContext.plugin.logger.debug(`Failed to stop the server: ${err.message}`);
-                this.appContext.plugin.showNotice('Failed to stop the server. Check the log file for more information.')
-                return false;
-            });
-            return true
+            })
+                .then(() => {
+                    this.publishServerButtonsChangeStateEvent();
+                    this.publishServerChangeStateEvent();
+                    return true;
+                })
+                .catch((err: Error) => {
+                    this.appContext.plugin.logger.debug(
+                        `Failed to stop the server: ${err.message}`
+                    );
+                    this.appContext.plugin.showNotice(
+                        'Failed to stop the server. Check the log file for more information.'
+                    );
+                    return false;
+                });
+            return true;
         }
-        return false
+        return false;
     }
 
     /**
@@ -148,12 +172,11 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         try {
             await this.stop();
             await this.start();
-            return true
+            return true;
         } catch (err: any) {
-            this.appContext.plugin.logger.debug(err.message)
-            return false
+            this.appContext.plugin.logger.debug(err.message);
+            return false;
         }
-
     }
 
     /**
@@ -172,16 +195,18 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      */
     private findFreePort(startPort: number): Promise<number> {
         return new Promise((resolve, reject) => {
-            this.isPortAvailable(startPort).then((available) => {
-                if (available) {
-                    resolve(startPort);
-                } else {
-                    this.findFreePort(startPort + 1).then(resolve, reject);
-                }
-            }).catch((error: Error) => {
-                this.appContext.plugin.logger.error(error.message)
-                reject(error)
-            });
+            this.isPortAvailable(startPort)
+                .then((available) => {
+                    if (available) {
+                        resolve(startPort);
+                    } else {
+                        this.findFreePort(startPort + 1).then(resolve, reject);
+                    }
+                })
+                .catch((error: Error) => {
+                    this.appContext.plugin.logger.error(error.message);
+                    reject(error);
+                });
         });
     }
 
@@ -202,7 +227,6 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                 } else {
                     reject(err);
                 }
-
             });
             server.listen(port, () => {
                 server.close(() => {
@@ -210,7 +234,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                 });
             });
         });
-    };
+    }
 
     /**
      * Updates the server port setting with a new port number.
@@ -221,8 +245,10 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         const oldPort = this.appContext.plugin.settings.serverPort;
         this.appContext.plugin.settings.serverPort = newPort;
         await this.appContext.plugin.settingsManager.saveSettings();
-        this.appContext.plugin.showNotice(`The originally configured port ${oldPort} was occupied. A new port ${newPort} has been assigned and saved in the settings.`)
-    };
+        this.appContext.plugin.showNotice(
+            `The originally configured port ${oldPort} was occupied. A new port ${newPort} has been assigned and saved in the settings.`
+        );
+    }
 
     /**
      * Validates a URL by decoding and normalizing it, and checking if the corresponding file exists.
@@ -233,14 +259,20 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         try {
             const requestedUrl = decodeURIComponent(url);
             const normalizedUrl = path.normalize(requestedUrl);
-            const isExist = await this.appContext.app.vault.adapter.exists(normalizedUrl);
+            const isExist =
+                await this.appContext.app.vault.adapter.exists(normalizedUrl);
             if (!isExist) {
                 return false;
             }
             const ext = path.extname(normalizedUrl);
-            return ['.html', '.js', '.css', '.yaml', '.yml', '.json'].contains(ext)
+            return ['.html', '.js', '.css', '.yaml', '.yml', '.json'].contains(
+                ext
+            );
         } catch (err: any) {
-            this.appContext.plugin.logger.debug('Error in validateUrl:', err.message);
+            this.appContext.plugin.logger.debug(
+                'Error in validateUrl:',
+                err.message
+            );
             return false;
         }
     }
@@ -251,7 +283,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * and handling undefined routes with a 404 response.
      */
     private setupMiddlewares(): void {
-        const vaultPath = this.appContext.app.vault.getRoot().vault.adapter
+        const vaultPath = this.appContext.app.vault.getRoot().vault.adapter;
 
         this.app.use(async (req, res, next) => {
             const url = req.path;
@@ -264,7 +296,10 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                     res.status(404).send('Not found');
                 }
             } catch (error: any) {
-                this.appContext.plugin.logger.debug('Middleware error:', error.message);
+                this.appContext.plugin.logger.debug(
+                    'Middleware error:',
+                    error.message
+                );
                 res.status(500).send('Internal Server Error');
             }
         });
@@ -289,16 +324,17 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                     return;
                 }
                 next();
-
             } catch (error: any) {
-                this.appContext.plugin.logger.debug('Middleware error:', error.message);
+                this.appContext.plugin.logger.debug(
+                    'Middleware error:',
+                    error.message
+                );
                 res.status(500).send('Internal Server Error');
             }
         });
 
         // Serving static files
         this.app.use(express.static(vaultPath.basePath));
-
 
         // Process all undefined routes
         this.app.use((req, res) => {
@@ -311,14 +347,16 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      * Returns `undefined` if the server address cannot be determined.
      */
     get serverAddress(): string | undefined {
-        const address = this.server?.address()
-        if (typeof address === "string") {
+        const address = this.server?.address();
+        if (typeof address === 'string') {
             return address;
-        } else if (address && typeof address === "object" && "port" in address) {
+        } else if (
+            address &&
+            typeof address === 'object' &&
+            'port' in address
+        ) {
             return `${address.address}:${address.port}`;
         }
         return undefined;
     }
-
-
 }
