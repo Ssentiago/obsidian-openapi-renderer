@@ -1,5 +1,5 @@
 import {EventRef, Events} from "obsidian";
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import {ObserverEventData, OpenAPIRendererEvent} from "../typing/interfaces";
 import {eventID} from "../typing/constants";
 

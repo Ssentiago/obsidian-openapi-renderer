@@ -1,5 +1,5 @@
 import {Octokit} from "@octokit/rest";
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import path from "path";
 import fs from 'fs';
 import {pipeline} from 'stream/promises';
@@ -43,7 +43,6 @@ export class GithubClient {
     async downloadAssetsFromLatestRelease() {
         const pluginPath = this.appContext.plugin.manifest.dir;
         const basePath = this.appContext.app.vault.getRoot().vault.adapter.basePath;
-        debugger
         if (pluginPath) {
             const relativeAssetsPath = path.join(pluginPath, 'assets');
             const fullAssetsPath = path.join(basePath, relativeAssetsPath);

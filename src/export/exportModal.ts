@@ -1,5 +1,5 @@
 import {App, Modal, Setting} from "obsidian";
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 
 export class ExportModal extends Modal {
     plugin!: OpenAPIRendererPlugin;

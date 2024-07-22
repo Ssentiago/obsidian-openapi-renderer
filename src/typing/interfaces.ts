@@ -1,9 +1,9 @@
 import {App, EventRef, Events, MarkdownPostProcessorContext, MarkdownView, TextComponent, TFile, WorkspaceLeaf} from "obsidian";
 import {OpenAPISettingTab} from "../settings/settings";
-import {OpenAPIPluginContext} from '../contextManager'
+import {OpenAPIPluginContext} from '../core/contextManager'
 import {OpenAPIRenderer, PreviewHandler} from 'rendering/openAPIRender';
 import {OpenAPIRendererEventsHandler} from 'pluginEvents/eventsHandler';
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 import OpenAPIRendererServer from "../server/server";
 import OpenAPIMarkdownProcessor from "../rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "../pluginLogging/loggingManager";
@@ -18,7 +18,7 @@ export interface DEFAULT_SETTINGS_Interface {
     openapiSpecFileName: string,
     iframeWidth: string,
     iframeHeight: string,
-    isAutoUpdate: boolean,
+    isHTMLAutoUpdate: boolean,
     serverHostName: string,
     serverPort: number,
     proxyHostName: string,
@@ -33,6 +33,7 @@ export interface DEFAULT_SETTINGS_Interface {
     timeoutUnit: string,
     timeout: number
     exportType: exportType
+    isResourcesAutoUpdate: boolean
 }
 
 

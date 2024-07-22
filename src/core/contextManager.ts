@@ -1,6 +1,6 @@
-import {OpenAPIPluginContextInterface} from "./typing/interfaces";
+import {OpenAPIPluginContextInterface} from "../typing/interfaces";
 import {App} from "obsidian";
-import OpenAPIRendererPlugin from "./main";
+import OpenAPIRendererPlugin from "./OpenAPIRendererPlugin";
 
 /**
  * Represents the context object for the OpenAPI plugin, providing access to the main

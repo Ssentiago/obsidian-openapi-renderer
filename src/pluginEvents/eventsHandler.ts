@@ -1,6 +1,6 @@
 import {MarkdownView, setIcon, TAbstractFile, TextComponent} from "obsidian";
 import {ChangeServerButtonStateEvent, OpenAPIRendererEventsHandlerInterface, ToggleButtonVisibilityEvent} from "../typing/interfaces";
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import {Button} from "../UI/Button";
 
 import {eventPublisher} from "../typing/constants";
