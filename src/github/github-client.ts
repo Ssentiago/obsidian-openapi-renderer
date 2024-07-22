@@ -125,7 +125,7 @@ export default class GithubClient {
                     (response) => {
                         if (response.statusCode === 302) {
                             const redirectUrl = response.headers.location;
-                            if (typeof redirectUrl === 'string') {
+                            if (redirectUrl) {
                                 this.downloadFile(redirectUrl, filePath)
                                     .then(resolve)
                                     .catch(reject);
