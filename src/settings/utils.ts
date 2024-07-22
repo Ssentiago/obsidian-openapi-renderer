@@ -83,6 +83,7 @@ export class SettingsUtils {
                                desc,
                                type,
                                options,
+                               setValue,
                                tooltips,
                                onChange
                            }: LinkedComponentOptions): Setting {
@@ -105,6 +106,7 @@ export class SettingsUtils {
                     if (options) {
                         dropdown.addOptions(options);
                     }
+                    dropdown.setValue(setValue)
                     dropdown.onChange((value) => {
                         updateTooltip(value);
                         if (onChange) onChange(value);
