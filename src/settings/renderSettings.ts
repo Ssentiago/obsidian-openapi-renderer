@@ -129,32 +129,7 @@ export class RenderSettings implements SettingsSection {
                     })
             })
 
-        // todo
-        this.utils.createLinkedComponents({
-            containerEl: containerEl,
-            name: 'Swagger resources storage method',
-            desc: 'Select how Swagger resources should be stored in your generated swagger-ui files',
-            type: 'dropdown',
-            options: {
-                'full-local-storing': 'Full-local-storing',
-                'local-server-storing': 'Local-server-storing',
-                'cdn': 'CDN'
-            },
-            tooltips: {
-                'full-local-storing': 'Best for offline use or high security needs. ' +
-                    'All resources, including code and CSS, will be embedded in the HTML file.' +
-                    'This results in larger file sizes, but ensures complete offline functionality.',
-                'local-server-storing': 'Balanced option. ' +
-                    'Resources are stored on a local server. ' +
-                    'The generated HTML file will contain links to this plugin`s local server ' +
-                    'This requires a enable plugin`s local proxy with a fixed address to redirect resource requests to ' +
-                    'the current server address.',
-                'cdn': 'Best for most users.' +
-                    'The HTML file will link to external CDN resources. ' +
-                    'Keeps file sizes small but needs an internet connection to load resources.'
-            },
-            onChange: (value) => console.log('Selected value:', value)
-        });
+
 
 
     }
