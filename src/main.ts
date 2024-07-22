@@ -12,7 +12,9 @@ import OpenAPIRendererPluginLogger from "./pluginLogging/loggingManager";
 import UIManager from './UI/UIManager'
 import path from "path";
 import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./typing/constants";
-import OpenAPIRendererProxyServer from "./server/proxy";
+import {ExportModal} from "./export/exportModal";
+import {Export} from "./export/pluginExport";
+import {GithubClient} from "./github/github-client";
 
 
 /**
@@ -32,7 +34,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
     uiManager!: UIManager
     publisher!: OpenAPIRendererEventPublisher
     observer!: OpenAPIRendererEventObserver
-    proxy!: OpenAPIRendererProxyServer
+    export!: Export
+    githubClient!: GithubClient
 
 
     /**
@@ -52,8 +55,9 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.previewHandler = new PreviewHandler(this.appContext);
         this.eventsHandler = new OpenAPIRendererEventsHandler(this.appContext);
         this.server = new OpenAPIRendererServer(this.appContext)
-        this.proxy = new OpenAPIRendererProxyServer(this.appContext)
         this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext)
+        this.export = new Export(this.appContext)
+        this.githubClient = new GithubClient(this.appContext)
 
 
         this.uiManager = new UIManager(this.appContext)
@@ -71,26 +75,32 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.addCommand({
             id: 'render-openapi-inline',
             name: 'Render Swagger UI inline',
-            editorCallback: async (editor, view) => {
-                await this.renderOpenAPI(view as MarkdownView, RenderingMode.Inline)
+            callback: async () => {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (view) {
+                    await this.renderOpenAPI(view as MarkdownView, RenderingMode.Inline)
+                }
             },
         });
 
         this.addCommand({
             id: 'refresh-openapi',
             name: 'Refresh Swagger UI',
-            editorCallback: async (editor, view) => {
-
-                await this.refreshOpenAPI(view as MarkdownView)
+            callback: async () => {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (view) {
+                    await this.refreshOpenAPI(view as MarkdownView)
+                }
             },
         });
-
+        // todo
+        // todo - методы про настройки вынести в отдельный класс
         this.addCommand({
-            id: 'render-openapi-modal',
-            name: 'Render Swagger UI modal',
-            editorCallback: async (editor, view) => {
-                await this.renderOpenAPI(view as MarkdownView, RenderingMode.Modal)
-            },
+            id: 'export-openapi',
+            name: 'Export OpenAPI',
+            callback: async () => {
+                await this.exportHTML()
+            }
         });
     }
 
@@ -112,6 +122,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @async
      */
     async onload(): Promise<void> {
+
+
         await this.initializePlugin()
         await this.initializeCommands()
         this.settings.isServerAutoStart && await this.server.start()
@@ -120,6 +132,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.settings.isAutoUpdate &&
         this.registerEvent(this.appContext.app.vault
             .on('modify', this.eventsHandler.modifyOpenAPISPec.bind(this.eventsHandler)))
+
+        // await this.githubClient.downloadAssetsFromLastRelease()
     }
 
     /**
@@ -225,7 +239,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
             theme: 'light',
             timeoutUnit: 'milliseconds',
             timeout: 2000,
-            swaggerStoringType: 'partial-local'
+            exportType: 'none'
         }
     }
 
@@ -237,12 +251,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @returns A promise that resolves when rendering is complete.
      */
     async renderOpenAPI(view: MarkdownView, mode: RenderingMode): Promise<void> {
-        try {
-            await this.openAPI.renderOpenAPIResources(view, mode)
-        } catch (e: any) {
-
-            this.showNotice('Something went wrong while rendering open API. Maybe check the logs?')
-        }
+        await this.openAPI.renderOpenAPIResources(view, mode)
     }
 
     /**
@@ -253,6 +262,23 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      */
     async refreshOpenAPI(view: MarkdownView): Promise<void> {
         this.previewHandler.previewManualUpdate(view)
+    }
+
+    async exportHTML() {
+        switch (this.settings.exportType) {
+            case 'none':
+                new ExportModal(this.app, this).open()
+                break
+            case 'cdn':
+                await this.export.exportCDN()
+                break
+            case 'all-in-the-one':
+                await this.export.exportFullyLocally()
+                break
+            case 'zip':
+                await this.export.exportZip()
+                break
+        }
     }
 
     /**
