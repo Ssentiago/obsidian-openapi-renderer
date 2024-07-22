@@ -6,6 +6,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "allowJs": false,
+    "esModuleInterop": true,
     "strict": true,
     "removeComments": false,
     "noImplicitAny": true,
