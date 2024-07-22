@@ -50,7 +50,7 @@ export class SettingsUtils {
                             buttonContainer.delete(location);
                         }
                         this.plugin.logger.debug(`Updated button container:`, Array.from(buttonContainer));
-                        await this.plugin.saveSettings();
+                        await this.plugin.settingsManager.saveSettings();
                         this.publishToggleVisibilityEvent(buttonId, this.app.workspace, this.publisher);
                         this.plugin.logger.debug(`Toggle visibility event published for ${buttonId}`);
                     })

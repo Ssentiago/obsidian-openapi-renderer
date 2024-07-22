@@ -37,7 +37,7 @@ export class UISettings {
                 .setValue(this.plugin.settings.isCreateServerButton)
                 .onChange(async (value) => {
                         this.plugin.settings.isCreateServerButton = value;
-                        await this.plugin.saveSettings();
+                        await this.plugin.settingsManager.saveSettings();
 
                         this.utils.publishToggleVisibilityEvent(SERVER_BUTTON_ID, this.app.workspace, this.publisher)
                     }
@@ -67,7 +67,7 @@ export class UISettings {
                 .setValue(this.plugin.settings.isCreateCommandButtons)
                 .onChange(async (value) => {
                         this.plugin.settings.isCreateCommandButtons = value;
-                        await this.plugin.saveSettings()
+                        await this.plugin.settingsManager.saveSettings()
                         this.utils.publishToggleVisibilityEvent(RENDERER_BUTTON_ID, this.app.workspace, this.publisher)
                         this.utils.publishToggleVisibilityEvent(REFRESHER_BUTTON_ID, this.app.workspace, this.publisher)
                     }

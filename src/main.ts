@@ -1,7 +1,7 @@
 import {MarkdownView, Notice, Plugin} from 'obsidian';
 import {OpenAPIRendererEventObserver, OpenAPIRendererEventPublisher} from './pluginEvents/eventEmitter'
 
-import {DEFAULT_SETTINGS_Interface, OpenAPIRendererPluginInterface, PowerOffEvent, ToggleButtonVisibilityEvent} from './typing/interfaces'
+import {DEFAULT_SETTINGS_Interface, OpenAPIRendererPluginInterface, PowerOffEvent} from './typing/interfaces'
 import {OpenAPISettingTab} from "./settings/settings";
 import {OpenAPIPluginContext} from "./contextManager";
 import {OpenAPIRenderer, PreviewHandler} from 'rendering/openAPIRender';
@@ -10,11 +10,11 @@ import OpenAPIRendererServer from "./server/server";
 import OpenAPIMarkdownProcessor from "./rendering/markdownProcessor";
 import OpenAPIRendererPluginLogger from "./pluginLogging/loggingManager";
 import UIManager from './UI/UIManager'
-import path from "path";
-import {ButtonLocation, eventID, eventPublisher, RenderingMode, Subject} from "./typing/constants";
+import {eventID, eventPublisher, RenderingMode, Subject} from "./typing/constants";
 import {ExportModal} from "./export/exportModal";
 import {Export} from "./export/pluginExport";
 import {GithubClient} from "./github/github-client";
+import {SettingsManager} from "./settingsManager";
 
 
 /**
@@ -36,6 +36,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
     observer!: OpenAPIRendererEventObserver
     export!: Export
     githubClient!: GithubClient
+    settingsManager!: SettingsManager
 
 
     /**
@@ -45,7 +46,8 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @returns A promise that resolves when initialization is complete.
      */
     private async initializePlugin(): Promise<void> {
-        await this.loadSettings();
+        this.settingsManager = new SettingsManager(this)
+        await this.settingsManager.loadSettings();
         this.appContext = new OpenAPIPluginContext(this.app, this);
         this.logger = new OpenAPIRendererPluginLogger(this.appContext)
         this.publisher = new OpenAPIRendererEventPublisher(this.appContext)
@@ -58,8 +60,6 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext)
         this.export = new Export(this.appContext)
         this.githubClient = new GithubClient(this.appContext)
-
-
         this.uiManager = new UIManager(this.appContext)
         this.addSettingTab(this.settingsTab);
     }
@@ -157,91 +157,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * Converts array-based locations to Set objects for efficient lookup.
      * @async
      */
-    async loadSettings(): Promise<void> {
 
-        const userSettings = await this.loadData();
-
-        const defaultSettings = this.getDefaultSettings();
-
-        const settings = Object.assign({}, defaultSettings, userSettings);
-
-        this.settings = {
-            ...settings,
-            renderButtonLocation: new Set(settings.renderButtonLocation),
-            refreshButtonLocation: new Set(settings.refreshButtonLocation),
-            serverButtonLocations: new Set(settings.serverButtonLocations),
-        }
-
-    }
-
-    /**
-     * Saves current plugin settings to persistent storage.
-     * Converts Set-based button locations to arrays for serialization.
-     * @async
-     */
-    async saveSettings(): Promise<void> {
-        const saveData = {
-            ...this.settings,
-            renderButtonLocation: Array.from(this.settings.renderButtonLocation),
-            refreshButtonLocation: Array.from(this.settings.refreshButtonLocation),
-            serverButtonLocations: Array.from(this.settings.serverButtonLocations)
-        };
-
-        await this.saveData(saveData);
-
-    }
-
-    /**
-     * Resets plugin settings to default values by removing the configuration file.
-     * @async
-     */
-    async resetSettings(): Promise<void> {
-        const pluginPath = this.manifest.dir
-        if (pluginPath) {
-            const configPath = path.join(pluginPath, '/data.json')
-            await this.app.vault.adapter.remove(configPath)
-            await this.loadSettings()
-            const event = {
-                eventID: eventID.ToggleButtonVisibility,
-                timestamp: new Date(),
-                publisher: eventPublisher.App,
-                subject: Subject.classes,
-                emitter: this.app.workspace,
-                data: {
-                    buttonID: null
-                }
-            } as ToggleButtonVisibilityEvent;
-            this.publisher.publish(event);
-        }
-    }
-
-    /**
-     * Returns default settings for the OpenAPI plugin.
-     * @returns Default settings object.
-     */
-    getDefaultSettings(): DEFAULT_SETTINGS_Interface {
-        return {
-            htmlFileName: 'openapi-spec.html',
-            openapiSpecFileName: 'openapi-spec.yaml',
-            iframeWidth: '100%',
-            iframeHeight: '600px',
-            isAutoUpdate: false,
-            serverHostName: '127.0.0.1',
-            serverPort: 8080,
-            proxyHostName: '127.0.0.1',
-            proxyPort: 47899,
-            isServerAutoStart: false,
-            isCreateServerButton: true,
-            isCreateCommandButtons: false,
-            renderButtonLocation: new Set([ButtonLocation.Toolbar]),
-            refreshButtonLocation: new Set([ButtonLocation.Toolbar]),
-            serverButtonLocations: new Set([ButtonLocation.Ribbon]),
-            theme: 'light',
-            timeoutUnit: 'milliseconds',
-            timeout: 2000,
-            exportType: 'none'
-        }
-    }
 
     /**
      * Renders OpenAPI resources into a Markdown view.

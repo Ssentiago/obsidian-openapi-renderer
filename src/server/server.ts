@@ -220,7 +220,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
     private async updatePortSettings(newPort: number): Promise<void> {
         const oldPort = this.appContext.plugin.settings.serverPort;
         this.appContext.plugin.settings.serverPort = newPort;
-        await this.appContext.plugin.saveSettings();
+        await this.appContext.plugin.settingsManager.saveSettings();
         this.appContext.plugin.showNotice(`The originally configured port ${oldPort} was occupied. A new port ${newPort} has been assigned and saved in the settings.`)
     };
 

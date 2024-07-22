@@ -78,7 +78,7 @@ export class ServerSettings implements SettingsSection {
                 .setValue(this.plugin.settings.isServerAutoStart)
                 .onChange(async (value) => {
                     this.plugin.settings.isServerAutoStart = value;
-                    await this.plugin.saveSettings()
+                    await this.plugin.settingsManager.saveSettings()
                 })
             );
 

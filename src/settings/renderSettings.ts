@@ -92,7 +92,7 @@ export class RenderSettings implements SettingsSection {
                 .setValue(this.plugin.settings.isAutoUpdate)
                 .onChange(async (value) => {
                     this.plugin.settings.isAutoUpdate = value;
-                    await this.plugin.saveSettings();
+                    await this.plugin.settingsManager.saveSettings();
                     if (value) {
                         this.modifySpecEvent = this.plugin.eventsHandler.modifyOpenAPISPec.bind(this.plugin.eventsHandler);
                         this.plugin.registerEvent(this.app.vault.on('modify', this.modifySpecEvent));
@@ -125,7 +125,7 @@ export class RenderSettings implements SettingsSection {
                     .setValue(this.plugin.settings.timeoutUnit)
                     .onChange(async (value) => {
                         this.plugin.settings.timeoutUnit = value
-                        await this.plugin.saveSettings()
+                        await this.plugin.settingsManager.saveSettings()
                     })
             })
 

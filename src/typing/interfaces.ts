@@ -62,10 +62,6 @@ export interface OpenAPIRendererPluginInterface {
 
     refreshOpenAPI(view: MarkdownView): Promise<void>;
 
-    loadSettings(): Promise<void>;
-
-    saveSettings(): Promise<void>;
-
     showNotice(message: string, duration?: number): void;
 }
 

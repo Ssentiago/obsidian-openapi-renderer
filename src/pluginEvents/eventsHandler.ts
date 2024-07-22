@@ -39,7 +39,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
         const value = textComponent.getValue()
         if (value.match(/\.(yaml|yml|json)$/i)) {
             this.appContext.plugin.settings.openapiSpecFileName = value;
-            await this.appContext.plugin.saveSettings();
+            await this.appContext.plugin.settingsManager.saveSettings();
         } else {
             const oldValue = this.appContext.plugin.settings.openapiSpecFileName;
             this.appContext.plugin.showNotice(`Invalid file extension.\nPlease use .yaml, .yml or .json.\n\nReverting to ${oldValue} after 2 seconds.`);
@@ -59,7 +59,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
         const value = textComponent.getValue()
         if (value.match(/\.html?$/)) {
             this.appContext.plugin.settings.htmlFileName = value;
-            await this.appContext.plugin.saveSettings();
+            await this.appContext.plugin.settingsManager.saveSettings();
         } else {
             const oldValue = this.appContext.plugin.settings.htmlFileName;
             this.appContext.plugin.showNotice(`Invalid file extension.\nPlease use .html or .htm.\n\nReverting to ${oldValue} after 2 seconds.`);
@@ -79,7 +79,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
         const value = textComponent.getValue()
         if (value.match(/^\d+?(%|px)?$/)) {
             this.appContext.plugin.settings.iframeHeight = value;
-            await this.appContext.plugin.saveSettings();
+            await this.appContext.plugin.settingsManager.saveSettings();
         } else {
             const oldValue = this.appContext.plugin.settings.iframeWidth;
             this.appContext.plugin.showNotice(`Invalid iframe width.\nPlease use a number followed by % or px (e.g. "100%", "500px"), or just a number for pixels.\n\nReverting to ${oldValue} after 2 seconds.`, 5000);
@@ -99,7 +99,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
         const value = textComponent.getValue()
         if (value.match(/^\d+?(%|px)?$/)) {
             this.appContext.plugin.settings.iframeHeight = value;
-            await this.appContext.plugin.saveSettings();
+            await this.appContext.plugin.settingsManager.saveSettings();
         } else {
             const oldValue = this.appContext.plugin.settings.iframeHeight;
             this.appContext.plugin.showNotice(`Invalid iframe width.\nPlease use a number followed by % or px (e.g. "100%", "500px"), or just a number for pixels.\n\nReverting to ${oldValue} after 2 seconds.`, 5000);
@@ -135,7 +135,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
                 if (await this.appContext.plugin.server.isPortAvailable(port)) {
                     this.appContext.plugin.settings.serverPort = port;
                     textComponent.setValue(port.toString())
-                    await this.appContext.plugin.saveSettings();
+                    await this.appContext.plugin.settingsManager.saveSettings();
 
                     if (this.appContext.plugin.server.server && this.appContext.plugin.server.isRunning()) {
                         await this.appContext.plugin.server.reload().then((isReloaded) => {
@@ -175,7 +175,7 @@ export class OpenAPIRendererEventsHandler implements OpenAPIRendererEventsHandle
             const timeout = parseInt(textComponent.inputEl.value, 10)
             textComponent.setValue(value.toString())
             this.appContext.plugin.settings.timeout = timeout
-            await this.appContext.plugin.saveSettings();
+            await this.appContext.plugin.settingsManager.saveSettings();
         } else {
             this.appContext.plugin.showNotice(`Incorrect timeout value. Input integer number. Reverting to ${oldTimeout} in 2 seconds`)
             setTimeout(() => {

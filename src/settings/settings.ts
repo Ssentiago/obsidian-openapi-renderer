@@ -48,7 +48,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
                     .setTooltip('Reset settings to default', {delay: 100})
                     .onClick(async () => {
                         try {
-                            await this.plugin.resetSettings()
+                            await this.plugin.settingsManager.resetSettings()
                             this.plugin.showNotice('Settings have been reset to default')
                             setTimeout(() => {
                                 this.display()
@@ -95,7 +95,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
             onChange: async (value) => {
                 debugger
                 this.plugin.settings.exportType = value as exportType
-                await this.plugin.saveSettings()
+                await this.plugin.settingsManager.saveSettings()
             }
         });
 
