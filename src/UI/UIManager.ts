@@ -1,5 +1,5 @@
 import {MarkdownView} from 'obsidian';
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import {PowerOffEvent, UIPluginSettings} from '../typing/interfaces'
 import {ButtonManager} from "./buttonManager";
 import {Button} from "./Button";

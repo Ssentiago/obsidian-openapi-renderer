@@ -1,5 +1,5 @@
 import {App, DropdownComponent, ExtraButtonComponent, Setting, TAbstractFile, TextComponent, ToggleComponent} from "obsidian";
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {PowerOffEvent, SettingSectionParams, SettingsSection} from "../typing/interfaces";
 
@@ -39,20 +39,8 @@ export class RenderSettings implements SettingsSection {
 
 
         new Setting(containerEl)
-            .setName('HTML filename')
-            .setDesc('Name of the generated HTML file that will contain the rendered OpenAPI specification.')
-            .addText(text => {
-                text.setPlaceholder('openapi-spec.html')
-                    .setValue(this.plugin.settings.htmlFileName);
-
-                const handler = this.plugin.eventsHandler.handleSettingsTabHTMLFileNameBlur.bind(this.plugin.eventsHandler, text)
-                this.plugin.registerDomEvent(text.inputEl, "blur", handler);
-            });
-
-
-        new Setting(containerEl)
             .setName("OpenAPI specification file name")
-            .setDesc("The file containing your OpenAPI specification. Must end with .yaml, .yml, or .json")
+            .setDesc("Specify the filename of your OpenAPI specification. Ensure it ends with .yaml, .yml, or .json.")
             .addText((text: TextComponent) => {
                 text.setPlaceholder('openapi-spec.yaml')
                     .setValue(this.plugin.settings.openapiSpecFileName)
@@ -63,7 +51,8 @@ export class RenderSettings implements SettingsSection {
 
         new Setting(containerEl)
             .setName('Iframe dimensions')
-            .setDesc('Set the dimensions for the iframe that will display the rendered OpenAPI specification in your notes.')
+            .setDesc('Define the width and height for the iframe that will display the rendered OpenAPI specification within your notes. ' +
+                'Use CSS units like px, %, or just numbers for pixels')
             .addText(text => {
                 text.setPlaceholder('100%')
                     .setValue(this.plugin.settings.iframeWidth);
@@ -86,12 +75,12 @@ export class RenderSettings implements SettingsSection {
             })
 
         new Setting(containerEl)
-            .setName('Autoupdate on file change')
-            .setDesc('Will the HTML file and iframe preview update automatically when the OpenAPI Spec file changes?')
+            .setName('Enable auto-update on file change')
+            .setDesc('Automatically update the HTML file and iframe preview when the OpenAPI specification file changes?')
             .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.isAutoUpdate)
+                .setValue(this.plugin.settings.isHTMLAutoUpdate)
                 .onChange(async (value) => {
-                    this.plugin.settings.isAutoUpdate = value;
+                    this.plugin.settings.isHTMLAutoUpdate = value;
                     await this.plugin.settingsManager.saveSettings();
                     if (value) {
                         this.modifySpecEvent = this.plugin.eventsHandler.modifyOpenAPISPec.bind(this.plugin.eventsHandler);
@@ -109,7 +98,8 @@ export class RenderSettings implements SettingsSection {
 
         new Setting(containerEl)
             .setName('Timeout of autoupdate on file change')
-            .setDesc('Enter the timeout in unit you chosen for auto-update when files are changed.')
+            .setDesc('Specify the timeout duration for auto-updating the HTML file and iframe preview after the OpenAPI specification file changes.' +
+                ' Set the duration in milliseconds or seconds.')
             .addText((text: TextComponent) => {
                 text.setPlaceholder('2000')
                     .setValue(this.plugin.settings.timeout.toString())

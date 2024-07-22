@@ -1,4 +1,4 @@
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {App, Setting} from "obsidian";
 import {SettingsUtils} from "./utils";
@@ -32,7 +32,7 @@ export class UISettings {
 
         new Setting(containerEl)
             .setName('Start server button')
-            .setDesc('Add a button for quick access to start the OpenAPI Renderer server?')
+            .setDesc('Enable a button to quickly start the OpenAPI Renderer server.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.isCreateServerButton)
                 .onChange(async (value) => {
@@ -47,13 +47,15 @@ export class UISettings {
         const serverGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
         new Setting(serverGroup)
             .setName('Server button locations')
-            .setDesc('What location of button do you need? Choose below. You can choose more than one')
+            .setDesc('Select where you want the server start button to appear. You can choose multiple locations.')
 
         const serverDetails = serverGroup.createEl('details', {cls: 'openapi-renderer-details'})
         serverDetails.createEl('summary', {text: 'Server button Locations', cls: 'openapi-renderer-summary'})
 
-        this.utils.createLocationToggle(serverDetails, 'Ribbon button',
-            ButtonLocation.Ribbon, SERVER_BUTTON_ID, settings.serverButtonLocations)
+        new Setting(serverDetails)
+            .setName('Ribbon button')
+            .setDesc('Ribbon buttons are enabled by default. ' +
+                'You can customize their visibility and order in Obsidian’s settings: Appearance -> Ribbon menu configuration -> Manage.')
         this.utils.createLocationToggle(serverDetails, 'Toolbar button',
             ButtonLocation.Toolbar, SERVER_BUTTON_ID, settings.serverButtonLocations)
         this.utils.createLocationToggle(serverDetails, 'Statusbar button',
@@ -62,7 +64,7 @@ export class UISettings {
 
         new Setting(containerEl)
             .setName('Command buttons')
-            .setDesc('Add buttons for OpenAPI Renderer commands in the Obsidian interface?')
+            .setDesc('Enable buttons for OpenAPI Renderer commands in the Obsidian interface.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.isCreateCommandButtons)
                 .onChange(async (value) => {
@@ -77,15 +79,17 @@ export class UISettings {
 
         const renderGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
         new Setting(renderGroup)
-            .setName('Command button locations')
-            .setDesc('What location of button do you need? Choose below. You can choose more than one')
+            .setName('Render button locations')
+            .setDesc('Select where you want the render button to appear. You can choose multiple locations.')
 
 
         const renderDetails = renderGroup.createEl('details', {cls: 'openapi-renderer-details'})
         renderDetails.createEl('summary', {text: 'Render button Locations', cls: 'openapi-renderer-summary'})
 
-        this.utils.createLocationToggle(renderDetails, 'Ribbon button',
-            ButtonLocation.Ribbon, RENDERER_BUTTON_ID, settings.renderButtonLocation)
+        new Setting(renderDetails)
+            .setName('Ribbon button')
+            .setDesc('Ribbon buttons are enabled by default. ' +
+                'You can customize their visibility and order in Obsidian’s settings: Appearance -> Ribbon menu configuration -> Manage.')
         this.utils.createLocationToggle(renderDetails, 'Toolbar button',
             ButtonLocation.Toolbar, RENDERER_BUTTON_ID, settings.renderButtonLocation)
         this.utils.createLocationToggle(renderDetails, 'Statusbar button',
@@ -93,11 +97,18 @@ export class UISettings {
 
 
         const refreshGroup = containerEl.createEl('div', {cls: 'openapi-renderer-group'})
+
+        new Setting(refreshGroup)
+            .setName('Refresh button locations')
+            .setDesc('Select where you want the refresh button to appear. You can choose multiple locations.')
+
         const refreshDetails = refreshGroup.createEl('details', {cls: 'openapi-renderer-details'})
         refreshDetails.createEl('summary', {text: 'Refresh button Locations', cls: 'openapi-renderer-summary'})
 
-        this.utils.createLocationToggle(refreshDetails, 'Ribbon button',
-            ButtonLocation.Ribbon, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
+        new Setting(refreshDetails)
+            .setName('Ribbon button')
+            .setDesc('Ribbon buttons are enabled by default. ' +
+                'You can customize their visibility and order in Obsidian’s settings: Appearance -> Ribbon menu configuration -> Manage.')
         this.utils.createLocationToggle(refreshDetails, 'Toolbar button',
             ButtonLocation.Toolbar, REFRESHER_BUTTON_ID, settings.refreshButtonLocation)
         this.utils.createLocationToggle(refreshDetails, 'Statusbar button',

@@ -2,7 +2,7 @@ import {ButtonID, ComponentType} from "../typing/types";
 import {App, DropdownComponent, Events, ExtraButtonComponent, Setting, TextComponent, ToggleComponent} from "obsidian";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {LinkedComponentOptions, ToggleButtonVisibilityEvent} from "../typing/interfaces";
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 import {ButtonLocation, eventID, eventPublisher, Subject} from "../typing/constants";
 
 /**

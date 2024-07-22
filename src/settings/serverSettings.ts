@@ -1,4 +1,4 @@
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {App, Setting} from "obsidian";
 import {SettingSectionParams, SettingsSection} from "../typing/interfaces";
@@ -26,7 +26,7 @@ export class ServerSettings implements SettingsSection {
 
         new Setting(containerEl)
             .setName('Server status')
-            .setDesc('Check if the server is running and toggle it')
+            .setDesc('Check the current status of the server and start or stop it as needed.')
             .addButton(button => {
                 let timeout: NodeJS.Timeout | null = null
 
@@ -73,7 +73,7 @@ export class ServerSettings implements SettingsSection {
             });
         new Setting(containerEl)
             .setName('Autostart server')
-            .setDesc('Will the server automatically start when the plugin is started?')
+            .setDesc('Enable or disable automatic server startup when the plugin is activated.')
             .addToggle((toggle) => toggle
                 .setValue(this.plugin.settings.isServerAutoStart)
                 .onChange(async (value) => {
@@ -84,7 +84,8 @@ export class ServerSettings implements SettingsSection {
 
         new Setting(containerEl)
             .setName('Server listening port')
-            .setDesc('The port number on which the OpenAPI Renderer server will listen for connections.')
+            .setDesc('Specify the port number that the OpenAPI Renderer server will use to listen for incoming connections. ' +
+                'Valid port numbers range from 1024 to 65535.')
             .addText(text => {
                     text.setPlaceholder('8080')
                         .setValue(this.plugin.settings.serverPort.toString())
@@ -93,10 +94,7 @@ export class ServerSettings implements SettingsSection {
                     this.plugin.registerDomEvent(text.inputEl, 'blur', handler);
                     text.inputEl.id = 'openapi-input-port'
                 }
-            ).addExtraButton(button => {
-            button.setIcon('info')
-                .setTooltip('Valid port numbers are between 1024 and 65535', {delay: 100})
-        })
+            )
     }
 
 }

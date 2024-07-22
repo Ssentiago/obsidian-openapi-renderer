@@ -1,6 +1,6 @@
 import express from 'express';
 import {IncomingMessage, Server, ServerResponse} from 'http';
-import {OpenAPIPluginContext} from "../contextManager";
+import {OpenAPIPluginContext} from "../core/contextManager";
 import {ChangeServerButtonStateEvent, ChangeServerStateEvent, OpenAPIRendererServerInterface, PowerOffEvent} from "../typing/interfaces";
 import * as net from "node:net";
 import path from 'path'

@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import {SettingSectionParams, SettingsSection} from "../typing/interfaces";
-import OpenAPIRendererPlugin from "../main";
+import OpenAPIRendererPlugin from "../core/OpenAPIRendererPlugin";
 import {OpenAPIRendererEventPublisher,} from "../pluginEvents/eventEmitter";
 import {UISettings} from "./UISettings";
 import {ServerSettings} from "./serverSettings";
@@ -20,10 +20,10 @@ export class OpenAPISettingTab extends PluginSettingTab {
     sections: SettingsSection[] = [];
 
     constructor(app: App,
-                plugin: OpenAPIRendererPlugin,
-                publisher: OpenAPIRendererEventPublisher) {
+                plugin: OpenAPIRendererPlugin) {
         super(app, plugin);
         this.plugin = plugin
+        const {publisher} =  plugin
         this.publisher = publisher
         this.utils = new SettingsUtils(this.app, this.plugin, this.publisher)
 
@@ -62,13 +62,23 @@ export class OpenAPISettingTab extends PluginSettingTab {
         new Setting(containerEl)
             .addButton(button => {
                 button.setIcon('github')
-                    .setTooltip('Download plugin`s assets from github release')
+                    .setTooltip('Download plugin`s assets from Github release')
                     .onClick(async (cb) => {
                         await this.plugin.githubClient.downloadAssetsFromLatestRelease()
                     })
             })
 
-        // todo
+        new Setting(containerEl)
+            .setName('Resources autoupdate')
+            .setDesc('Automatically download plugin assets from GitHub releases?')
+            .addToggle(toggle => {
+                toggle.setValue(this.plugin.settings.isResourcesAutoUpdate)
+                    .onChange(async (value) => {
+                        this.plugin.settings.isResourcesAutoUpdate = value
+                       await this.plugin.settingsManager.saveSettings()
+                    })
+            })
+
         this.utils.createLinkedComponents({
             containerEl: containerEl,
             name: 'Default export option',
@@ -93,7 +103,6 @@ export class OpenAPISettingTab extends PluginSettingTab {
                     'connection to access resources.'
             },
             onChange: async (value) => {
-                debugger
                 this.plugin.settings.exportType = value as exportType
                 await this.plugin.settingsManager.saveSettings()
             }
