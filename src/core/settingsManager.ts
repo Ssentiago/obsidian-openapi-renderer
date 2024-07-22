@@ -1,7 +1,7 @@
-import OpenAPIRendererPlugin from "./main";
+import OpenAPIRendererPlugin from "./OpenAPIRendererPlugin";
 import path from "path";
-import {ButtonLocation, eventID, eventPublisher, Subject} from "./typing/constants";
-import {DEFAULT_SETTINGS_Interface, ToggleButtonVisibilityEvent} from "./typing/interfaces";
+import {ButtonLocation, eventID, eventPublisher, Subject} from "../typing/constants";
+import {DEFAULT_SETTINGS_Interface, ToggleButtonVisibilityEvent} from "../typing/interfaces";
 
 export class SettingsManager {
     plugin: OpenAPIRendererPlugin
@@ -78,7 +78,7 @@ export class SettingsManager {
             openapiSpecFileName: 'openapi-spec.yaml',
             iframeWidth: '100%',
             iframeHeight: '600px',
-            isAutoUpdate: false,
+            isHTMLAutoUpdate: false,
             serverHostName: '127.0.0.1',
             serverPort: 8080,
             proxyHostName: '127.0.0.1',
@@ -92,7 +92,8 @@ export class SettingsManager {
             theme: 'light',
             timeoutUnit: 'milliseconds',
             timeout: 2000,
-            exportType: 'none'
+            exportType: 'none',
+            isResourcesAutoUpdate: false
         }
     }
 }
