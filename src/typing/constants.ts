@@ -20,7 +20,6 @@ export enum Subject {
 
 export enum RenderingMode {
     'Inline' = 'inline',
-    'Modal' = 'modal'
 }
 
 export enum ButtonLocation {
