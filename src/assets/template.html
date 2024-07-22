@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui/swagger-ui.module.css">
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="./swagger-ui/swagger-ui-bundle.module.js"></script>
+    <script>
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedPath = urlParams.get('path');
+            if (!encodedPath) {
+                console.error('No path parameter provided in URL');
+                return;
+            }
+
+            const path = decodeURIComponent(encodedPath);
+            fetch(path)
+                .then(response => response.json()) 
+                .then(spec => {
+                    SwaggerUIBundle({
+                        spec: spec,
+                        dom_id: '#swagger-ui',
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIBundle.SwaggerUIStandalonePreset
+                        ],
+                        layout: "BaseLayout",
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
