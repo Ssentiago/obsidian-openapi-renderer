@@ -7,8 +7,8 @@ import * as SimpleNodeLogger from 'simple-node-logger';
 export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPluginLoggerInterface {
     private readonly logger: SimpleNodeLogger.Logger;
     private readonly logDir: string;
-    private readonly maxFileSize: number = 1024 * 1024 * 10; // 10 MB
-    private readonly maxLogFiles: number = 7; // Количество резервных файлов
+    private readonly maxFileSize: number = 1024 * 1024 * 10;
+    private readonly maxLogFiles: number = 7;
 
     constructor(appContext: OpenAPIPluginContext) {
         const pluginDir = appContext.plugin.manifest.dir;
@@ -16,7 +16,6 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
             this.logDir = path.join(appContext.app.vault.adapter.basePath, pluginDir, 'logs');
             this.ensureLogDirExists();
 
-            // Настройки ротации и логирования
             const logFilePath = path.join(this.logDir, 'logs.log');
             const options = {
                 logFilePath,
@@ -24,10 +23,8 @@ export default class OpenAPIRendererPluginLogger implements OpenAPIRendererPlugi
                 maxLogFiles: this.maxLogFiles,
             };
 
-            // Создание логгера
             this.logger = SimpleNodeLogger.createSimpleLogger(options);
 
-            // Обновление логгера для ротации
             this.setupRotation(logFilePath);
         } else {
             throw new Error('Plugin directory is not defined');
