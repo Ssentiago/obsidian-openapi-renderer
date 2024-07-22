@@ -5,7 +5,8 @@ import {ChangeServerButtonStateEvent, ChangeServerStateEvent, OpenAPIRendererSer
 import * as net from "node:net";
 import path from 'path'
 import {eventID, eventPublisher, SERVER_BUTTON_ID, Subject} from "../typing/constants";
-import {JSYAML, swaggerUICSS, swaggerUIJS} from "../assets/shared resources";
+import yaml from "js-yaml";
+import fs from "node:fs";
 
 
 /**
@@ -23,7 +24,6 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
 
     initialize(): void {
         this.app = express();
-        this.setupRouters()
         this.setupMiddlewares()
         this.appContext.plugin.observer.subscribe(
             this.appContext.app.workspace,
@@ -238,7 +238,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
                 return false;
             }
             const ext = path.extname(normalizedUrl);
-            return ext === '.html';
+            return ['.html', '.js', '.css', '.yaml', '.yml', '.json'].contains(ext)
         } catch (err: any) {
             this.appContext.plugin.logger.debug('Error in validateUrl:', err.message);
             return false;
@@ -252,7 +252,7 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
      */
     private setupMiddlewares(): void {
         const vaultPath = this.appContext.app.vault.getRoot().vault.adapter
-        // URL validation middleware: it must end with .html
+
         this.app.use(async (req, res, next) => {
             const url = req.path;
 
@@ -269,6 +269,33 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
             }
         });
 
+        this.app.use(async (req, res, next) => {
+            const url = req.path;
+
+            try {
+                const filePath = path.join(vaultPath.basePath, url);
+                const fileContent = fs.readFileSync(filePath, 'utf8');
+                const fileExt = path.extname(filePath).toLowerCase();
+
+                if (['.yaml', '.yml', '.json'].includes(fileExt)) {
+                    let jsonContent;
+                    if (fileExt === '.json') {
+                        jsonContent = JSON.parse(fileContent);
+                    } else {
+                        jsonContent = yaml.load(fileContent);
+                    }
+
+                    res.json(jsonContent);
+                    return;
+                }
+                next();
+
+            } catch (error: any) {
+                this.appContext.plugin.logger.debug('Middleware error:', error.message);
+                res.status(500).send('Internal Server Error');
+            }
+        });
+
         // Serving static files
         this.app.use(express.static(vaultPath.basePath));
 
@@ -276,21 +303,6 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         // Process all undefined routes
         this.app.use((req, res) => {
             res.status(404).send('Not found');
-        });
-    }
-
-    setupRouters() {
-        this.app.get('/swagger-ui.css', (req, res) => {
-            res.setHeader('Content-Type', 'text/css');
-            res.end(swaggerUICSS);
-        });
-        this.app.get('/swagger-ui.js', (req, res) => {
-            res.setHeader('Content-Type', 'application/javascript');
-            res.end(swaggerUIJS);
-        });
-        this.app.get('/js-yaml', (req, res) => {
-            res.setHeader('Content-Type', 'application/javascript');
-            res.end(JSYAML);
         });
     }
 
@@ -307,4 +319,6 @@ export default class OpenAPIRendererServer implements OpenAPIRendererServerInter
         }
         return undefined;
     }
+
+
 }

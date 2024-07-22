@@ -1,10 +1,9 @@
-import {OpenAPIRendererInterface, Params, ParsedParams, PowerOffEvent, PreviewHandlerInterface} from "../typing/interfaces";
+import {OpenAPIRendererInterface, ParsedParams, PowerOffEvent, PreviewHandlerInterface} from "../typing/interfaces";
 import {OpenAPIPluginContext} from "../contextManager";
 import path from "path";
 import {MarkdownView, WorkspaceLeaf} from "obsidian";
-import {SwaggerUIModal} from 'rendering/swaggerUIModal'
 import {eventID, RenderingMode} from "../typing/constants";
-import * as swaggerResources from '../assets/shared resources'
+import yaml from "js-yaml";
 
 /**
  * Class representing an OpenAPI renderer.
@@ -23,62 +22,33 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @param mode - The rendering mode (Inline or Modal).
      */
     async renderOpenAPIResources(view: MarkdownView, mode: RenderingMode): Promise<void> {
-        try {
-            const result = await this.renderHTML(view);
-            if (result.htmlFilePath && result.specFilePath) {
-                switch (mode) {
-                    case RenderingMode.Inline:
-                        await this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(view, result.htmlFilePath, result.specFilePath);
-                        this.appContext.plugin.showNotice('New OpenAPI Swagger UI was rendered');
-                        break;
-                    case RenderingMode.Modal:
-                        const width = this.appContext.plugin.settings.iframeWidth;
-                        const height = this.appContext.plugin.settings.iframeHeight;
-                        const iframeCreator = this.createIframe.bind(this.appContext.plugin);
-                        new SwaggerUIModal(this.appContext.app, result.htmlFilePath,
-                            result.specFilePath, width, height, iframeCreator).open();
-                        break;
-                }
-            }
-        } catch (error: any) {
-            this.appContext.plugin.showNotice(error.message);
+        const specPath = `/${this.appContext.plugin.settings.openapiSpecFileName}`
+        switch (mode) {
+            case RenderingMode.Inline:
+                await this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(view, specPath);
+                this.appContext.plugin.showNotice('New OpenAPI Swagger UI was rendered');
+                break;
         }
     }
 
     /**
-     * Renders HTML content for OpenAPI Swagger UI based on the current MarkdownView.
-     * @param view - The MarkdownView to render into.
-     * @returns An object containing paths to the generated spec and HTML files.
-     * @throws Error if no file is currently open or if there's an issue with file operations.
+     * Creates an iframe element for embedding content based on provided parameters.
+     * @param params - Parameters containing HTML path, width, and height for the iframe.
+     * @returns The created iframe element.
      */
-    private async renderHTML(view: MarkdownView): Promise<{ specFilePath: string; htmlFilePath: string }> {
+    createIframe(params: ParsedParams): HTMLIFrameElement {
+        const iframe = document.createElement("iframe");
+        iframe.id = 'openapi-iframe';
 
-        const currentFile = view.file;
+        const baseURL = `http://${this.appContext.plugin.server.serverAddress}/`;
+        const templatePath = path.join(this.appContext.plugin.manifest.dir!, 'assets/template.html')
+        const specPath = encodeURIComponent(params!.specPath);
 
-        if (!currentFile) {
-            throw new Error('No file is currently open')
-        }
-
-        const parentFolder = currentFile.parent ?? currentFile.vault.getRoot();
-
-        const currentDir = parentFolder.path;
-        const specName = this.appContext.plugin.settings.openapiSpecFileName;
-        const specFilePath = path.join(currentDir, specName)
-
-        const specContent = await this.getOpenAPISpec(specFilePath, specName);
-
-        const htmlContent = this.generateSwaggerUI(specContent!);
-
-        const htmlFileName = this.appContext.plugin.settings.htmlFileName;
-
-        const htmlFilePath = path.join(currentDir, htmlFileName)
-
-        await this.appContext.app.vault.adapter.write(htmlFilePath, htmlContent);
-        return {
-            specFilePath: specFilePath,
-            htmlFilePath: htmlFilePath
-        }
-    };
+        iframe.src = path.normalize(`${baseURL}${templatePath}?path=${specPath}`)
+        iframe.width = params!.width;
+        iframe.height = params!.height;
+        return iframe
+    }
 
     /**
      * Retrieves and processes the content of an OpenAPI specification file.
@@ -87,7 +57,7 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @returns The processed content of the OpenAPI specification.
      * @throws Error if the specification file is not found or if there's an issue reading the file.
      */
-    private async getOpenAPISpec(specFilePath: string, specFileName: string): Promise<string> {
+    async getOpenAPISpec(specFilePath: string, specFileName: string): Promise<string> {
         const existSpec = await this.appContext.app.vault.adapter.exists(specFilePath);
         if (!existSpec) {
             throw new Error('The specification file was not found');
@@ -97,107 +67,14 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
         switch (extension) {
             case 'yaml':
             case 'yml' :
-                return content.replace(/\t/g, '    ');
+                const data = yaml.load(content.replace(/\t/g, '    '))
+                return JSON.stringify(data)
             case 'json':
                 return content;
             default:
                 throw new Error('The specification file was not found')
         }
     };
-
-
-    /**
-     * Generates HTML content for displaying Swagger UI based on the provided OpenAPI specification content.
-     * @param specContent - The content of the OpenAPI specification.
-     * @returns The generated HTML content with embedded Swagger UI.
-     */
-    private generateSwaggerUI(specContent: string): string {
-        const { proxyPort, proxyHostName } = this.appContext.plugin.settings;
-        const proxyAddress = `http://${proxyHostName}:${proxyPort}`;
-
-        const cdnCSS = '<link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css">\n';
-        const cdnJS = '<script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>';
-        const cdnJSYAML = '<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>\n';
-        const embedCSS = `<style>${swaggerResources.swaggerUICSS}</style>`;
-        const embedJS = `<script>${swaggerResources.swaggerUIJS}</script>`;
-        const embedJSYAML = `<script>${swaggerResources.JSYAML}</script>`;
-        const partialCSS = `<link rel="stylesheet" type="text/css" href="${proxyAddress}/swagger-ui.css">\n`;
-        const partialJS = `<script src="${proxyAddress}/swagger-ui.js"></script>`;
-        const partialJSYAML = `<script src="${proxyAddress}/js-yaml"></script>\n`;
-
-        let resultCSS: string;
-        let resultJS: string;
-        let resultJSYAML: string;
-
-        switch (this.appContext.plugin.settings.swaggerStoringType) {
-            case 'fully-local':
-                resultCSS = embedCSS;
-                resultJS = embedJS;
-                resultJSYAML = embedJSYAML;
-                break;
-            case 'partial-local':
-                resultCSS = partialCSS;
-                resultJS = partialJS;
-                resultJSYAML = partialJSYAML;
-                break;
-            case 'cdn':
-                resultCSS = cdnCSS;
-                resultJS = cdnJS;
-                resultJSYAML = cdnJSYAML;
-                break;
-            default:
-                throw new Error('Invalid swaggerStoringType');
-        }
-
-        return `
- <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <title>Swagger UI</title>
-       ${resultCSS}
-     <style>
-         html { box-sizing: border-box; overflow-moz-scrollbars-vertical; overflow-y: scroll; }
-         *, *:before, *:after { box-sizing: inherit; }
-         body { margin: 0; background: #fafafa; }
-     </style>
- </head>
- <body>
-     <div id="swagger-ui"></div>
-     ${resultJS}
-     ${resultJSYAML}
-     <script>
-         window.onload = function() {
-             const spec = jsyaml.load(${JSON.stringify(specContent)});
-             const ui = SwaggerUIBundle({
-                 spec: spec,
-                 dom_id: '#swagger-ui',
-                 presets: [
-                     SwaggerUIBundle.presets.apis,
-                     SwaggerUIBundle.SwaggerUIStandalonePreset
-                 ],
-                 layout: "BaseLayout"
-             });
-         }
-     </script>
- </body>
- </html>
-         `;
-    }
-
-    /**
-     * Creates an iframe element for embedding content based on provided parameters.
-     * @param params - Parameters containing HTML path, width, and height for the iframe.
-     * @returns The created iframe element.
-     */
-    createIframe(params: ParsedParams | Params): HTMLIFrameElement {
-        const iframe = document.createElement("iframe");
-        iframe.id = 'openapi-iframe';
-        iframe.src = path.normalize(`http://${this.appContext.plugin.server.serverAddress}/${params!.htmlPath}`)
-        iframe.width = params!.width;
-        iframe.height = params!.height;
-        return iframe
-    }
 
 }
 

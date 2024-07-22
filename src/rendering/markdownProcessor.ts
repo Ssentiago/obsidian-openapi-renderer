@@ -52,8 +52,8 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      */
     private async parseParams(source: string): Promise<ParseResult> {
         const lines = source.trim().split('\n')
-        if (!(lines.length === 4)) {
-            return this.createErrorResult('Missing one or more required parameters or too many parameters. Expected 4 parameters: openapi-spec, openapi-html, width, height')
+        if (!(lines.length === 3)) {
+            return this.createErrorResult('Missing one or more required parameters or too many parameters. Expected 3 parameters: openapi-spec, width, height')
         }
 
         const sectionParts = lines.map(line => line.split(/:\s*/));
@@ -61,11 +61,13 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
         if (!this.isValidParamsNames(sectionParts)) {
             return this.createErrorResult("Invalid parameter names or order. Expected, one per line: openapi-spec, openapi-html, width, height")
         }
-        const [specPath, htmlPath, width, height] = sectionParts.map(line => line[1].trim());
 
-        if (!specPath || !htmlPath || !width || !height) {
-            return this.createErrorResult("Missing one or more required parameters value: openapi-spec, openapi-html, width, height")
+        const paramValues = sectionParts.map(line => line[1].trim());
+        if (paramValues.some(value => !value)) {
+            return this.createErrorResult("Missing one or more required parameters value: openapi-spec, width, height")
         }
+        const [specPath, width, height] = paramValues;
+
 
         const existsSpec = await this.appContext.app.vault.adapter.exists(specPath)
         if (!existsSpec) {
@@ -81,14 +83,11 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
             success: true,
             params: {
                 specPath: specPath,
-                htmlPath: htmlPath,
                 width: width,
                 height: height
             },
             error: null,
         }
-
-
     }
 
     /**
@@ -97,9 +96,10 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @returns True if the parameter names and order are valid; otherwise, false.
      */
     private isValidParamsNames(sectionParts: string[][]): boolean {
+        const expectedParamNames = ['openapi-spec', 'width', 'height']
         const paramsNames = sectionParts.map(line => line[0].trim())
-        const expectedParamNames = ['openapi-spec', 'openapi-html', 'width', 'height'];
         return paramsNames.every((name, index) => name === expectedParamNames[index])
+
     }
 
     /**
@@ -128,7 +128,6 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
     }
 
 
-
     /**
      * Inserts an OpenAPI block into a Markdown view if one does not already exist.
      * @async
@@ -137,13 +136,13 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param specFilePath - The file path to the OpenAPI specification file.
      * @returns A promise that resolves when the block is inserted.
      */
-    async insertOpenAPIBlock(view: MarkdownView, htmlFilePath: string, specFilePath: string): Promise<void> {
+    async insertOpenAPIBlock(view: MarkdownView, specFilePath: string): Promise<void> {
         const file = view.file;
         const editor = view.editor;
 
         const cache = this.appContext.app.metadataCache.getFileCache(file!);
         const isOpenAPIBlock = this.hasOpenAPIBlock(cache, editor);
-        !isOpenAPIBlock && await this.insertNewBlock(editor, htmlFilePath, specFilePath);
+        !isOpenAPIBlock && await this.insertNewBlock(editor, specFilePath);
     }
 
     /**
@@ -154,10 +153,10 @@ export default class OpenAPIMarkdownProcessor implements OpenAPIMarkdownProcesso
      * @param specFilePath - The file path to the OpenAPI specification file.
      * @returns A promise that resolves when the block is inserted.
      */
-    private async insertNewBlock(editor: Editor, htmlFilePath: string, specFilePath: string): Promise<void> {
+    private async insertNewBlock(editor: Editor, specFilePath: string): Promise<void> {
         const width = this.appContext.plugin.settings.iframeWidth
         const height = this.appContext.plugin.settings.iframeHeight
-        const newBlock = `\`\`\`openapi\nopenapi-spec: ${specFilePath}\nopenapi-html: ${htmlFilePath}\nwidth: ${width}\nheight: ${height}\n\`\`\``
+        const newBlock = `\`\`\`openapi\nopenapi-spec: ${specFilePath}\nwidth: ${width}\nheight: ${height}\n\`\`\``
         const lastLine = editor.lastLine();
         editor.replaceRange(newBlock, {line: lastLine, ch: editor.getLine(lastLine).length});
     }
