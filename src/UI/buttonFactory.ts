@@ -68,7 +68,7 @@ export class ButtonFactory {
             title: 'Render Swagger UI',
             onClick: async (): Promise<void> => {
                 const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-               view && await plugin.renderOpenAPI(view, RenderingMode.Inline);
+                view && await plugin.openAPI.renderOpenAPIResources(view, RenderingMode.Inline);
             },
             get locations(): Set<ButtonLocation> {
                 return plugin.settings.renderButtonLocation
@@ -99,7 +99,7 @@ export class ButtonFactory {
             title: 'Refresh Swagger UI',
             onClick: async (): Promise<void> => {
                 const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-                await plugin.refreshOpenAPI(view!);
+                view && plugin.previewHandler.rerenderPreview(view);
             },
             get locations(): Set<ButtonLocation> {
                 return plugin.settings.refreshButtonLocation

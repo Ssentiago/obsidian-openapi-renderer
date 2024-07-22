@@ -141,8 +141,10 @@ export class ButtonManager {
             }
             requestAnimationFrame(() => {
                 for (const [location, element] of config.htmlElements!) {
-                    const shouldItBeVisible = config.state(location);
-                    shouldItBeVisible ? element.show() : element.hide();
+                    if (location !== 'ribbon') {
+                        const shouldItBeVisible = config.state(location);
+                        shouldItBeVisible ? element.show() : element.hide();
+                    }
                 }
                 resolve();
             });
