@@ -2,7 +2,6 @@ import {App, DropdownComponent, Setting, TAbstractFile, TextComponent} from "obs
 import OpenAPIRendererPlugin from "../main";
 import {OpenAPIRendererEventPublisher} from "../pluginEvents/eventEmitter";
 import {PowerOffEvent, SettingsSection} from "../typing/interfaces";
-import {PreviewModal} from "./previewModal";
 
 import {eventID} from "../typing/constants";
 
@@ -83,13 +82,7 @@ export class RenderSettings implements SettingsSection {
                     .onClick(() => {
                         this.plugin.showNotice('Width and height determine the size of the iframe in your notes. Use CSS units like px, %, or vh.', 5000)
                     });
-            }).addButton(button => {
-            button.onClick(() => {
-                new PreviewModal(this.app, this.plugin).open()
             })
-                .setTooltip('Show the preview of the iframe with current settings. Check the server state first', {delay: 100})
-                .setIcon('scan-eye')
-        });
 
 
         new Setting(containerEl)
