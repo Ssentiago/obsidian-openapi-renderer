@@ -1,20 +1,31 @@
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import cjs from '@rollup/plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import postcss from 'rollup-plugin-postcss';
-import autoprefixer from 'autoprefixer';
-import {string} from 'rollup-plugin-string';
-import url from "rollup-plugin-url";
 
 
 const name = 'openapi-renderer';
 
-const developmentConfig = {
+const baseConfig = {
     input: 'src/main.ts',
     external: ['obsidian'],
+    plugins: [
+        json(),
+        nodeResolve({
+            preferBuiltins: true
+        }),
+        commonjs({
+            include: 'node_modules/**'
+        }),
+        typescript(),
+    ],
+};
+
+
+const developmentConfig = {
+    ...baseConfig,
     output: {
         dir: 'test-vault/.obsidian/plugins/openapi-renderer',
         sourcemap: false,
@@ -23,46 +34,21 @@ const developmentConfig = {
         name
     },
     plugins: [
-        string({
-            include: [
-                '**/swagger-ui.module.css',
-                '**/swagger-ui-bundle.module.js',
-                '**/js-yaml.module.js'
-            ],
-        }),
-        // postcss({
-        //     extensions: ['.css'],
-        //     inject: false,
-        //     extract: false,
-        //     exclude: '**/swagger-ui.module.css', // Исключаем файл из обработки PostCSS
-        // }),
-        json(),
-        nodeResolve({preferBuiltins: true}),
-        cjs({include: 'node_modules/**'}),
-        typescript({tsconfig: './tsconfig.devs.json'}),
+        ...baseConfig.plugins,
         copy({
             targets: [
-<<<<<<< HEAD
-                {
-                    src: './styles.css',
-                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
-                },
-                {
-                    src: './manifest.json',
-                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
-                },
-=======
-                {src: './styles.css', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
-                {src: './swagger-pet-store-example.html', dest: 'dist/'},
-                {src: './manifest.json', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
->>>>>>> 4f8b677 (added proxy)
+                { src: './styles.css', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
+                { src: './manifest.json', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
+                { src: './src/assets', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
+                { src: './.hotreload', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
             ],
         }),
     ],
 };
+
+
 const productionConfig = {
-    input: 'src/main.ts',
-    external: ['obsidian'],
+    ...baseConfig,
     output: {
         dir: 'dist',
         sourcemap: false,
@@ -72,24 +58,11 @@ const productionConfig = {
         name
     },
     plugins: [
-        json(),
-        nodeResolve({preferBuiltins: true}),
-        cjs({include: 'node_modules/**'}),
-        typescript({tsconfig: './tsconfig.prod.json'}),
+        ...baseConfig.plugins,
         copy({
             targets: [
-                {
-                    src: './styles.css',
-                    dest: 'dist/',
-                },
-                {
-                    src: './swagger-pet-store-example.html',
-                    dest: 'dist/',
-                },
-                {
-                    src: './manifest.json',
-                    dest: 'dist/',
-                },
+                { src: './styles.css', dest: 'dist/' },
+                { src: './manifest.json', dest: 'dist/' },
             ],
         }),
         terser({
@@ -98,6 +71,7 @@ const productionConfig = {
         }),
     ],
 };
+
 
 const config = process.env.PRODUCTION === '1' ? productionConfig : developmentConfig;
 export default config;
