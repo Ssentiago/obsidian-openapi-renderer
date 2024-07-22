@@ -127,7 +127,6 @@ export interface OpenAPIMarkdownProcessorInterface {
 }
 
 export interface OpenAPIRendererPluginLoggerInterface {
-    appContext: OpenAPIPluginContext;
 }
 
 export interface ParsedParams {

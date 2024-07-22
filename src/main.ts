@@ -52,7 +52,7 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.logger = new OpenAPIRendererPluginLogger(this.appContext)
         this.publisher = new OpenAPIRendererEventPublisher(this.appContext)
         this.observer = new OpenAPIRendererEventObserver(this.appContext)
-        this.settingsTab = new OpenAPISettingTab(this.app, this, this.publisher);
+        this.addSettingTab(new OpenAPISettingTab(this.app, this, this.publisher));
         this.openAPI = new OpenAPIRenderer(this.appContext);
         this.previewHandler = new PreviewHandler(this.appContext);
         this.eventsHandler = new OpenAPIRendererEventsHandler(this.appContext);
@@ -61,7 +61,6 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
         this.export = new Export(this.appContext)
         this.githubClient = new GithubClient(this.appContext)
         this.uiManager = new UIManager(this.appContext)
-        this.addSettingTab(this.settingsTab);
     }
 
     /**
@@ -122,8 +121,6 @@ export default class OpenAPIRendererPlugin extends Plugin implements OpenAPIRend
      * @async
      */
     async onload(): Promise<void> {
-
-
         await this.initializePlugin()
         await this.initializeCommands()
         this.settings.isServerAutoStart && await this.server.start()
