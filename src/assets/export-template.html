@@ -2,39 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Swagger UI</title>
-        {{{swaggerCSS}}}
-        <style>
-            html { box-sizing: border-box; overflow-moz-scrollbars-vertical; overflow-y: scroll; }
-            *, *:before, *:after { box-sizing: inherit; }
-            body { margin: 0; background: #fafafa; }
-        </style>
-    </head>
-    <body>
-        <div id="swagger-ui"></div>
-        {{{swaggerJS}}}
-        <script>
-            window.onload = function() {
-                const spec = {{{specContent}}}
-                const ui = SwaggerUIBundle({
-                    spec: spec,
-                    dom_id: '#swagger-ui',
-                    presets: [
-                        SwaggerUIBundle.presets.apis,
-                        SwaggerUIBundle.SwaggerUIStandalonePreset
-                    ],
-                    layout: "BaseLayout"
-                });
-            }
-        </script>
-    </body>
-    </html></title>
+    <title>Swagger UI</title>
+    {{{swaggerCSS}}}
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+    </style>
 </head>
 <body>
-
+    <div id="swagger-ui"></div>
+    {{{swaggerJS}}}
+    <script>
+        window.onload = function() {
+            const spec = {{{specContent}}};
+            const ui = SwaggerUIBundle({
+                spec: spec,
+                dom_id: '#swagger-ui',
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIBundle.SwaggerUIStandalonePreset
+                ],
+                layout: "BaseLayout"
+            });
+        }
+    </script>
 </body>
 </html>
