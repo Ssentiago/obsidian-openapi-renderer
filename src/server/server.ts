@@ -79,7 +79,6 @@ export default class OpenAPIRendererServer
 
                         this.server = newServer;
 
-                        this.publishServerButtonsChangeStateEvent();
                         this.publishServerChangeStateEvent();
 
                         resolve(true);
@@ -99,23 +98,6 @@ export default class OpenAPIRendererServer
             );
             return false;
         }
-    }
-
-    /**
-     * Publishes a server state change event when the server is either started or stopped.
-     */
-    private publishServerButtonsChangeStateEvent(): void {
-        const event = {
-            eventID: eventID.ServerChangeButtonState,
-            timestamp: new Date(),
-            publisher: eventPublisher.Plugin,
-            subject: Subject.Button,
-            emitter: this.appContext.app.workspace,
-            data: {
-                buttonID: SERVER_BUTTON_ID,
-            },
-        } as ChangeServerButtonStateEvent;
-        this.appContext.plugin.publisher.publish(event);
     }
 
     publishServerChangeStateEvent(): void {
@@ -146,7 +128,6 @@ export default class OpenAPIRendererServer
                 });
             })
                 .then(() => {
-                    this.publishServerButtonsChangeStateEvent();
                     this.publishServerChangeStateEvent();
                     return true;
                 })

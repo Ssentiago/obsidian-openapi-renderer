@@ -1,6 +1,6 @@
 import { MarkdownView, setIcon, TAbstractFile, TextComponent } from 'obsidian';
 import {
-    ChangeServerButtonStateEvent,
+    ChangeServerStateEvent,
     OpenAPIRendererEventsHandlerInterface,
     ToggleButtonVisibilityEvent,
 } from '../typing/interfaces';
@@ -241,7 +241,7 @@ export class OpenAPIRendererEventsHandler
      * @returns A function that handles ChangeServerButtonStateEvent.
      */
     handleServerButtonState(button: Button) {
-        return async (event: ChangeServerButtonStateEvent): Promise<void> => {
+        return async (event: ChangeServerStateEvent): Promise<void> => {
             const elements = button.config.htmlElements?.values();
             if (elements) {
                 for (const element of elements) {

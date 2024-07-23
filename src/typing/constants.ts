@@ -1,6 +1,5 @@
 export enum eventID {
     ToggleButtonVisibility = 'toggle-button-visibility',
-    ServerChangeButtonState = 'server-change-button-state',
     ServerChangedState = 'openapi-renderer-server-started',
     PowerOff = 'openapi-renderer-power-off',
 }

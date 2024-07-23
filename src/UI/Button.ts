@@ -48,7 +48,7 @@ export class Button extends AbstractButtonObject {
         if (this.config.buttonType === 'server-button') {
             this.buttonManager.uiManager.appContext.plugin.observer.subscribe(
                 this.buttonManager.uiManager.appContext.app.workspace,
-                eventID.ServerChangeButtonState,
+                eventID.ServerChangedState,
                 eventsHandler.handleServerButtonState(this)
             );
         }
