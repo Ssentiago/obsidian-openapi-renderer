@@ -55,7 +55,7 @@ Customize the plugin in the settings:
 - Server listening port
 
 
-## Commands
+### Commands
 
 - Render OpenAPI Swagger UI inline
 - Refresh OpenAPI Swagger UI preview
