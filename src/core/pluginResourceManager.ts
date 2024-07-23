@@ -32,13 +32,14 @@ export default class PluginResourceManager {
         if (await this.pluginUtils.isFirstOpenPlugin()) {
             this.plugin.showNotice(
                 'This seems to be the first launch of the plugin. Please download the resources in the plugin settings, otherwise it may not work correctly.',
-                5000
+                7000
             );
         } else if (await this.pluginUtils.wasAnUpdate()) {
             if (this.plugin.settings.isResourcesAutoUpdate) {
                 this.plugin.showNotice(
                     'An update for the plugin has been identified. ' +
-                        'Downloading the latest resources. This may take a moment.'
+                        'Downloading the latest resources. This may take a moment.',
+                    4000
                 );
                 setTimeout(async () => {
                     await this.plugin.githubClient.downloadAssetsFromLatestRelease();
