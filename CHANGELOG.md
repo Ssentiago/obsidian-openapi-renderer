@@ -1,3 +1,7 @@
+# Date update
+2024-07-24
+
+
 # 1.0.0 (Initial Release)
 
 ### Features:
@@ -96,3 +100,31 @@ Added validation for HTML file existence on file open
 ### New Commands
 
 - Rendering in a modal window
+
+# 3.1.0
+
+### Added
+
+- **Export Options for Swagger-UI**:
+  - **CDN Export**: Export with CDN links.
+  - **Single-File Export**: Combine all code into one HTML file.
+  - **ZIP Export**: Package the HTML file and its dependencies into a ZIP archive.
+- **Custom Plugin Resource Downloader**: Implemented a new system for downloading plugin resources from GitHub Releases.
+- The plugin now performs the following checks:
+  - On first open: Notifies the user that an update is recommended.
+  - If an update has been detected:
+    - If auto-update is enabled: Automatically downloads the necessary resources.
+    - If auto-update is not enabled: Prompts the user to manually download the resources.
+
+### Improved
+
+- **Refactored Generation Method**: Now using template-based generation for improved flexibility and maintainability.
+- **Updated Plugin Settings UI**: Redesigned the plugin settings interface to include a navigation bar.
+
+### Removed
+
+- **Rendering Command in Modal Window**: Removed the command to render swagger ui within a 
+  modal window.
+- **HTML Filename Option in Settings**: Removed the HTML filename option from settings. We now 
+  work exclusively with templates, and users can export their own Swagger UI manually (`Open 
+  comand palette - OpenAPI Renderer: Export`).
