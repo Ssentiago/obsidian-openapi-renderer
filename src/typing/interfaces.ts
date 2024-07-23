@@ -217,8 +217,6 @@ export interface ChangeServerButtonStateEvent extends ButtonEvent {
 
 export interface ChangeServerStateEvent extends OpenAPIRendererEvent {}
 
-export interface ChangedServerSettingsEvent extends OpenAPIRendererEvent {}
-
 export interface PowerOffEvent extends OpenAPIRendererEvent {}
 
 export interface ObserverEventData {
