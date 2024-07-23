@@ -50,8 +50,10 @@ export default class GithubClient {
                     name: asset.name,
                     download_url: asset.browser_download_url,
                 }));
-        } catch (error) {
-            console.error(`Error fetching release for tag ${this.tag}:`, error);
+        } catch (error: any) {
+            this.appContext.plugin.logger.error(
+                `Error fetching release for tag ${this.tag}: ${error.message}`
+            );
             throw error;
         }
     }
@@ -186,7 +188,10 @@ export default class GithubClient {
                     fileStream
                         .pipe(extract)
                         .on('error', (tarErr) => {
-                            console.error('Tar extraction error:', tarErr);
+                            this.appContext.plugin.logger.error(
+                                'Tar extraction error:',
+                                tarErr
+                            );
                             reject(tarErr);
                         })
                         .on('finish', () => {
