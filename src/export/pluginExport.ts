@@ -28,9 +28,17 @@ export default class Export {
      */
     async exportCDN(): Promise<void> {
         const currentDir = this.utils.getCurrentDir();
+        if (!currentDir) {
+            this.appContext.plugin.showNotice('No current file open');
+            return;
+        }
         const template = await this.utils.getTemplateContent();
-        if (currentDir && template) {
+        if (template) {
             const specContent = await this.utils.getSpecContent(currentDir);
+            if (!specContent) {
+                return;
+            }
+
             const cssLink =
                 '<link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css">';
             const swaggerJSLink =
@@ -67,9 +75,16 @@ export default class Export {
      */
     async exportFullyLocally(): Promise<void> {
         const currentDir = this.utils.getCurrentDir();
+        if (!currentDir) {
+            this.appContext.plugin.showNotice('No current file open');
+            return;
+        }
         const template = await this.utils.getTemplateContent();
-        if (currentDir && this.pluginPath && template) {
+        if (this.pluginPath && template) {
             const specContent = await this.utils.getSpecContent(currentDir);
+            if (!specContent) {
+                return;
+            }
             const cssPath = path.join(
                 this.basePath,
                 this.pluginPath,
@@ -119,6 +134,11 @@ export default class Export {
      */
     async exportZip(): Promise<void> {
         const currentDir = this.utils.getCurrentDir();
+        if (!currentDir) {
+            this.appContext.plugin.showNotice('No current file open');
+            return;
+        }
+
         if (currentDir && this.pluginPath) {
             const assetsDir = path.join(
                 this.basePath,
@@ -137,6 +157,9 @@ export default class Export {
             );
             const templateContent = await this.utils.getTemplateContent();
             const specContent = await this.utils.getSpecContent(currentDir);
+            if (!specContent) {
+                return;
+            }
             if (templateContent) {
                 const zip = new Yazl.ZipFile();
 
@@ -154,8 +177,8 @@ export default class Export {
                     .pipe(fs.createWriteStream(output))
                     .on('finish', () =>
                         this.appContext.plugin.showNotice(
-                            'Archive created successfully: ' +
-                                'All files and templates have been packed into a ZIP.'
+                            'Export complete: All files and templates have been ' +
+                                'successfully packed into a ZIP archive.'
                         )
                     );
             }

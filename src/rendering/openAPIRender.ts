@@ -65,16 +65,28 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
      * @param params - Parameters containing spec path, width, and height for the iframe.
      * @returns The created iframe element.
      */
-    createIframe(params: ParsedParams): HTMLIFrameElement {
+    async createIframe(params: ParsedParams): Promise<HTMLIFrameElement> {
         const iframe = document.createElement('iframe');
         iframe.id = 'openapi-iframe';
 
+        const pluginDir = this.appContext.plugin.manifest.dir;
+        if (!pluginDir) {
+            throw new Error('No plugin dir found');
+        }
+        const assetsPath = path.join(pluginDir, 'assets');
+
+        const existsAssetsPath =
+            await this.appContext.app.vault.adapter.exists(assetsPath);
+
+        if (!existsAssetsPath) {
+            throw new Error(
+                'No plugin resources dir found. Please download it'
+            );
+        }
+
         const baseURL = `http://${this.appContext.plugin.server.serverAddress}/`;
-        const templatePath = path.join(
-            this.appContext.plugin.manifest.dir!,
-            'assets/template.html'
-        );
-        const specPath = encodeURIComponent(params!.specPath);
+        const templatePath = path.join(assetsPath, 'template.html');
+        const specPath = encodeURIComponent(params.specPath);
 
         iframe.src = path.normalize(
             `${baseURL}${templatePath}?path=${specPath}`

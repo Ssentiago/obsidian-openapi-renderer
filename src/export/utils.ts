@@ -42,18 +42,29 @@ export default class Utils {
      */
     async getTemplateContent(): Promise<string | undefined> {
         if (this.export.pluginPath) {
-            const templatePath = 'assets/export-template.html';
-            const fullPath = path.join(
-                this.export.basePath,
+            const templatePath = path.join(
                 this.export.pluginPath,
-                templatePath
+                'assets/export-template.html'
             );
+            const existsTemplatePath =
+                await this.export.appContext.app.vault.adapter.exists(
+                    templatePath
+                );
+            if (!existsTemplatePath) {
+                this.export.appContext.plugin.showNotice(
+                    'No plugin resources dir found. Please download it'
+                );
+                return undefined;
+            }
+            const fullPath = path.join(this.export.basePath, templatePath);
             try {
-                const content = fs.readFileSync(fullPath, 'utf8');
-                return content;
+                return fs.readFileSync(fullPath, 'utf8');
             } catch (err: any) {
                 this.export.appContext.plugin.logger.error(err.message);
             }
+        } else {
+            this.export.appContext.plugin.showNotice('No plugin dir found');
+            return undefined;
         }
     }
 
@@ -63,10 +74,17 @@ export default class Utils {
      * @param {string} currentDir - Directory containing the spec file.
      * @returns {Promise<string>} Content of the specification file.
      */
-    async getSpecContent(currentDir: string): Promise<string> {
+    async getSpecContent(currentDir: string): Promise<string | undefined> {
         const specFileName =
             this.export.appContext.plugin.settings.openapiSpecFileName;
         const specPath = path.join(currentDir, specFileName);
+        const existsSpec =
+            await this.export.appContext.app.vault.adapter.exists(specPath);
+        if (!existsSpec) {
+            this.export.appContext.plugin.showNotice('No spec file found');
+            return;
+        }
+
         return this.export.appContext.plugin.openAPI.getOpenAPISpec(
             specPath,
             specFileName

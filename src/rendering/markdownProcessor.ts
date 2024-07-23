@@ -55,11 +55,15 @@ export default class OpenAPIMarkdownProcessor
                 return;
             }
         }
-
-        const iframe = this.appContext.plugin.openAPI.createIframe(
-            params.params!
-        );
-        el.appendChild(iframe);
+        try {
+            const iframe = await this.appContext.plugin.openAPI.createIframe(
+                params.params!
+            );
+            el.appendChild(iframe);
+        } catch (err: any) {
+            const errorDiv = el.createEl('div');
+            errorDiv.setText(err.message);
+        }
     }
 
     /**
