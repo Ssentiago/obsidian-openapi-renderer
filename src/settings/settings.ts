@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import UISettings from './UISettings';
 import ServerSettings from './serverSettings';
 import RenderSettings from './renderSettings';

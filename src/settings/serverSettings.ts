@@ -1,5 +1,5 @@
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import { App, Setting } from 'obsidian';
 import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
 

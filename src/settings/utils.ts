@@ -8,7 +8,7 @@ import {
     TextComponent,
     ToggleComponent,
 } from 'obsidian';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import {
     LinkedComponentOptions,
     ToggleButtonVisibilityEvent,

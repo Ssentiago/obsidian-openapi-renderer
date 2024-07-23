@@ -6,7 +6,7 @@ import {
     TextComponent,
 } from 'obsidian';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import {
     PowerOffEvent,
     SettingSectionParams,

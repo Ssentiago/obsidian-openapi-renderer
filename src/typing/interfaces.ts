@@ -25,7 +25,7 @@ import {
     RenderingMode,
     Subject,
 } from './constants';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 
 export interface DEFAULT_SETTINGS_Interface {
     htmlFileName: string;

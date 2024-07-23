@@ -2,7 +2,7 @@ import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
 import SettingsUtils from './utils';
 import { App, Setting } from 'obsidian';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import { exportType } from '../typing/types';
 import { OpenAPISettingTab } from './settings';
 

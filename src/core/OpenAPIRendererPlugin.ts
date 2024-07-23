@@ -2,7 +2,7 @@ import { MarkdownView, Notice, Plugin } from 'obsidian';
 import {
     OpenAPIRendererEventObserver,
     OpenAPIRendererEventPublisher,
-} from '../pluginEvents/eventEmitter';
+} from '../pluginEvents/eventManager';
 
 import {
     DEFAULT_SETTINGS_Interface,
