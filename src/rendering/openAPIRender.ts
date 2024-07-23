@@ -29,7 +29,22 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
         view: MarkdownView,
         mode: RenderingMode
     ): Promise<void> {
-        const specPath = `/${this.appContext.plugin.settings.openapiSpecFileName}`;
+        const currentFile = view.file;
+
+        if (!currentFile) {
+            this.appContext.plugin.showNotice('No file is currently open');
+            return;
+        }
+        const parentFolder = currentFile.parent ?? currentFile.vault.getRoot();
+        const currentDir = parentFolder.path;
+        const specFileName =
+            this.appContext.plugin.settings.openapiSpecFileName;
+
+        const specPath = path.join('/', currentDir, specFileName);
+        const existsPath = this.appContext.app.vault.adapter.exists(specPath);
+        if (!existsPath) {
+            return;
+        }
         switch (mode) {
             case RenderingMode.Inline:
                 await this.appContext.plugin.markdownProcessor.insertOpenAPIBlock(

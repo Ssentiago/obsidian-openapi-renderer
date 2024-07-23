@@ -36,7 +36,13 @@ export default class PluginResourceManager {
             );
         } else if (await this.pluginUtils.wasAnUpdate()) {
             if (this.plugin.settings.isResourcesAutoUpdate) {
-                await this.plugin.githubClient.downloadAssetsFromLatestRelease();
+                this.plugin.showNotice(
+                    'An update for the plugin has been identified. ' +
+                        'Downloading the latest resources. This may take a moment.'
+                );
+                setTimeout(async () => {
+                    await this.plugin.githubClient.downloadAssetsFromLatestRelease();
+                }, 4000);
             } else {
                 this.plugin.showNotice(
                     'Plugin update detected. It is recommended to update resources in settings to ensure stable operation.',
