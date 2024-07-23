@@ -152,22 +152,19 @@ export class ButtonManager {
      *
      * @param config The configuration object for the button.
      */
-    // todo the function is buggy, observe the behavior
+    // todo this is buggy, observe the behavior
     async toggleVisibility(config: ButtonConfig): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if (!config.htmlElements) {
-                reject('No any elements found.');
-            }
-            requestAnimationFrame(() => {
-                for (const [location, element] of config.htmlElements!) {
-                    if (location !== 'ribbon') {
-                        const shouldItBeVisible = config.state(location);
-                        shouldItBeVisible ? element.show() : element.hide();
-                    }
+        if (!config.htmlElements) {
+            throw new Error('No elements found.');
+        }
+        setTimeout(() => {
+            for (const [location, element] of config.htmlElements!) {
+                if (location !== 'ribbon') {
+                    const shouldItBeVisible = config.state(location);
+                    shouldItBeVisible ? element.show() : element.hide();
                 }
-                resolve();
-            });
-        });
+            }
+        }, 0);
     }
 
     /**

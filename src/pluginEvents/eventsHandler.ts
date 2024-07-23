@@ -7,8 +7,6 @@ import {
 import OpenAPIPluginContext from '../core/contextManager';
 import { Button } from '../UI/Button';
 
-import { eventPublisher } from '../typing/constants';
-
 /**
  * Handler for managing events and settings related to OpenAPI rendering.
  *
@@ -258,12 +256,7 @@ export class OpenAPIRendererEventsHandler
      */
     handleButtonVisibility(button: Button) {
         return async (event: ToggleButtonVisibilityEvent): Promise<void> => {
-            if (
-                event.publisher === eventPublisher.Plugin ||
-                event.data.buttonID === button.config.id
-            ) {
-                await button.buttonManager.toggleVisibility(button.config);
-            }
+            await button.buttonManager.toggleVisibility(button.config);
         };
     }
 
