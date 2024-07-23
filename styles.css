@@ -1,33 +1,33 @@
 :root {
-  --text-normal: #dcddde;
-  --text-muted: #999;
-  --text-faint: #666;
-  --text-error: #ff3333;
-  --text-accent: #7f6df2;
-  --interactive-normal: #2a2a2a;
-  --interactive-hover: #303030;
-  --interactive-accent: #483699;
-  --interactive-accent-hover: #4d3ca6;
-  --background-primary: #202020;
-  --background-primary-alt: #1a1a1a;
-  --background-secondary: #161616;
-  --background-secondary-alt: #000000;
-  --background-modifier-border: #333;
-  --background-modifier-form-field: #2a2a2a;
-  --background-modifier-form-field-highlighted: #303030;
-  --background-modifier-box-shadow: rgba(0, 0, 0, 0.3);
-  --background-modifier-success: #197300;
-  --background-modifier-error: #3d0000;
-  --background-modifier-error-rgb: 61, 0, 0;
-  --background-modifier-error-hover: #470000;
-  --background-modifier-cover: rgba(0, 0, 0, 0.6);
-  --text-on-accent: #dcddde;
-  --text-selection: rgba(155, 255, 255, 0.2);
-  --text-highlight-bg: rgba(255, 255, 0, 0.4);
-  --interactive-accent-rgb: 72, 54, 153;
-  --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.2);
-  --scrollbar-bg: rgba(255, 255, 255, 0.05);
-  --scrollbar-thumb-bg: rgba(255, 255, 255, 0.1);
+    --text-normal: #dcddde;
+    --text-muted: #999;
+    --text-faint: #666;
+    --text-error: #ff3333;
+    --text-accent: #7f6df2;
+    --interactive-normal: #2a2a2a;
+    --interactive-hover: #303030;
+    --interactive-accent: #483699;
+    --interactive-accent-hover: #4d3ca6;
+    --background-primary: #202020;
+    --background-primary-alt: #1a1a1a;
+    --background-secondary: #161616;
+    --background-secondary-alt: #000000;
+    --background-modifier-border: #333;
+    --background-modifier-form-field: #2a2a2a;
+    --background-modifier-form-field-highlighted: #303030;
+    --background-modifier-box-shadow: rgba(0, 0, 0, 0.3);
+    --background-modifier-success: #197300;
+    --background-modifier-error: #3d0000;
+    --background-modifier-error-rgb: 61, 0, 0;
+    --background-modifier-error-hover: #470000;
+    --background-modifier-cover: rgba(0, 0, 0, 0.6);
+    --text-on-accent: #dcddde;
+    --text-selection: rgba(155, 255, 255, 0.2);
+    --text-highlight-bg: rgba(255, 255, 0, 0.4);
+    --interactive-accent-rgb: 72, 54, 153;
+    --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.2);
+    --scrollbar-bg: rgba(255, 255, 255, 0.05);
+    --scrollbar-thumb-bg: rgba(255, 255, 255, 0.1);
 }
 
 
@@ -43,7 +43,6 @@
     border-bottom: 2px solid var(--background-modifier-border);
     padding-bottom: 8px;
     margin-bottom: 16px;
-    margin-top: 32px;
 }
 
 /* Individual setting items */
@@ -177,3 +176,52 @@
 .openapi-renderer-settings .clickable-icon:hover {
     color: var(--text-normal);
 }
+
+.openapi-renderer-settings .settings-navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Центрирование содержимого по горизонтали */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--background-modifier-border); /* Для отделения от содержимого */
+}
+
+.openapi-renderer-settings .settings-navbar-tab {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Растягивает вкладку на всю доступную ширину */
+    margin: 0 4px; /* Отступы между вкладками, чтобы они не слипались */
+    gap: var(--size-4-2);
+    padding: 5px 5px; /* Уменьшенные отступы */
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 15px; /* Скругленные углы */
+    font-size: 14px; /* Размер шрифта */
+    color: var(--text-color); /* Цвет текста */
+    height: 40px; /* Фиксированная высота для сплюснутого вида */
+    line-height: 24px; /* Высота строки для выравнивания текста по вертикали */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Плавные переходы */
+}
+
+.openapi-renderer-settings .settings-navbar-tab:hover {
+    background-color: var(--background-modifier-hover-active); /* Цвет фона при наведении */
+    border-color: var(--background-modifier-border-hover); /* Цвет границы при наведении */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень под элементом */
+}
+
+.openapi-renderer-settings .settings-navbar-tab-name {
+    font-weight: bold;
+}
+
+.openapi-renderer-settings .settings-navbar-tab-active {
+    background-color: var(--color-accent);
+    color: var(--text-on-accent);
+    font-weight: bold;
+}
+
+.openapi-renderer-settings .settings-navbar-tab-active:hover {
+    background-color: var(--color-accent);
+    color: var(--text-on-accent);
+    font-weight: bold;
+    border-color: var(--background-modifier-border-hover); /* Цвет границы при наведении */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень под элементом */
+}
+
