@@ -41,8 +41,10 @@ export class OpenAPIRenderer implements OpenAPIRendererInterface {
             this.appContext.plugin.settings.openapiSpecFileName;
 
         const specPath = path.join('/', currentDir, specFileName);
-        const existsPath = this.appContext.app.vault.adapter.exists(specPath);
+        const existsPath =
+            await this.appContext.app.vault.adapter.exists(specPath);
         if (!existsPath) {
+            this.appContext.plugin.showNotice('Spec file does not exist');
             return;
         }
         switch (mode) {
