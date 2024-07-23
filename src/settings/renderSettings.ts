@@ -14,13 +14,13 @@ import {
 } from '../typing/interfaces';
 
 import { eventID } from '../typing/constants';
-import { SettingsUtils } from './utils';
+import SettingsUtils from './utils';
 
 /**
  * Class representing the settings section of the OpenAPI Renderer plugin.
  * Implements the `SettingsSection` interface to manage plugin-specific settings in the settings UI.
  */
-export class RenderSettings implements SettingsSection {
+export default class RenderSettings implements SettingsSection {
     app: App;
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
@@ -48,8 +48,6 @@ export class RenderSettings implements SettingsSection {
      * @returns {void}
      */
     display(containerEl: HTMLElement): void {
-        new Setting(containerEl).setName('Rendering').setHeading();
-
         new Setting(containerEl)
             .setName('OpenAPI specification file name')
             .setDesc(

@@ -7,7 +7,7 @@ import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
  * Represents the server settings section within the OpenAPI Renderer plugin settings.
  * Allows users to configure server-related options such as status checking, autostart, and port settings.
  */
-export class ServerSettings implements SettingsSection {
+export default class ServerSettings implements SettingsSection {
     app: App;
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
@@ -24,8 +24,6 @@ export class ServerSettings implements SettingsSection {
      * @param containerEl - The HTML element where the settings will be displayed.
      */
     display(containerEl: HTMLElement): void {
-        new Setting(containerEl).setName('Server').setHeading();
-
         new Setting(containerEl)
             .setName('Server status')
             .setDesc(
