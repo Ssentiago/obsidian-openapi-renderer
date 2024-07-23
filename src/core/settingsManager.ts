@@ -72,7 +72,6 @@ export default class SettingsManager {
      * @returns {Promise<void>} A promise that resolves when the settings have been reset and the event has been published.
      */
     async resetSettings(): Promise<void> {
-        debugger;
         const pluginPath = this.plugin.manifest.dir;
         if (pluginPath) {
             const configPath = path.join(pluginPath, '/data.json');

@@ -167,8 +167,8 @@ export default class RenderSettings implements SettingsSection {
             .addDropdown((dropdown: DropdownComponent) => {
                 dropdown
                     .addOptions({
-                        milliseconds: 'Milliseconds',
-                        seconds: 'Seconds',
+                        milliseconds: 'ms',
+                        seconds: 's',
                     })
                     .setValue(this.plugin.settings.timeoutUnit)
                     .onChange(async (value) => {

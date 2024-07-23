@@ -242,5 +242,5 @@ export interface LinkedComponentOptions {
     options?: { [key: string]: string };
     setValue: any;
     tooltips: { [key: string]: string };
-    onChange?: (value: string) => void;
+    onChange?: (value: any) => void;
 }
