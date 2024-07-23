@@ -24,7 +24,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
         const params: SettingSectionParams = { app, plugin, publisher };
 
         this.tabs = [
-            { name: 'General', section: new GeneralSettings(params) },
+            { name: 'General', section: new GeneralSettings(params, this) },
             { name: 'UI', section: new UISettings(params) },
             { name: 'Render', section: new RenderSettings(params) },
             { name: 'Server', section: new ServerSettings(params) },
