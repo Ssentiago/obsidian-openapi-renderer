@@ -48,46 +48,45 @@ export default class ServerSettings implements SettingsSection {
 
                 button.onClick(async () => {
                     if (timeout) {
-                        return;
-                    }
-
-                    if (this.plugin.server.isRunning()) {
-                        this.plugin.showNotice(
-                            'Pong! Server is running. Click again if you want to stop it'
-                        );
-                        timeout = setTimeout(async () => {
-                            if (this.plugin.server.isRunning()) {
+                        if (this.plugin.server.isRunning()) {
+                            this.plugin.showNotice('Stopping the server...');
+                            const isServerStopped =
+                                await this.plugin.server.stop();
+                            if (isServerStopped) {
                                 this.plugin.showNotice(
-                                    'Stopping the server...'
+                                    'Server stopped successfully!'
                                 );
-                                const isServerStopped =
-                                    await this.plugin.server.stop();
-                                if (isServerStopped) {
-                                    this.plugin.showNotice(
-                                        'Server stopped successfully!'
-                                    );
-                                } else {
-                                    this.plugin.showNotice(
-                                        'Failed to stop server. Check logs for details.'
-                                    );
-                                }
-                                updateButtonState();
-                                timeout = null;
+                            } else {
+                                this.plugin.showNotice(
+                                    'Failed to stop server. Check logs for details.'
+                                );
                             }
-                        }, 3000);
-                    } else {
-                        const startServer = await this.plugin.server.start();
-                        if (startServer) {
-                            this.plugin.showNotice(
-                                'Server started successfully!'
-                            );
-                        } else {
-                            this.plugin.showNotice(
-                                'Failed to start server. Check logs for details.'
-                            );
+                            updateButtonState();
                         }
+                    } else {
+                        if (this.plugin.server.isRunning()) {
+                            this.plugin.showNotice(
+                                'Pong! Server is running. Click again if you want to stop it',
+                                3000
+                            );
+                            timeout = setTimeout(async () => {
+                                timeout = null;
+                            }, 3000);
+                        } else {
+                            const startServer =
+                                await this.plugin.server.start();
+                            if (startServer) {
+                                this.plugin.showNotice(
+                                    'Server started successfully!'
+                                );
+                            } else {
+                                this.plugin.showNotice(
+                                    'Failed to start server. Check logs for details.'
+                                );
+                            }
+                        }
+                        updateButtonState();
                     }
-                    updateButtonState();
                 });
             });
         new Setting(containerEl)
