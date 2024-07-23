@@ -24,7 +24,7 @@ import {
 /**
  * Utility class for managing settings-related operations in the OpenAPI Renderer plugin.
  */
-export class SettingsUtils {
+export default class SettingsUtils {
     app: App;
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;

@@ -1,7 +1,7 @@
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
 import { App, Setting } from 'obsidian';
-import { SettingsUtils } from './utils';
+import SettingsUtils from './utils';
 import {
     ButtonLocation,
     REFRESHER_BUTTON_ID,
@@ -14,7 +14,7 @@ import { SettingSectionParams } from '../typing/interfaces';
  * Represents the UI settings section within the OpenAPI Renderer plugin settings.
  * Allows users to customize UI elements such as server start buttons and command buttons.
  */
-export class UISettings {
+export default class UISettings {
     app: App;
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
@@ -35,8 +35,6 @@ export class UISettings {
      */
     display(containerEl: HTMLElement): void {
         const { settings } = this.plugin;
-
-        new Setting(containerEl).setName('UI').setHeading();
 
         new Setting(containerEl)
             .setName('Start server button')
