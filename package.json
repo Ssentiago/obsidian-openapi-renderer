@@ -19,7 +19,6 @@
     "js-yaml": "^4.1.0",
     "mustache": "^4.2.0",
     "obsidian": "^1.5.7-1",
-    "simple-node-logger": "^21.8.12",
     "tar": "^7.4.0",
     "yazl": "^2.5.1"
   },
