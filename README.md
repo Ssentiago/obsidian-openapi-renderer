@@ -86,3 +86,4 @@ This project uses the following third-party resources:
 
 - [Swagger UI](https://github.com/swagger-api/swagger-ui) - Licensed under the [Apache License 2.
   0](./src/assets/swagger-ui/LICENSE).
+
