@@ -4,18 +4,24 @@ import { App, Setting } from 'obsidian';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventEmitter';
 import { exportType } from '../typing/types';
+import { OpenAPISettingTab } from './settings';
 
 export default class GeneralSettings implements SettingsSection {
     app: App;
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
     utils: SettingsUtils;
+    settingsTab: OpenAPISettingTab;
 
-    constructor({ app, plugin, publisher }: SettingSectionParams) {
+    constructor(
+        { app, plugin, publisher }: SettingSectionParams,
+        settingsTab: OpenAPISettingTab
+    ) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;
         this.utils = new SettingsUtils(this.app, this.plugin, this.publisher);
+        this.settingsTab = settingsTab;
     }
 
     display(containerEl: HTMLElement): void {
@@ -32,7 +38,7 @@ export default class GeneralSettings implements SettingsSection {
                             'Settings have been reset to default'
                         );
                         setTimeout(() => {
-                            this.display(containerEl);
+                            this.settingsTab.display();
                         }, 100);
                     } catch (e: any) {
                         this.plugin.showNotice(
@@ -65,7 +71,6 @@ export default class GeneralSettings implements SettingsSection {
                         await this.plugin.settingsManager.saveSettings();
                     });
             });
-
         this.utils.createLinkedComponents({
             containerEl: containerEl,
             name: 'Default export option',
