@@ -1,7 +1,7 @@
 {
   "name": "openapi-renderer",
   "version": "3.1.0",
-  "type": "commonjs",
+  "type": "module",
   "description": "Generates a Swagger-UI interface and embeds it as an iframe",
   "main": "src/main.ts",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "Sentiago",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@octokit/rest": "^21.0.1",
     "express": "^4.19.2",
