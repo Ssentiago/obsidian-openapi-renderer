@@ -1,61 +1,33 @@
-# Date update
-2024-07-24
+# 3.1.0
 
+### Added
 
-# 1.0.0 (Initial Release)
+- **Export Options for Swagger-UI**:
+  - **CDN Export**: Export with CDN links.
+  - **Single-File Export**: Combine all code into one HTML file.
+  - **ZIP Export**: Package the HTML file and its dependencies into a ZIP archive.
+- **Custom Plugin Resource Downloader**: Implemented a new system for downloading plugin resources from GitHub Releases.
+- The plugin now performs the following checks:
+  - On first open: Notifies the user that an update is recommended.
+  - If an update has been detected:
+    - If auto-update is enabled: Automatically downloads the necessary resources.
+    - If auto-update is not enabled: Prompts the user to manually download the resources.
 
-### Features:
-- Render OpenAPI specifications within Obsidian notes
-- Support for both YAML and JSON OpenAPI specification files
-- Generate HTML with Swagger UI for visualizing API documentation
-- Automatic insertion of DataviewJS script for rendering the OpenAPI spec
-- Customizable HTML file name and OpenAPI spec file name
-- Adjustable iframe dimensions (width and height)
-- Auto-update feature for real-time preview updates
-- Hotkey support (Mod+Shift+O) for quick rendering
+### Improved
 
-### Settings:
-- Configurable HTML output file name
-- Configurable OpenAPI specification file name (supports .yaml, .yml, and .json)
-- Adjustable iframe width and height
-- Toggle for auto-update functionality
+- **Refactored Generation Method**: Now using template-based generation for improved flexibility and maintainability.
+- **Updated Plugin Settings UI**: Redesigned the plugin settings interface to include a navigation bar.
 
-### User Interface:
-- Added a settings tab for easy configuration
-- Implemented a refresh button for manual updates in desktop environments
+### Removed
 
-### Integration:
-- Seamless integration with Obsidian's file system and workspace
-- Compatible with both desktop and mobile versions of Obsidian
-
-### Performance:
-- Implemented a debounce mechanism for auto-updates to prevent excessive rerender
-
-# 2.0.0
-### Major Changes:
-- Renamed main plugin class to OpenAPIRendererPlugin for better clarity
-- Implemented a new modular architecture with separate handler classes for improved code 
-  organization and maintainability
-
-### New Features:
-- Added a new command to refresh Swagger UI (Mod+Shift+L hotkey)
-- Implemented automatic iframe source updating when opening files
-Added validation for HTML file existence on file open
-
-### Improvements:
-- Enhanced settings management with separate SettingsHandler class
-- Improved error handling and user notifications
-- Implemented more robust event handling system
-- Added support for different view modes (source/preview) when updating iframes
-
-### User Interface:
-- Updated settings tab with improved input validation for file names and iframe dimensions
-- Added notices for invalid inputs in settings with automatic reversion
-
-## Performance:
-- Optimized file open event handling with a small delay for better performance
+- **Rendering Command in Modal Window**: Removed the command to render swagger ui within a 
+  modal window.
+- **HTML Filename Option in Settings**: Removed the HTML filename option from settings. We now 
+  work exclusively with templates, and users can export their own Swagger UI manually (`Open 
+  comand palette - OpenAPI Renderer: Export`).
 
 # 3.0.0
+
 ### Added
 
 - Implemented a custom event system with centralized handling (subscription and publication)
@@ -101,30 +73,66 @@ Added validation for HTML file existence on file open
 
 - Rendering in a modal window
 
-# 3.1.0
+# 2.0.0
 
-### Added
+### Major Changes:
 
-- **Export Options for Swagger-UI**:
-  - **CDN Export**: Export with CDN links.
-  - **Single-File Export**: Combine all code into one HTML file.
-  - **ZIP Export**: Package the HTML file and its dependencies into a ZIP archive.
-- **Custom Plugin Resource Downloader**: Implemented a new system for downloading plugin resources from GitHub Releases.
-- The plugin now performs the following checks:
-  - On first open: Notifies the user that an update is recommended.
-  - If an update has been detected:
-    - If auto-update is enabled: Automatically downloads the necessary resources.
-    - If auto-update is not enabled: Prompts the user to manually download the resources.
+- Renamed main plugin class to OpenAPIRendererPlugin for better clarity
+- Implemented a new modular architecture with separate handler classes for improved code 
+  organization and maintainability
 
-### Improved
+### New Features:
 
-- **Refactored Generation Method**: Now using template-based generation for improved flexibility and maintainability.
-- **Updated Plugin Settings UI**: Redesigned the plugin settings interface to include a navigation bar.
+- Added a new command to refresh Swagger UI (Mod+Shift+L hotkey)
+- Implemented automatic iframe source updating when opening files
+Added validation for HTML file existence on file open
 
-### Removed
+### Improvements:
 
-- **Rendering Command in Modal Window**: Removed the command to render swagger ui within a 
-  modal window.
-- **HTML Filename Option in Settings**: Removed the HTML filename option from settings. We now 
-  work exclusively with templates, and users can export their own Swagger UI manually (`Open 
-  comand palette - OpenAPI Renderer: Export`).
+- Enhanced settings management with separate SettingsHandler class
+- Improved error handling and user notifications
+- Implemented more robust event handling system
+- Added support for different view modes (source/preview) when updating iframes
+
+### User Interface:
+
+- Updated settings tab with improved input validation for file names and iframe dimensions
+- Added notices for invalid inputs in settings with automatic reversion
+
+## Performance:
+
+- Optimized file open event handling with a small delay for better performance
+
+# 1.0.0 (Initial Release)
+
+### Features:
+- Render OpenAPI specifications within Obsidian notes
+- Support for both YAML and JSON OpenAPI specification files
+- Generate HTML with Swagger UI for visualizing API documentation
+- Automatic insertion of DataviewJS script for rendering the OpenAPI spec
+- Customizable HTML file name and OpenAPI spec file name
+- Adjustable iframe dimensions (width and height)
+- Auto-update feature for real-time preview updates
+- Hotkey support (Mod+Shift+O) for quick rendering
+
+### Settings:
+- Configurable HTML output file name
+- Configurable OpenAPI specification file name (supports .yaml, .yml, and .json)
+- Adjustable iframe width and height
+- Toggle for auto-update functionality
+
+### User Interface:
+- Added a settings tab for easy configuration
+- Implemented a refresh button for manual updates in desktop environments
+
+### Integration:
+- Seamless integration with Obsidian's file system and workspace
+- Compatible with both desktop and mobile versions of Obsidian
+
+### Performance:
+- Implemented a debounce mechanism for auto-updates to prevent excessive rerender
+
+
+
+
+
