@@ -59,6 +59,10 @@ Customize the plugin in the settings:
 
 - Render OpenAPI Swagger UI inline
 - Refresh OpenAPI Swagger UI preview
+- Export Swagger-UI in three options:
+  - As CDN
+  - All-in-the-one
+  - As ZIP
 
 ## Known Issues
 
