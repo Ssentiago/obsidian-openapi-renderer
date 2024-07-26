@@ -24,6 +24,7 @@ import {
     eventPublisher,
     RenderingMode,
     Subject,
+    SwaggerUITheme,
 } from './constants';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 
@@ -35,8 +36,6 @@ export interface DEFAULT_SETTINGS_Interface {
     isHTMLAutoUpdate: boolean;
     serverHostName: string;
     serverPort: number;
-    proxyHostName: string;
-    proxyPort: number;
     isServerAutoStart: boolean;
     isCreateServerButton: boolean;
     isCreateCommandButtons: boolean;
@@ -47,6 +46,7 @@ export interface DEFAULT_SETTINGS_Interface {
     timeout: number;
     exportType: exportType;
     isResourcesAutoUpdate: boolean;
+    swaggerUITheme: SwaggerUITheme;
 }
 
 export interface OpenAPIPluginContextInterface {
