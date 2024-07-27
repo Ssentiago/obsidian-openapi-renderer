@@ -111,31 +111,13 @@ export default class SwaggerView extends ItemView {
         contentEl.empty();
 
         const loadingText = contentEl.createEl('div', {
-            cls: 'loading-text',
+            cls: 'openapi-renderer-loading-text',
             text: 'Loading ',
         });
 
         const spinner = loadingText.createSpan({ cls: 'spinner' });
         setIcon(spinner, 'loader');
-
-        const style = contentEl.createEl('style');
-        style.textContent = `.loading-text {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.2em;
-                color: var(--text-normal);
-            }
-            .spinner {
-                display: inline-flex;
-                width: 1em;
-                height: 1em;
-                margin-left: 0.5em;
-                animation: spin 1s linear infinite;
-            }
-            @keyframes spin {
-                100% { transform: rotate(360deg); }
-            }`;
+        spinner.addClass('openapi-renderer-loading-text');
     }
 
     async renderView() {
