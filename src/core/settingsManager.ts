@@ -5,6 +5,7 @@ import {
     eventID,
     eventPublisher,
     Subject,
+    SwaggerUITheme,
 } from '../typing/constants';
 import {
     DEFAULT_SETTINGS_Interface,
@@ -112,8 +113,6 @@ export default class SettingsManager {
             isHTMLAutoUpdate: false,
             serverHostName: '127.0.0.1',
             serverPort: 8080,
-            proxyHostName: '127.0.0.1',
-            proxyPort: 47899,
             isServerAutoStart: false,
             isCreateServerButton: true,
             isCreateCommandButtons: false,
@@ -124,6 +123,7 @@ export default class SettingsManager {
             timeout: 2000,
             exportType: 'none',
             isResourcesAutoUpdate: false,
+            swaggerUITheme: SwaggerUITheme.light,
         };
     }
 }
