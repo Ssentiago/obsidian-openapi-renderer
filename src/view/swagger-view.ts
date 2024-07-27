@@ -1,5 +1,5 @@
 // import {SwaggerConfigs, SwaggerUIBundle} from 'swagger-ui-dist';
-import { ItemView, setIcon, TFile, WorkspaceLeaf } from 'obsidian';
+import { App, ItemView, setIcon, TFile, WorkspaceLeaf } from 'obsidian';
 import path from 'path';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
 import { promises as fs } from 'fs';
@@ -74,6 +74,17 @@ export default class SwaggerView extends ItemView {
 
     getDisplayText(): string {
         return 'Swagger View';
+    }
+
+    static async activateView(app: App) {
+        const { workspace } = app;
+        let leaf = workspace.getLeavesOfType('swagger-view')[0];
+        if (!leaf) {
+            // @ts-ignore
+            leaf = workspace.getRightLeaf(false);
+            await leaf.setViewState({ type: 'swagger-view' });
+        }
+        workspace.revealLeaf(leaf);
     }
 
     async onOpen() {
