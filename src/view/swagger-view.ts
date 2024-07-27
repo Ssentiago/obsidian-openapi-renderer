@@ -11,7 +11,7 @@ const SWAGGER_VIEW_TYPE = 'swagger-view';
 export default class SwaggerView extends ItemView {
     plugin: OpenAPIRendererPlugin;
     private cssCache = new Map<string, string>();
-    currentDir: string = '/';
+    currentDir = '/';
     renderTimeout: NodeJS.Timeout | null = null;
     swaggerContent: any = null;
     private swaggerUIBundle: SwaggerUIBundle | null = null;
@@ -37,7 +37,7 @@ export default class SwaggerView extends ItemView {
         });
     }
 
-    private async initSwaggerUIBundle() {
+    private async initSwaggerUIBundle(): Promise<void> {
         if (this.swaggerUIBundle) {
             return;
         }
@@ -60,8 +60,11 @@ export default class SwaggerView extends ItemView {
                 `${swaggerContent}
                 return SwaggerUIBundle;`
             )();
-        } catch (error) {
-            console.error('Error initializing SwaggerUIBundle:', error);
+        } catch (error: any) {
+            this.plugin.logger.error(
+                'Error initializing SwaggerUIBundle:',
+                error.message
+            );
             this.plugin.showNotice(
                 'Failed to initialize SwaggerUI. Please check the console for details.'
             );
@@ -76,7 +79,7 @@ export default class SwaggerView extends ItemView {
         return 'Swagger View';
     }
 
-    static async activateView(app: App) {
+    static async activateView(app: App): Promise<void> {
         const { workspace } = app;
         let leaf = workspace.getLeavesOfType('swagger-view')[0];
         if (!leaf) {
@@ -87,13 +90,13 @@ export default class SwaggerView extends ItemView {
         workspace.revealLeaf(leaf);
     }
 
-    async onOpen() {
+    async onOpen(): Promise<void> {
         await this.renderView();
     }
 
-    async onClose() {}
+    async onClose(): Promise<void> {}
 
-    async debounceRender() {
+    async debounceRender(): Promise<void> {
         if (this.renderTimeout) {
             clearTimeout(this.renderTimeout);
         }
@@ -106,7 +109,7 @@ export default class SwaggerView extends ItemView {
         }, 2000);
     }
 
-    async showLoadingView() {
+    async showLoadingView(): Promise<void> {
         const { contentEl } = this;
         contentEl.empty();
 
@@ -120,7 +123,7 @@ export default class SwaggerView extends ItemView {
         spinner.addClass('openapi-renderer-loading-text');
     }
 
-    async renderView() {
+    async renderView(): Promise<void> {
         const mainEl = this.containerEl.children[1];
         mainEl.empty();
 
@@ -135,7 +138,7 @@ export default class SwaggerView extends ItemView {
         await this.renderSwaggerUI(swaggerBody);
     }
 
-    async renderHeader(swaggerHeader: Element) {
+    async renderHeader(swaggerHeader: Element): Promise<void> {
         const buttonContainer = swaggerHeader.createEl('div', {
             cls: 'swagger-header-actions',
         });
@@ -167,7 +170,7 @@ export default class SwaggerView extends ItemView {
         });
     }
 
-    async renderSwaggerUI(swaggerBody: Element) {
+    async renderSwaggerUI(swaggerBody: Element): Promise<void> {
         if (!this.swaggerUIBundle) {
             await this.initSwaggerUIBundle();
         }
@@ -217,7 +220,7 @@ export default class SwaggerView extends ItemView {
         }
     }
 
-    async getCSS(cssName: string) {
+    async getCSS(cssName: string): Promise<string> {
         const basePath = this.app.vault.adapter.basePath;
         const pluginDir = this.plugin.manifest.dir;
         if (!pluginDir) {
