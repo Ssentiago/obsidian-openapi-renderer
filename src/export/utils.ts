@@ -175,8 +175,8 @@ export default class Utils {
                         const renderedTemplate = this.renderTemplate(
                             templateContent,
                             specContent,
-                            '<link rel="stylesheet" type="text/css" href="./swagger-ui/swagger-ui.module.css">\n',
-                            '<script src="./swagger-ui/swagger-ui-bundle.module.js"></script>'
+                            '<link rel="stylesheet" type="text/css" href="./swagger-ui/swagger-ui-base.css">\n',
+                            '<script src="./swagger-ui/swagger-ui-bundle.js"></script>'
                         );
                         zip.addBuffer(
                             Buffer.from(renderedTemplate, 'utf8'),
