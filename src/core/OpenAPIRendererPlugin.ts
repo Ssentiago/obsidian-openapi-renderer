@@ -29,6 +29,8 @@ import SettingsManager from './settingsManager';
 import PluginUtils from './pluginUtils';
 import PluginResourceManager from './pluginResourceManager';
 
+import SwaggerView from '../view/swagger-view';
+
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
  *
@@ -117,6 +119,10 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.previewHandler = new PreviewHandler(this.appContext);
         this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext);
         await this.markdownProcessor.registerProcessor();
+        this.registerView(
+            'swagger-view',
+            (leaf) => new SwaggerView(leaf, this)
+        );
     }
 
     /**
@@ -177,6 +183,9 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializeUI(): Promise<void> {
         this.uiManager = new UIManager(this.appContext);
         await this.uiManager.initializeUI();
+        this.addRibbonIcon('code', 'Open Swagger UI', async () => {
+            await SwaggerView.activateView(this.app);
+        });
     }
 
     /**
