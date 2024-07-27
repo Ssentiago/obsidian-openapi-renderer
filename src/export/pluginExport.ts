@@ -88,12 +88,12 @@ export default class Export {
             const cssPath = path.join(
                 this.basePath,
                 this.pluginPath,
-                'assets/swagger-ui/swagger-ui.module.css'
+                'assets/swagger-ui/swagger-ui-base.css'
             );
             const swaggerJSPath = path.join(
                 this.basePath,
                 this.pluginPath,
-                'assets/swagger-ui/swagger-ui-bundle.module.js'
+                'assets/swagger-ui/swagger-ui-bundle.js'
             );
 
             const cssContent = fs.readFileSync(cssPath, 'utf8');
