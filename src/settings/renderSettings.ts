@@ -13,7 +13,7 @@ import {
     SettingsSection,
 } from '../typing/interfaces';
 
-import { eventID } from '../typing/constants';
+import { eventID, SwaggerUITheme } from '../typing/constants';
 import SettingsUtils from './utils';
 
 /**
@@ -173,6 +173,26 @@ export default class RenderSettings implements SettingsSection {
                     .setValue(this.plugin.settings.timeoutUnit)
                     .onChange(async (value) => {
                         this.plugin.settings.timeoutUnit = value;
+                        await this.plugin.settingsManager.saveSettings();
+                    });
+            });
+
+        new Setting(containerEl)
+            .setName('Swagger-UI Theme')
+            .setDesc(
+                'Select the theme for Swagger UI in Swagger View. ' +
+                    'Choose between Light and Dark modes.'
+            )
+            .addDropdown((dropdown) => {
+                dropdown
+                    .setValue(this.plugin.settings.swaggerUITheme)
+                    .addOptions({
+                        [SwaggerUITheme.light]: 'Light',
+                        [SwaggerUITheme.dark]: 'Dark',
+                    })
+                    .onChange(async (value) => {
+                        this.plugin.settings.swaggerUITheme =
+                            value as SwaggerUITheme;
                         await this.plugin.settingsManager.saveSettings();
                     });
             });
