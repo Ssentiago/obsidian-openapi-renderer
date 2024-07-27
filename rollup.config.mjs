@@ -37,10 +37,10 @@ const developmentConfig = {
         ...baseConfig.plugins,
         copy({
             targets: [
-                { src: './styles.css', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
-                { src: './manifest.json', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
-                { src: './src/assets', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
-                { src: './.hotreload', dest: 'test-vault/.obsidian/plugins/openapi-renderer/' },
+                {src: './styles.css', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
+                {src: './manifest.json', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
+                {src: './src/assets', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
+                {src: './.hotreload', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
             ],
         }),
     ],
@@ -61,8 +61,8 @@ const productionConfig = {
         ...baseConfig.plugins,
         copy({
             targets: [
-                { src: './styles.css', dest: 'dist/' },
-                { src: './manifest.json', dest: 'dist/' },
+                {src: './styles.css', dest: 'dist/'},
+                {src: './manifest.json', dest: 'dist/'},
             ],
         }),
         terser({
