@@ -1,3 +1,8 @@
+.swagger-ui {
+    --background-secondary: #262626;
+    background-color: var(--background-secondary);
+}
+
 a { color: #8c8cfa; }
 
 ::-webkit-scrollbar-track-piece { background-color: rgba(255, 255, 255, .2) !important; }
