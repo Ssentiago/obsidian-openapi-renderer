@@ -178,24 +178,35 @@ export default class RenderSettings implements SettingsSection {
             });
 
         new Setting(containerEl)
-            .setName('Swagger-UI Theme')
-            .setDesc(
-                'Select the theme for Swagger UI in Swagger View. ' +
-                    'Choose between Light and Dark modes.'
-            )
-            .addDropdown((dropdown) => {
+            .setName('SwaggerUI Theme')
+            .setDesc('Select the theme for Swagger UI in Swagger View.')
+            .addDropdown((dropdown: DropdownComponent) => {
                 dropdown
-                    .setValue(this.plugin.settings.swaggerUITheme)
                     .addOptions({
-                        [SwaggerUITheme.light]: 'Light',
-                        [SwaggerUITheme.dark]: 'Dark',
+                        light: 'Light',
+                        dark: 'Dark',
                     })
+                    .setValue(this.plugin.settings.swaggerUITheme)
                     .onChange(async (value) => {
                         this.plugin.settings.swaggerUITheme =
                             value as SwaggerUITheme;
                         await this.plugin.settingsManager.saveSettings();
                     });
             });
+
+        new Setting(containerEl)
+            .setName('Synchronize Swagger UI Theme')
+            .setDesc(
+                'Synchronize Swagger UI appearance with the plugin’s selected theme mode upon opening'
+            )
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.synchronizeSwaggerUITheme)
+                    .onChange(async (value) => {
+                        this.plugin.settings.synchronizeSwaggerUITheme = value;
+                        await this.plugin.settingsManager.saveSettings();
+                    })
+            );
     }
 
     /**
