@@ -197,7 +197,7 @@ export default class RenderSettings implements SettingsSection {
         new Setting(containerEl)
             .setName('Synchronize Swagger UI Theme')
             .setDesc(
-                'Synchronize Swagger UI appearance with the plugin’s selected theme mode upon opening'
+                'Synchronize Swagger UI appearance with the plugin’s selected theme mode'
             )
             .addToggle((toggle) =>
                 toggle
