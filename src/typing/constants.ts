@@ -33,10 +33,11 @@ export const SERVER_BUTTON_ID = 'openapi-renderer-server';
 export const SERVER_ICON_NAME_ON = 'wifi';
 export const SERVER_ICON_NAME_OFF = 'wifi-off';
 
-export const enum CSS_NAME {
+export const enum RESOURCE_NAME {
     BaseCSS = 'swagger-ui-base.css',
     LightThemeCSS = 'swagger-ui-light.css',
     DarkThemeCSS = 'swagger-ui-dark.css',
+    SwaggerBundle = 'swagger-ui-bundle.js',
 }
 
 export const enum SwaggerUITheme {
