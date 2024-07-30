@@ -27,9 +27,8 @@ import Export from '../export/pluginExport';
 import GithubClient from '../github/github-client';
 import SettingsManager from './settingsManager';
 import PluginUtils from './pluginUtils';
+import PluginStateChecker from './pluginStateChecker';
 import PluginResourceManager from './pluginResourceManager';
-
-import SwaggerView from '../view/swagger-view';
 
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
@@ -61,6 +60,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
     githubClient!: GithubClient;
     settingsManager!: SettingsManager;
     pluginUtils!: PluginUtils;
+    stateChecker!: PluginStateChecker;
     resourceManager!: PluginResourceManager;
 
     /**
@@ -101,6 +101,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
         await this.settingsManager.loadSettings();
         this.appContext = new OpenAPIPluginContext(this.app, this);
         this.logger = new OpenAPIRendererPluginLogger(this.appContext);
+        this.resourceManager = new PluginResourceManager(this.app, this);
     }
 
     /**
@@ -119,10 +120,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.previewHandler = new PreviewHandler(this.appContext);
         this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext);
         await this.markdownProcessor.registerProcessor();
-        this.registerView(
-            'swagger-view',
-            (leaf) => new SwaggerView(leaf, this)
-        );
     }
 
     /**
@@ -183,17 +180,14 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializeUI(): Promise<void> {
         this.uiManager = new UIManager(this.appContext);
         await this.uiManager.initializeUI();
-        this.addRibbonIcon('code', 'Open Swagger UI', async () => {
-            await SwaggerView.activateView(this.app);
-        });
     }
 
     /**
      * Initializes utility components of the plugin.
      *
      * This method:
-     * - Creates instances of `PluginUtils`, `PluginResourceManager`, and `Export`.
-     * - Checks resources through `PluginResourceManager`.
+     * - Creates instances of `PluginUtils`, `PluginStateChecker`, and `Export`.
+     * - Checks resources through `PluginStateChecker`.
      *
      * @returns A promise that resolves when utility initialization is complete.
      *
@@ -202,12 +196,9 @@ export default class OpenAPIRendererPlugin extends Plugin {
 
     private async initializeUtilities(): Promise<void> {
         this.pluginUtils = new PluginUtils(this.appContext);
-        this.resourceManager = new PluginResourceManager(
-            this,
-            this.pluginUtils
-        );
+        this.stateChecker = new PluginStateChecker(this, this.pluginUtils);
         this.export = new Export(this.appContext);
-        await this.resourceManager.checkResources();
+        await this.stateChecker.checkResources();
     }
 
     /**
@@ -284,6 +275,8 @@ export default class OpenAPIRendererPlugin extends Plugin {
      */
     async onload(): Promise<void> {
         await this.initializePlugin();
+        // @ts-ignore
+        window.settings = this.settings;
     }
 
     /**
