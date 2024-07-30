@@ -236,7 +236,7 @@ export class OpenAPIRendererEventsHandler
     /**
      * Creates a handler for changing the server button state.
      * @param button The Button instance.
-     * @returns A function that handles ChangeServerButtonStateEvent.
+     * @returns A function that handles ChangeServerStateEvent.
      */
     handleServerButtonState(button: Button) {
         return async (event: ChangeServerStateEvent): Promise<void> => {
