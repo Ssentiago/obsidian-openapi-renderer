@@ -8,3 +8,5 @@ test-vault/.obsidian/community-plugins.json
 test-vault/.obsidian/workspace.json
 
 /test-vault/
+
+bundle*
