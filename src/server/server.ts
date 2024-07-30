@@ -2,7 +2,6 @@ import express from 'express';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import OpenAPIPluginContext from '../core/contextManager';
 import {
-    ChangeServerButtonStateEvent,
     ChangeServerStateEvent,
     OpenAPIRendererServerInterface,
     PowerOffEvent,
