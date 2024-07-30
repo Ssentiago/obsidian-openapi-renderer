@@ -123,7 +123,8 @@ export default class SettingsManager {
             timeout: 2000,
             exportType: 'none',
             isResourcesAutoUpdate: false,
-            swaggerUITheme: SwaggerUITheme.light,
+            swaggerUITheme: SwaggerUITheme.dark,
+            synchronizeSwaggerUITheme: false,
         };
     }
 }

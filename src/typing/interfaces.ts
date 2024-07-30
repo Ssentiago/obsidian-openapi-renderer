@@ -47,6 +47,7 @@ export interface DEFAULT_SETTINGS_Interface {
     exportType: exportType;
     isResourcesAutoUpdate: boolean;
     swaggerUITheme: SwaggerUITheme;
+    synchronizeSwaggerUITheme: boolean;
 }
 
 export interface OpenAPIPluginContextInterface {
