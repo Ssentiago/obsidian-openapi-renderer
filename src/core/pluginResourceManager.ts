@@ -36,9 +36,6 @@ export default class PluginResourceManager {
         try {
             const resource = await this.app.vault.adapter.read(resourcePath);
             this.resourceCache.set(resourcePath, resource);
-            if (resourcePath.endsWith('swagger-ui-bundle.js')) {
-                debugger;
-            }
             return resource;
         } catch (err: any) {
             this.plugin.logger.error(
