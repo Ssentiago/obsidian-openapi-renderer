@@ -4,13 +4,18 @@ import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import {visualizer} from 'rollup-plugin-visualizer';
+import bundleStats from 'rollup-plugin-bundle-stats';
 
 const name = 'openapi-renderer';
 
 const baseConfig = {
     input: 'src/main.ts',
-    external: ['obsidian'],
+    external: [
+        "obsidian",
+        "electron",
+    ],
     plugins: [
         json(),
         nodeResolve({
@@ -20,7 +25,18 @@ const baseConfig = {
             include: 'node_modules/**'
         }),
         typescript(),
+        webWorkerLoader({
+            inline: true, forceInline: true, targetPlatform: "browser", format: "cjs",
+        }),
+        visualizer({
+            open: false,
+            filename: 'bundle-analysis.html'
+        }),
+        bundleStats.bundleStats({
+            output: 'bundle-stats.json',
+        })
     ],
+
 };
 
 
