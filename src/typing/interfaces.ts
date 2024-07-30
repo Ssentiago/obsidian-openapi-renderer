@@ -210,12 +210,6 @@ export interface ToggleButtonVisibilityEvent extends ButtonEvent {
     };
 }
 
-export interface ChangeServerButtonStateEvent extends ButtonEvent {
-    data: {
-        buttonID: ButtonID;
-    };
-}
-
 export interface ChangeServerStateEvent extends OpenAPIRendererEvent {}
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {}
