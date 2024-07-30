@@ -1,4 +1,5 @@
 .swagger-ui {
+    --background-primary: #fafafa;
     --background-secondary: #fafafa;
     background-color: var(--background-secondary);
 }
