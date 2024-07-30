@@ -1,55 +1,63 @@
-import PluginUtils from './pluginUtils';
+import { App } from 'obsidian';
 import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
+import path from 'path';
 
-/**
- * Manages resources for the OpenAPI Renderer Plugin.
- *
- * This class handles:
- * - Checking if it's the first time the plugin is launched.
- * - Managing updates and notifying the user.
- *
- */
 export default class PluginResourceManager {
-    plugin: OpenAPIRendererPlugin;
-    pluginUtils: PluginUtils;
+    private app: App;
+    private plugin: OpenAPIRendererPlugin;
+    resourceCache: Map<string, string> = new Map();
+    assetsPath!: string;
 
-    constructor(plugin: OpenAPIRendererPlugin, pluginUtils: PluginUtils) {
+    constructor(app: App, plugin: OpenAPIRendererPlugin) {
+        this.app = app;
         this.plugin = plugin;
-        this.pluginUtils = pluginUtils;
+
+        this.initializeAssetsPath().catch((err: any) => {
+            this.plugin.showNotice(err.message);
+            throw err;
+        });
     }
 
-    /**
-     * Checks and manages plugin resources.
-     *
-     * This method:
-     * - Displays a notice if it's the first launch of the plugin, prompting the user to download resources.
-     * - Checks for plugin updates and either downloads updated resources automatically or shows a notice
-     *   recommending an update based on user settings.
-     *
-     * @returns A promise that resolves when the resource check is complete.
-     */
-    async checkResources(): Promise<void> {
-        if (await this.pluginUtils.isFirstOpenPlugin()) {
-            this.plugin.showNotice(
-                'This seems to be the first launch of the plugin. Please download the resources in the plugin settings, otherwise it may not work correctly.',
-                7000
-            );
-        } else if (await this.pluginUtils.wasAnUpdate()) {
-            if (this.plugin.settings.isResourcesAutoUpdate) {
-                this.plugin.showNotice(
-                    'An update for the plugin has been identified. ' +
-                        'Downloading the latest resources. This may take a moment.',
-                    4000
-                );
-                setTimeout(async () => {
-                    await this.plugin.githubClient.downloadAssetsFromLatestRelease();
-                }, 4000);
-            } else {
-                this.plugin.showNotice(
-                    'Plugin update detected. It is recommended to update resources in settings to ensure stable operation.',
-                    5000
-                );
-            }
+    async initializeAssetsPath() {
+        const pluginDir = this.plugin.manifest.dir;
+        if (!pluginDir) {
+            throw new Error('No plugin directory found');
         }
+
+        this.assetsPath = path.join(pluginDir, 'assets/swagger-ui');
+    }
+
+    private async getResource(resourcePath: string): Promise<string> {
+        const cachedResource = this.resourceCache.get(resourcePath);
+        if (cachedResource) {
+            return cachedResource;
+        }
+
+        try {
+            const resource = await this.app.vault.adapter.read(resourcePath);
+            this.resourceCache.set(resourcePath, resource);
+            if (resourcePath.endsWith('swagger-ui-bundle.js')) {
+                debugger;
+            }
+            return resource;
+        } catch (err: any) {
+            this.plugin.logger.error(
+                'Error while reading file in view:',
+                err.message
+            );
+            throw new Error(
+                'Error while reading a resource file. Try re-download it'
+            );
+        }
+    }
+
+    async getCSS(cssName: string): Promise<string> {
+        const cssPath = path.join(this.assetsPath, cssName);
+        return this.getResource(cssPath);
+    }
+
+    async getJS(jsName: string): Promise<string> {
+        const jsPath = path.join(this.assetsPath, jsName);
+        return this.getResource(jsPath);
     }
 }
