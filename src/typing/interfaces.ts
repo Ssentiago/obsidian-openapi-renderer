@@ -48,6 +48,8 @@ export interface DEFAULT_SETTINGS_Interface {
     isResourcesAutoUpdate: boolean;
     swaggerUITheme: SwaggerUITheme;
     synchronizeSwaggerUITheme: boolean;
+    synchronizeSwaggerEditorTheme: boolean;
+    swaggerEditorTheme: string;
 }
 
 export interface OpenAPIPluginContextInterface {
@@ -213,6 +215,10 @@ export interface ToggleButtonVisibilityEvent extends ButtonEvent {
 export interface ChangeServerStateEvent extends OpenAPIRendererEvent {}
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {}
+
+export interface SwaggerEditorThemeChange extends OpenAPIRendererEvent {}
+
+export interface SwaggerEditorThemeStateEvent extends OpenAPIRendererEvent {}
 
 export interface ObserverEventData {
     emitter: Events;
