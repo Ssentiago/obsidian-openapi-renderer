@@ -1,7 +1,6 @@
 import {
     SettingSectionParams,
     SettingsSection,
-    SwaggerEditorThemeChange,
     SwaggerEditorThemeStateEvent,
 } from '../typing/interfaces';
 import { App, DropdownComponent, Setting } from 'obsidian';
