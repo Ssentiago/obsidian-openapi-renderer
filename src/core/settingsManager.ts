@@ -124,7 +124,9 @@ export default class SettingsManager {
             exportType: 'none',
             isResourcesAutoUpdate: false,
             swaggerUITheme: SwaggerUITheme.dark,
-            synchronizeSwaggerUITheme: false,
+            synchronizeSwaggerUITheme: true,
+            synchronizeSwaggerEditorTheme: true,
+            swaggerEditorTheme: 'dark',
         };
     }
 }
