@@ -7,6 +7,7 @@ import ServerSettings from './serverSettings';
 import RenderSettings from './renderSettings';
 import SettingsUtils from './utils';
 import GeneralSettings from './generalSettings';
+import { EditorSettings } from './editorSettings';
 
 export class OpenAPISettingTab extends PluginSettingTab {
     protected publisher: OpenAPIRendererEventPublisher;
@@ -24,14 +25,15 @@ export class OpenAPISettingTab extends PluginSettingTab {
         const params: SettingSectionParams = { app, plugin, publisher };
 
         this.tabs = [
-            { name: 'General', section: new GeneralSettings(params, this) },
-            { name: 'UI', section: new UISettings(params) },
-            { name: 'Render', section: new RenderSettings(params) },
-            { name: 'Server', section: new ServerSettings(params) },
+            { name: 'General', section: new GeneralSettings(params, this, 0) },
+            { name: 'UI', section: new UISettings(params, 1) },
+            { name: 'Render', section: new RenderSettings(params, 2) },
+            { name: 'Server', section: new ServerSettings(params, 3) },
+            { name: 'Editor', section: new EditorSettings(params, this, 4) },
         ];
     }
 
-    display(): void {
+    display(activeTabNumber: number | undefined = undefined): void {
         const { containerEl } = this;
         containerEl.empty();
         const navbar = containerEl.createEl('nav', {
@@ -58,7 +60,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
                 cls: 'openapi-renderer-settings settings-navbar-tab-name',
                 text: tab.name,
             });
-            if (index === activeTab) {
+            if (index === (activeTabNumber ?? activeTab)) {
                 tabEl.addClass('settings-navbar-tab-active');
             }
 
@@ -75,7 +77,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
                 ]);
                 displaySection(activeTab);
             });
-            displaySection(activeTab); // showing first tab by first open
+            displaySection(activeTabNumber ?? activeTab);
         });
     }
 }
