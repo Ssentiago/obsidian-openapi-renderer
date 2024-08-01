@@ -2,6 +2,7 @@ export enum eventID {
     ToggleButtonVisibility = 'toggle-button-visibility',
     ServerChangedState = 'openapi-renderer-server-started',
     PowerOff = 'openapi-renderer-power-off',
+    SwaggerEditorThemeState = 'openapi-renderer-theme-state',
 }
 
 export enum eventPublisher {
