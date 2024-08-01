@@ -2,7 +2,10 @@ import { SwaggerEditor } from './OpenAPIEditorView';
 import { EditorView } from '@codemirror/view';
 import yaml from 'js-yaml';
 
-export function openAPIFormatter(editor: SwaggerEditor, view: EditorView) {
+export function openAPIFormatter(
+    editor: SwaggerEditor,
+    view: EditorView
+): boolean {
     let isJson = editor.file?.extension === 'json';
     const content = view.state.doc.toString();
     let formatterContent: string;
@@ -21,4 +24,5 @@ export function openAPIFormatter(editor: SwaggerEditor, view: EditorView) {
         },
     });
     editor.plugin.showNotice('Formatted');
+    return true;
 }
