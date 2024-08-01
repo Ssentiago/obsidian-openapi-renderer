@@ -11,17 +11,16 @@ export default class GeneralSettings implements SettingsSection {
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
     utils: SettingsUtils;
-    settingsTab: OpenAPISettingTab;
 
     constructor(
         { app, plugin, publisher }: SettingSectionParams,
-        settingsTab: OpenAPISettingTab
+        private settingsTab: OpenAPISettingTab,
+        private position: number
     ) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;
         this.utils = new SettingsUtils(this.app, this.plugin, this.publisher);
-        this.settingsTab = settingsTab;
     }
 
     display(containerEl: HTMLElement): void {

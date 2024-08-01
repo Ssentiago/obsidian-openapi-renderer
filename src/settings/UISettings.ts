@@ -20,7 +20,10 @@ export default class UISettings {
     publisher: OpenAPIRendererEventPublisher;
     utils: SettingsUtils;
 
-    constructor({ app, plugin, publisher }: SettingSectionParams) {
+    constructor(
+        { app, plugin, publisher }: SettingSectionParams,
+        private position: number
+    ) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;

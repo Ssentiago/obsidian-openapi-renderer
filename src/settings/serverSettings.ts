@@ -12,7 +12,10 @@ export default class ServerSettings implements SettingsSection {
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
 
-    constructor({ app, plugin, publisher }: SettingSectionParams) {
+    constructor(
+        { app, plugin, publisher }: SettingSectionParams,
+        private position: number
+    ) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;
