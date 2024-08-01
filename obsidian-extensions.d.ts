@@ -2,6 +2,7 @@ import { EventRef } from 'obsidian';
 import {
     ChangeServerStateEvent,
     PowerOffEvent,
+    SwaggerEditorThemeStateEvent,
     ToggleButtonVisibilityEvent,
 } from './src/typing/interfaces';
 
@@ -13,6 +14,16 @@ declare module 'obsidian' {
     }
 
     interface Workspace {
+        on(
+            name: eventID.SwaggerEditorThemeState,
+            callback: (event: SwaggerEditorThemeStateEvent) => any
+        ): EventRef;
+
+        trigger(
+            name: eventID.SwaggerEditorThemeState,
+            event: SwaggerEditorThemeStateEvent
+        ): void;
+
         on(
             name: eventID.ToggleButtonVisibility,
             callback: (event: ToggleButtonVisibilityEvent) => any
