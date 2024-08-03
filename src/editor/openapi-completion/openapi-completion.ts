@@ -13,7 +13,7 @@ import {
     responseCompletionLabels,
     rootCompletionLabels,
 } from './completion-labels';
-import { Extension, SelectionRange } from '@codemirror/state';
+import { SelectionRange } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { jsonLanguage } from '@codemirror/lang-json';
 import { SyntaxNode } from '@lezer/common';
@@ -124,20 +124,12 @@ function openAPIAutocompletion(
     };
 }
 
-export function yamlOpenAPICompletions(): Extension[] {
-    return [
-        yamlLanguage.data.of({
-            autocomplete: openAPIAutocompletion(getYAMLParentTree),
-        }),
-        autocompletion(),
-    ];
-}
-
-export function jsonOpenAPICompletions(): Extension[] {
-    return [
-        jsonLanguage.data.of({
-            autocomplete: openAPIAutocompletion(getJSONParentTree),
-        }),
-        autocompletion(),
-    ];
-}
+export const OpenAPICompletionExtension = [
+    yamlLanguage.data.of({
+        autocomplete: openAPIAutocompletion(getYAMLParentTree),
+    }),
+    jsonLanguage.data.of({
+        autocomplete: openAPIAutocompletion(getJSONParentTree),
+    }),
+    autocompletion(),
+];
