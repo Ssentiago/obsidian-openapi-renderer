@@ -45,12 +45,12 @@ export default class SettingsManager {
             timeout: 2000,
             exportType: 'none',
             isResourcesAutoUpdate: false,
-            swaggerUITheme: 'dark',
-            synchronizeSwaggerUITheme: true,
-            synchronizeSwaggerEditorTheme: true,
-            swaggerEditorThemeMode: 'dark',
-            swaggerEditorLightTheme: 'default',
-            swaggerEditorDarkTheme: 'default',
+            OpenAPIPreviewTheme: 'dark',
+            OpenAPISourceThemeMode: 'dark',
+            OpenAPISourceLightTheme: 'default',
+            OpenAPISourceDarkTheme: 'default',
+            synchronizeOpenAPIPreviewTheme: true,
+            synchronizeOpenAPISourceTheme: true,
         };
     }
 
