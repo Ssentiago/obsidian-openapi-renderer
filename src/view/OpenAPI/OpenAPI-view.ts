@@ -1,4 +1,4 @@
-import { TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
+import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
 import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
 import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
@@ -62,6 +62,16 @@ export class OpenAPIView extends TextFileView {
         this.mode = this.controller.newMode;
         this.initializeComponent();
         this.activeComponent.render();
+    }
+
+    addAction(
+        icon: IconName,
+        title: string,
+        callback: (evt: MouseEvent) => any
+    ): HTMLElement {
+        const button = super.addAction(icon, title, callback);
+        button.addClass('openapi-renderer-action-button');
+        return button;
     }
 
     async onLoadFile(file: TFile): Promise<void> {
