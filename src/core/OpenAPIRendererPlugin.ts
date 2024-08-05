@@ -2,13 +2,10 @@ import { MarkdownView, Notice, Plugin } from 'obsidian';
 import {
     OpenAPIRendererEventObserver,
     OpenAPIRendererEventPublisher,
-} from '../pluginEvents/eventManager';
+} from 'pluginEvents/eventManager';
 
-import {
-    DEFAULT_SETTINGS_Interface,
-    PowerOffEvent,
-} from '../typing/interfaces';
-import { OpenAPISettingTab } from '../settings/settings';
+import { DEFAULT_SETTINGS_Interface, PowerOffEvent } from 'typing/interfaces';
+import { OpenAPISettingTab } from 'settings/settings';
 import OpenAPIPluginContext from './contextManager';
 import { OpenAPIRenderer, PreviewHandler } from 'rendering/openAPIRender';
 import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
@@ -16,12 +13,7 @@ import OpenAPIRendererServer from '../server/server';
 import OpenAPIMarkdownProcessor from '../rendering/markdownProcessor';
 import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
 import UIManager from '../UI/UIManager';
-import {
-    eventID,
-    eventPublisher,
-    RenderingMode,
-    Subject,
-} from '../typing/constants';
+import { eventID, eventPublisher, Subject } from 'typing/constants';
 import ExportModal from '../export/exportModal';
 import Export from '../export/pluginExport';
 import GithubClient from '../github/github-client';
@@ -29,6 +21,7 @@ import SettingsManager from './settingsManager';
 import PluginUtils from './pluginUtils';
 import PluginStateChecker from './pluginStateChecker';
 import PluginResourceManager from './pluginResourceManager';
+import { OpenAPIView, OpenAPIView_TYPE } from 'view/OpenAPI/OpenAPI-view';
 
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
@@ -62,6 +55,46 @@ export default class OpenAPIRendererPlugin extends Plugin {
     pluginUtils!: PluginUtils;
     stateChecker!: PluginStateChecker;
     resourceManager!: PluginResourceManager;
+
+    /**
+     * Lifecycle method called when the plugin is loaded.
+     *
+     * This method is responsible for initializing the plugin by calling `initializePlugin`.
+     * It ensures that all necessary setup is completed when the plugin starts.
+     *
+     * @returns A promise that resolves when the plugin is fully initialized.
+     */
+    async onload(): Promise<void> {
+        await this.initializePlugin();
+    }
+
+    /**
+     * Lifecycle method called when the plugin is unloaded.
+     *
+     * This method publishes a power-off event to notify that the plugin is being unloaded.
+     *
+     * @returns A promise that resolves when the unload event has been published.
+     */
+    async onunload(): Promise<void> {
+        const event = {
+            eventID: eventID.PowerOff,
+            timestamp: new Date(),
+            publisher: eventPublisher.Plugin,
+            subject: Subject.All,
+            emitter: this.app.workspace,
+        } as PowerOffEvent;
+        this.publisher.publish(event);
+    }
+
+    /**
+     * Shows a notification message to the user.
+     *
+     * @param {string} message - The notification message.
+     * @param {number} [duration] - Optional duration (in milliseconds) for the notice.
+     */
+    showNotice(message: string, duration?: number): void {
+        new Notice(message, duration);
+    }
 
     /**
      * Initializes the plugin by performing core setup tasks sequentially.
@@ -180,6 +213,11 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializeUI(): Promise<void> {
         this.uiManager = new UIManager(this.appContext);
         await this.uiManager.initializeUI();
+        this.registerView(
+            OpenAPIView_TYPE,
+            (leaf) => new OpenAPIView(leaf, this)
+        );
+        this.registerExtensions(['yaml', 'yml', 'json'], OpenAPIView_TYPE);
     }
 
     /**
@@ -223,10 +261,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
                 const view =
                     this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
-                    await this.openAPI.renderOpenAPIResources(
-                        view,
-                        RenderingMode.Inline
-                    );
+                    await this.openAPI.renderOpenAPIResources(view, '');
                 }
             },
         });
@@ -263,47 +298,5 @@ export default class OpenAPIRendererPlugin extends Plugin {
                 }
             },
         });
-    }
-
-    /**
-     * Lifecycle method called when the plugin is loaded.
-     *
-     * This method is responsible for initializing the plugin by calling `initializePlugin`.
-     * It ensures that all necessary setup is completed when the plugin starts.
-     *
-     * @returns A promise that resolves when the plugin is fully initialized.
-     */
-    async onload(): Promise<void> {
-        await this.initializePlugin();
-        // @ts-ignore
-        window.settings = this.settings;
-    }
-
-    /**
-     * Lifecycle method called when the plugin is unloaded.
-     *
-     * This method publishes a power-off event to notify that the plugin is being unloaded.
-     *
-     * @returns A promise that resolves when the unload event has been published.
-     */
-    async onunload(): Promise<void> {
-        const event = {
-            eventID: eventID.PowerOff,
-            timestamp: new Date(),
-            publisher: eventPublisher.Plugin,
-            subject: Subject.All,
-            emitter: this.app.workspace,
-        } as PowerOffEvent;
-        this.publisher.publish(event);
-    }
-
-    /**
-     * Shows a notification message to the user.
-     *
-     * @param {string} message - The notification message.
-     * @param {number} [duration] - Optional duration (in milliseconds) for the notice.
-     */
-    showNotice(message: string, duration?: number): void {
-        new Notice(message, duration);
     }
 }
