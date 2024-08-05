@@ -2,13 +2,16 @@ export enum eventID {
     ToggleButtonVisibility = 'toggle-button-visibility',
     ServerChangedState = 'openapi-renderer-server-started',
     PowerOff = 'openapi-renderer-power-off',
-    SwaggerEditorThemeState = 'openapi-renderer-theme-state',
+    SourceThemeState = 'openapi-renderer-theme-state',
+    EditorChanged = 'openapi-renderer-editor-changed',
+    PreviewThemeState = 'openapi-renderer-preview-theme-state-changed',
 }
 
 export enum eventPublisher {
     App = 'app',
     Plugin = 'plugin',
     Settings = 'settings',
+    Editor = 'editor',
 }
 
 export enum Subject {
@@ -16,10 +19,7 @@ export enum Subject {
     Plugin = 'plugin',
     App = 'app',
     All = 'all-classes',
-}
-
-export enum RenderingMode {
-    'Inline' = 'inline',
+    Preview = 'preview',
 }
 
 export enum ButtonLocation {
@@ -41,7 +41,13 @@ export const enum RESOURCE_NAME {
     SwaggerBundle = 'swagger-ui-bundle.js',
 }
 
-export const enum SwaggerUITheme {
+export const enum OpenAPIThemeMode {
     dark = 'dark',
     light = 'light',
+}
+
+export const enum RenderingMode {
+    Source = 'source',
+    Preview = 'preview',
+    live = 'live',
 }
