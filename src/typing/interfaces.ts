@@ -18,14 +18,7 @@ import OpenAPIMarkdownProcessor from '../rendering/markdownProcessor';
 import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
 import UIManager from '../UI/UIManager';
 import { ButtonID, exportType } from './types';
-import {
-    ButtonLocation,
-    eventID,
-    eventPublisher,
-    RenderingMode,
-    Subject,
-    SwaggerUITheme,
-} from './constants';
+import { ButtonLocation, eventID, eventPublisher, Subject } from './constants';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 
 export interface DEFAULT_SETTINGS_Interface {
@@ -46,10 +39,12 @@ export interface DEFAULT_SETTINGS_Interface {
     timeout: number;
     exportType: exportType;
     isResourcesAutoUpdate: boolean;
-    swaggerUITheme: SwaggerUITheme;
-    synchronizeSwaggerUITheme: boolean;
-    synchronizeSwaggerEditorTheme: boolean;
-    swaggerEditorTheme: string;
+    OpenAPIPreviewTheme: string;
+    synchronizeOpenAPIPreviewTheme: boolean;
+    OpenAPISourceThemeMode: string;
+    OpenAPISourceLightTheme: string;
+    OpenAPISourceDarkTheme: string;
+    synchronizeOpenAPISourceTheme: boolean;
 }
 
 export interface OpenAPIPluginContextInterface {
@@ -73,7 +68,7 @@ export interface OpenAPIRendererPluginInterface {
 
     onunload(): Promise<void>;
 
-    renderOpenAPI(view: MarkdownView, mode: RenderingMode): Promise<void>;
+    renderOpenAPI(view: MarkdownView, mode: ''): Promise<void>;
 
     refreshOpenAPI(view: MarkdownView): Promise<void>;
 
@@ -83,10 +78,7 @@ export interface OpenAPIRendererPluginInterface {
 export interface OpenAPIRendererInterface {
     appContext: OpenAPIPluginContext;
 
-    renderOpenAPIResources(
-        view: MarkdownView,
-        mode: RenderingMode
-    ): Promise<void>;
+    renderOpenAPIResources(view: MarkdownView, mode: ''): Promise<void>;
 }
 
 export interface PreviewHandlerInterface {
@@ -128,6 +120,8 @@ export interface OpenAPIRendererEventsHandlerInterface {
 }
 
 export interface OpenAPIRendererServerInterface {
+    serverAddress: string | undefined;
+
     start(): Promise<boolean>;
 
     stop(): Promise<boolean>;
@@ -137,8 +131,6 @@ export interface OpenAPIRendererServerInterface {
     isRunning(): boolean | undefined;
 
     isPortAvailable(port: number): Promise<boolean>;
-
-    serverAddress: string | undefined;
 }
 
 export interface OpenAPIMarkdownProcessorInterface {
@@ -216,9 +208,11 @@ export interface ChangeServerStateEvent extends OpenAPIRendererEvent {}
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {}
 
-export interface SwaggerEditorThemeChange extends OpenAPIRendererEvent {}
+export interface EditorChangedEvent extends OpenAPIRendererEvent {}
 
-export interface SwaggerEditorThemeStateEvent extends OpenAPIRendererEvent {}
+export interface SourceThemeStateEvent extends OpenAPIRendererEvent {}
+
+export interface OpenAPIPreviewThemeStateEvent extends OpenAPIRendererEvent {}
 
 export interface ObserverEventData {
     emitter: Events;
@@ -244,4 +238,12 @@ export interface LinkedComponentOptions {
     setValue: any;
     tooltips: { [key: string]: string };
     onChange?: (value: any) => void;
+}
+
+export interface IOpenAPIViewComponent {
+    render(): void;
+
+    clear(): void;
+
+    getComponentData(): string;
 }
