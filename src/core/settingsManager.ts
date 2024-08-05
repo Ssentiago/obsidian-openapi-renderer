@@ -5,7 +5,6 @@ import {
     eventID,
     eventPublisher,
     Subject,
-    SwaggerUITheme,
 } from '../typing/constants';
 import {
     DEFAULT_SETTINGS_Interface,
@@ -17,6 +16,42 @@ export default class SettingsManager {
 
     constructor(plugin: OpenAPIRendererPlugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * Retrieves the default settings for the plugin.
+     *
+     * This method provides the default configuration values for various plugin settings, including file names,
+     * dimensions, server configuration, button locations, timeout settings, export type, and resource update options.
+     *
+     * @returns {DEFAULT_SETTINGS_Interface} The default settings object.
+     */
+    get defaultSettings(): DEFAULT_SETTINGS_Interface {
+        return {
+            htmlFileName: 'openapi-spec.html',
+            openapiSpecFileName: 'openapi-spec.yaml',
+            iframeWidth: '100%',
+            iframeHeight: '600px',
+            isHTMLAutoUpdate: false,
+            serverHostName: '127.0.0.1',
+            serverPort: 8080,
+            isServerAutoStart: false,
+            isCreateServerButton: true,
+            isCreateCommandButtons: false,
+            renderButtonLocation: new Set([ButtonLocation.Toolbar]),
+            refreshButtonLocation: new Set([ButtonLocation.Toolbar]),
+            serverButtonLocations: new Set([ButtonLocation.Ribbon]),
+            timeoutUnit: 'milliseconds',
+            timeout: 2000,
+            exportType: 'none',
+            isResourcesAutoUpdate: false,
+            swaggerUITheme: 'dark',
+            synchronizeSwaggerUITheme: true,
+            synchronizeSwaggerEditorTheme: true,
+            swaggerEditorThemeMode: 'dark',
+            swaggerEditorLightTheme: 'default',
+            swaggerEditorDarkTheme: 'default',
+        };
     }
 
     /**
@@ -94,39 +129,5 @@ export default class SettingsManager {
             } as ToggleButtonVisibilityEvent;
             this.plugin.publisher.publish(event);
         }
-    }
-
-    /**
-     * Retrieves the default settings for the plugin.
-     *
-     * This method provides the default configuration values for various plugin settings, including file names,
-     * dimensions, server configuration, button locations, timeout settings, export type, and resource update options.
-     *
-     * @returns {DEFAULT_SETTINGS_Interface} The default settings object.
-     */
-    get defaultSettings(): DEFAULT_SETTINGS_Interface {
-        return {
-            htmlFileName: 'openapi-spec.html',
-            openapiSpecFileName: 'openapi-spec.yaml',
-            iframeWidth: '100%',
-            iframeHeight: '600px',
-            isHTMLAutoUpdate: false,
-            serverHostName: '127.0.0.1',
-            serverPort: 8080,
-            isServerAutoStart: false,
-            isCreateServerButton: true,
-            isCreateCommandButtons: false,
-            renderButtonLocation: new Set([ButtonLocation.Toolbar]),
-            refreshButtonLocation: new Set([ButtonLocation.Toolbar]),
-            serverButtonLocations: new Set([ButtonLocation.Ribbon]),
-            timeoutUnit: 'milliseconds',
-            timeout: 2000,
-            exportType: 'none',
-            isResourcesAutoUpdate: false,
-            swaggerUITheme: SwaggerUITheme.dark,
-            synchronizeSwaggerUITheme: true,
-            synchronizeSwaggerEditorTheme: true,
-            swaggerEditorTheme: 'dark',
-        };
     }
 }
