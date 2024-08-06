@@ -71,11 +71,11 @@ export class PreviewUtils {
         const { plugin } = this.controller.preview.openAPIView;
         const view = this.controller.preview.openAPIView;
 
-        view.addAction('settings', 'Settings', () =>
+        view.modifiedAddAction('settings', 'Settings', () =>
             new SettingsModal(plugin.app, plugin, 'Preview').open()
         );
 
-        view.addAction(
+        view.modifiedAddAction(
             this.controller.themeManager.getThemeButtonIcon(),
             'Theme',
             async () => {
@@ -84,9 +84,9 @@ export class PreviewUtils {
             }
         );
 
-        view.addAction('file-stack', 'Version history', () => {});
+        view.modifiedAddAction('file-stack', 'Version history', () => {});
 
-        view.addAction('save', 'Save current version', () => {});
+        view.modifiedAddAction('save', 'Save current version', () => {});
     }
 
     setupEventListeners(): void {

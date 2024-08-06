@@ -64,7 +64,7 @@ export class OpenAPIView extends TextFileView {
         this.activeComponent.render();
     }
 
-    addAction(
+    modifiedAddAction(
         icon: IconName,
         title: string,
         callback: (evt: MouseEvent) => any
