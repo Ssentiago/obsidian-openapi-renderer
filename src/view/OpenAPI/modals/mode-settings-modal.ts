@@ -1,6 +1,6 @@
 import { App, Modal } from 'obsidian';
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
-import { EditorSettings } from 'settings/editorSettings';
+import { SourceSettings } from 'settings/source-settings';
 import { SettingSectionParams } from 'typing/interfaces';
 import { OpenAPIRendererEventPublisher } from 'pluginEvents/eventManager';
 import { PreviewSettings } from 'settings/preview-settings';
@@ -29,11 +29,11 @@ export class SettingsModal extends Modal {
 
         const { app, plugin, publisher } = this;
         const params = { app, plugin, publisher } as SettingSectionParams;
-        let settingSection: EditorSettings | PreviewSettings;
+        let settingSection: SourceSettings | PreviewSettings;
 
         switch (this.settings) {
             case 'Source':
-                settingSection = new EditorSettings(params);
+                settingSection = new SourceSettings(params);
                 break;
             case 'Preview':
                 settingSection = new PreviewSettings(params);
