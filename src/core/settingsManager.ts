@@ -1,11 +1,6 @@
 import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
 import path from 'path';
-import {
-    ButtonLocation,
-    eventID,
-    eventPublisher,
-    Subject,
-} from '../typing/constants';
+import { eventID, eventPublisher, Subject } from '../typing/constants';
 import {
     DEFAULT_SETTINGS_Interface,
     ToggleButtonVisibilityEvent,
@@ -28,21 +23,9 @@ export default class SettingsManager {
      */
     get defaultSettings(): DEFAULT_SETTINGS_Interface {
         return {
-            htmlFileName: 'openapi-spec.html',
-            openapiSpecFileName: 'openapi-spec.yaml',
-            iframeWidth: '100%',
-            iframeHeight: '600px',
-            isHTMLAutoUpdate: false,
             serverHostName: '127.0.0.1',
             serverPort: 8080,
             isServerAutoStart: false,
-            isCreateServerButton: true,
-            isCreateCommandButtons: false,
-            renderButtonLocation: new Set([ButtonLocation.Toolbar]),
-            refreshButtonLocation: new Set([ButtonLocation.Toolbar]),
-            serverButtonLocations: new Set([ButtonLocation.Ribbon]),
-            timeoutUnit: 'milliseconds',
-            timeout: 2000,
             exportType: 'none',
             isResourcesAutoUpdate: false,
             OpenAPIPreviewTheme: 'dark',
@@ -69,9 +52,6 @@ export default class SettingsManager {
         const settings = Object.assign({}, defaultSettings, userSettings);
         this.plugin.settings = {
             ...settings,
-            renderButtonLocation: new Set(settings.renderButtonLocation),
-            refreshButtonLocation: new Set(settings.refreshButtonLocation),
-            serverButtonLocations: new Set(settings.serverButtonLocations),
         };
     }
 
@@ -86,15 +66,6 @@ export default class SettingsManager {
     async saveSettings(): Promise<void> {
         const saveData = {
             ...this.plugin.settings,
-            renderButtonLocation: Array.from(
-                this.plugin.settings.renderButtonLocation
-            ),
-            refreshButtonLocation: Array.from(
-                this.plugin.settings.refreshButtonLocation
-            ),
-            serverButtonLocations: Array.from(
-                this.plugin.settings.serverButtonLocations
-            ),
         };
         await this.plugin.saveData(saveData);
     }
