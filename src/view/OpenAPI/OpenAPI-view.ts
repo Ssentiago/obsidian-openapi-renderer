@@ -3,8 +3,13 @@ import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
 import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
 import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
 import { OpenAPIController } from 'view/OpenAPI/controllers/view-controller';
-import { RenderingMode } from 'typing/constants';
-import { IOpenAPIViewComponent } from 'typing/interfaces';
+import {
+    eventID,
+    eventPublisher,
+    RenderingMode,
+    Subject,
+} from 'typing/constants';
+import { IOpenAPIViewComponent, SwitchModeStateEvent } from 'typing/interfaces';
 
 export const OpenAPIView_TYPE = 'openapi-view';
 
@@ -60,6 +65,13 @@ export class OpenAPIView extends TextFileView {
         this.clear();
         this.controller.clearActions();
         this.mode = this.controller.newMode;
+        this.plugin.publisher.publish({
+            eventID: eventID.SwitchModeState,
+            publisher: eventPublisher.OpenAPIView,
+            subject: Subject.All,
+            timestamp: new Date(),
+            emitter: this.app.workspace,
+        } as SwitchModeStateEvent);
         this.initializeComponent();
         this.activeComponent.render();
     }
