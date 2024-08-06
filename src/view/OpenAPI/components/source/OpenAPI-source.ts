@@ -26,8 +26,7 @@ export class OpenAPISource implements IOpenAPIViewComponent {
     }
 
     clear(): void {
-        this.editor?.destroy();
-        this.contentEl.empty();
+        this.contentEl.hide();
     }
 
     getComponentData(): string {

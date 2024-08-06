@@ -13,7 +13,10 @@ export class SourceController {
 
     initializeEditor(): void {
         this.initializeActions();
-        SourceUtils.initializeEditor(this);
+        this.editor.contentEl.show();
+        if (!this.editor.editor) {
+            SourceUtils.initializeEditor(this);
+        }
     }
 
     setupEventListeners(): void {

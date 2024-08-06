@@ -20,13 +20,12 @@ export default class OpenAPIPreview implements IOpenAPIViewComponent {
     }
 
     async render(): Promise<void> {
-        this.clear();
         await this.controller.initializePreview();
         await this.controller.render();
     }
 
     clear(): void {
-        this.contentEl.empty();
+        this.contentEl.hide();
         this.openAPIView.controller.clearActions();
     }
 

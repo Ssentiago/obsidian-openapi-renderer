@@ -22,6 +22,7 @@ export default class OpenAPIPreviewController {
     async initializePreview(): Promise<void> {
         this.initializeActions();
         await this.initializeSwaggerUIBundle();
+        this.preview.contentEl.show();
     }
 
     async render(): Promise<void> {
