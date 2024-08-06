@@ -1,7 +1,5 @@
-import { spawn } from 'child_process';
+import {spawn} from 'child_process';
 import psList from 'ps-list';
-import dotenv from 'dotenv';
-
 
 const OBSIDIAN_PATH = process.env.OBSIDIAN_PATH;
 
@@ -9,8 +7,6 @@ if (!OBSIDIAN_PATH) {
     console.error('OBSIDIAN_PATH is not set in the environment variables.');
     process.exit(1);
 }
-
-
 async function isObsidianRunning() {
     const processes = await psList();
     return processes.some(p => p.name.toLowerCase().includes('obsidian'));
@@ -22,9 +18,9 @@ async function startObsidian() {
         return;
     }
 
-    const cp = spawn(OBSIDIAN_PATH, { detached: true, stdio: 'ignore' });
+    const cp = spawn(OBSIDIAN_PATH, ['--remote-debugging-port=9222'], {detached: true, stdio: 'ignore'});
     cp.unref();
-    console.log('Obsidian started.');
+    console.log('Obsidian started in debugging mode at port 9222.');
 }
 
 startObsidian().catch(err => {
