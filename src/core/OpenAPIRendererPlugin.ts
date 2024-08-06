@@ -1,4 +1,4 @@
-import { MarkdownView, Notice, Plugin } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 import {
     OpenAPIRendererEventObserver,
     OpenAPIRendererEventPublisher,
@@ -7,15 +7,10 @@ import {
 import { DEFAULT_SETTINGS_Interface, PowerOffEvent } from 'typing/interfaces';
 import { OpenAPISettingTab } from 'settings/settings';
 import OpenAPIPluginContext from './contextManager';
-import { OpenAPIRenderer, PreviewHandler } from 'rendering/openAPIRender';
 import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
 import OpenAPIRendererServer from '../server/server';
-import OpenAPIMarkdownProcessor from '../rendering/markdownProcessor';
 import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
-import UIManager from '../UI/UIManager';
 import { eventID, eventPublisher, Subject } from 'typing/constants';
-import ExportModal from '../export/exportModal';
-import Export from '../export/pluginExport';
 import GithubClient from '../github/github-client';
 import SettingsManager from './settingsManager';
 import PluginUtils from './pluginUtils';
@@ -40,16 +35,11 @@ export default class OpenAPIRendererPlugin extends Plugin {
     settings!: DEFAULT_SETTINGS_Interface;
     settingsTab!: OpenAPISettingTab;
     appContext!: OpenAPIPluginContext;
-    openAPI!: OpenAPIRenderer;
-    previewHandler!: PreviewHandler;
     eventsHandler!: OpenAPIRendererEventsHandler;
     server!: OpenAPIRendererServer;
-    markdownProcessor!: OpenAPIMarkdownProcessor;
     logger!: OpenAPIRendererPluginLogger;
-    uiManager!: UIManager;
     publisher!: OpenAPIRendererEventPublisher;
     observer!: OpenAPIRendererEventObserver;
-    export!: Export;
     githubClient!: GithubClient;
     settingsManager!: SettingsManager;
     pluginUtils!: PluginUtils;
@@ -109,12 +99,10 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializePlugin(): Promise<void> {
         await this.initializeCore();
         this.initializeEventSystem();
-        await this.initializeRendering();
         await this.initializeNetworking();
         await this.initializeUI();
         await this.initializeUtilities();
         this.addSettingTab(new OpenAPISettingTab(this.app, this));
-        await this.initializeCommands();
     }
 
     /**
@@ -138,24 +126,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
     }
 
     /**
-     * Initializes rendering components of the plugin.
-     *
-     * This method:
-     * - Creates instances of `OpenAPIRenderer` and `PreviewHandler`.
-     * - Initializes `OpenAPIMarkdownProcessor` and registers the Markdown processor.
-     *
-     * @returns A promise that resolves when rendering initialization is complete.
-     *
-     * @private
-     */
-    private async initializeRendering(): Promise<void> {
-        this.openAPI = new OpenAPIRenderer(this.appContext);
-        this.previewHandler = new PreviewHandler(this.appContext);
-        this.markdownProcessor = new OpenAPIMarkdownProcessor(this.appContext);
-        await this.markdownProcessor.registerProcessor();
-    }
-
-    /**
      * Initializes the event system for the plugin.
      *
      * This method:
@@ -169,17 +139,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.publisher = new OpenAPIRendererEventPublisher(this.appContext);
         this.observer = new OpenAPIRendererEventObserver(this.appContext);
         this.eventsHandler = new OpenAPIRendererEventsHandler(this.appContext);
-
-        if (this.settings.isHTMLAutoUpdate) {
-            this.registerEvent(
-                this.appContext.app.vault.on(
-                    'modify',
-                    this.eventsHandler.modifyOpenAPISPec.bind(
-                        this.eventsHandler
-                    )
-                )
-            );
-        }
     }
 
     /**
@@ -211,8 +170,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * @private
      */
     private async initializeUI(): Promise<void> {
-        this.uiManager = new UIManager(this.appContext);
-        await this.uiManager.initializeUI();
         this.registerView(
             OpenAPIView_TYPE,
             (leaf) => new OpenAPIView(leaf, this)
@@ -220,83 +177,10 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.registerExtensions(['yaml', 'yml', 'json'], OpenAPIView_TYPE);
     }
 
-    /**
-     * Initializes utility components of the plugin.
-     *
-     * This method:
-     * - Creates instances of `PluginUtils`, `PluginStateChecker`, and `Export`.
-     * - Checks resources through `PluginStateChecker`.
-     *
-     * @returns A promise that resolves when utility initialization is complete.
-     *
-     * @private
-     */
-
     private async initializeUtilities(): Promise<void> {
         this.pluginUtils = new PluginUtils(this.appContext);
         this.stateChecker = new PluginStateChecker(this, this.pluginUtils);
-        this.export = new Export(this.appContext);
+        // this.export = new Export(this.appContext);
         await this.stateChecker.checkResources();
-    }
-
-    /**
-     * Initializes commands for the plugin.
-     *
-     * This method registers three commands:
-     *
-     * - **Render Swagger UI inline**: Renders Swagger UI inline in the active Markdown view.
-     * - **Refresh Swagger UI**: Refreshes Swagger UI in the active Markdown view.
-     * - **Export OpenAPI**: Exports OpenAPI resources based on the specified export type.
-     *
-     * @returns A promise that resolves when all commands are registered.
-     *
-     * @private
-     */
-    private async initializeCommands(): Promise<void> {
-        this.addCommand({
-            id: 'render-openapi-inline',
-
-            name: 'Render Swagger UI inline',
-            callback: async () => {
-                const view =
-                    this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (view) {
-                    await this.openAPI.renderOpenAPIResources(view, '');
-                }
-            },
-        });
-
-        this.addCommand({
-            id: 'refresh-openapi',
-            name: 'Refresh Swagger UI',
-            callback: async () => {
-                const view =
-                    this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (view) {
-                    this.previewHandler.previewManualUpdate(view);
-                }
-            },
-        });
-
-        this.addCommand({
-            id: 'export-openapi',
-            name: 'Export OpenAPI',
-            callback: async () => {
-                switch (this.settings.exportType) {
-                    case 'none':
-                        new ExportModal(this.app, this).open();
-                        break;
-                    case 'cdn':
-                        await this.export.exportCDN();
-                        break;
-                    case 'all-in-the-one':
-                        await this.export.exportFullyLocally();
-                        break;
-                    case 'zip':
-                        await this.export.exportZip();
-                        break;
-                }
-            },
-        });
     }
 }
