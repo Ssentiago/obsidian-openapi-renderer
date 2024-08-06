@@ -5,7 +5,7 @@ import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import ServerSettings from './serverSettings';
 import SettingsUtils from './utils';
 import GeneralSettings from './generalSettings';
-import { EditorSettings } from './editorSettings';
+import { SourceSettings } from './source-settings';
 import { PreviewSettings } from './preview-settings';
 
 export class OpenAPISettingTab extends PluginSettingTab {
@@ -26,7 +26,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
         this.tabs = [
             { name: 'General', section: new GeneralSettings(params, this, 0) },
             { name: 'Server', section: new ServerSettings(params, 3) },
-            { name: 'Source', section: new EditorSettings(params) },
+            { name: 'Source', section: new SourceSettings(params) },
             { name: 'Preview', section: new PreviewSettings(params) },
         ];
     }
