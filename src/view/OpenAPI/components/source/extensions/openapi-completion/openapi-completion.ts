@@ -61,6 +61,7 @@ function getJSONParentTree(context: CompletionContext): string[] {
     const tree = syntaxTree(context.state);
     let currentNode: SyntaxNode | null = tree.resolveInner(context.pos, -1);
     const parentTree: string[] = [];
+    currentNode.nextSibling;
     while (currentNode) {
         if (currentNode.name === 'Property') {
             const prop = context.state
@@ -80,9 +81,7 @@ function getJSONParentTree(context: CompletionContext): string[] {
 function openAPIAutocompletion(
     parentTreeGetter: ParentTreeGetter
 ): (context: CompletionContext) => CompletionResult | null {
-    return function newCompleterOpenAPI(
-        context: CompletionContext
-    ): CompletionResult | null {
+    return function (context: CompletionContext): CompletionResult | null {
         const currentWord = context.state.wordAt(context.pos);
         if (!currentWord) {
             return null;
