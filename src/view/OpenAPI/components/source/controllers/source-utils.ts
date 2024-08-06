@@ -18,7 +18,6 @@ import {
 } from '@codemirror/language';
 import createBoundKeymap from '../extensions/keymap';
 import { history } from '@codemirror/commands';
-import { showMinimap } from '@replit/codemirror-minimap';
 import { EditorState, Extension } from '@codemirror/state';
 import { eventID, eventPublisher, Subject } from 'typing/constants';
 import { json } from '@codemirror/lang-json';
@@ -127,12 +126,6 @@ export class SourceUtils {
             keymap.of(createBoundKeymap(editor)),
             indentOnInput(),
             history({}),
-            showMinimap.compute(['doc'], (state) => ({
-                create,
-                displayText: 'characters',
-                showOverlay: 'mouse-over',
-                gutters: [{ 1: '#00FF00', 2: '#00FF00' }],
-            })),
             lineNumbers({
                 formatNumber: (lineNo) => `${lineNo}`,
                 domEventHandlers: {
@@ -188,10 +181,6 @@ export class SourceUtils {
         }
         const isJson = file.extension === 'json';
         controller.editor.languageExtension = isJson ? json : yaml;
-
-        if (controller.editor.editor) {
-            controller.editor.editor.destroy();
-        }
 
         controller.editor.editor = new EditorView({
             state: EditorState.create({
