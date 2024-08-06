@@ -5,6 +5,7 @@ export enum eventID {
     SourceThemeState = 'openapi-renderer-theme-state',
     EditorChanged = 'openapi-renderer-editor-changed',
     PreviewThemeState = 'openapi-renderer-preview-theme-state-changed',
+    LiveModeChangeState = 'openapi-renderer-live-mode-change-state',
 }
 
 export enum eventPublisher {
@@ -12,6 +13,7 @@ export enum eventPublisher {
     Plugin = 'plugin',
     Settings = 'settings',
     Editor = 'editor',
+    OpenAPIView = 'view',
 }
 
 export enum Subject {
@@ -20,6 +22,7 @@ export enum Subject {
     App = 'app',
     All = 'all-classes',
     Preview = 'preview',
+    Editor = 'editor',
 }
 
 export enum ButtonLocation {
