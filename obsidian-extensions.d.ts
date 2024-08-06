@@ -1,8 +1,9 @@
 import { EventRef } from 'obsidian';
 import {
     ChangeServerStateEvent,
+    OpenAPIPreviewThemeStateEvent,
     PowerOffEvent,
-    SwaggerEditorThemeStateEvent,
+    SourceThemeStateEvent,
     ToggleButtonVisibilityEvent,
 } from './src/typing/interfaces';
 
@@ -15,13 +16,23 @@ declare module 'obsidian' {
 
     interface Workspace {
         on(
-            name: eventID.SwaggerEditorThemeState,
-            callback: (event: SwaggerEditorThemeStateEvent) => any
+            name: eventID.SourceThemeState,
+            callback: (event: SourceThemeStateEvent) => any
         ): EventRef;
 
         trigger(
-            name: eventID.SwaggerEditorThemeState,
-            event: SwaggerEditorThemeStateEvent
+            name: eventID.SourceThemeState,
+            event: SourceThemeStateEvent
+        ): void;
+
+        on(
+            name: eventID.PreviewThemeState,
+            callback: (event: OpenAPIPreviewThemeStateEvent) => any
+        ): EventRef;
+
+        trigger(
+            name: eventID.PreviewThemeState,
+            event: OpenAPIPreviewThemeStateEvent
         ): void;
 
         on(
@@ -45,6 +56,7 @@ declare module 'obsidian' {
             name: eventID.ServerChangedState,
             callback: (event: ChangeServerStateEvent) => any
         ): EventRef;
+
         trigger(
             name: eventID.ServerChangedState,
             event: ChangeServerStateEvent
