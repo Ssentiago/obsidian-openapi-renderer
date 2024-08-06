@@ -6,6 +6,7 @@ export enum eventID {
     EditorChanged = 'openapi-renderer-editor-changed',
     PreviewThemeState = 'openapi-renderer-preview-theme-state-changed',
     LiveModeChangeState = 'openapi-renderer-live-mode-change-state',
+    SwitchModeState = 'openapi-renderer-switch-mode',
 }
 
 export enum eventPublisher {
