@@ -176,6 +176,8 @@ export interface OpenAPIPreviewThemeStateEvent extends OpenAPIRendererEvent {}
 
 export interface LiveModeChangeStateEvent extends OpenAPIRendererEvent {}
 
+export interface SwitchModeStateEvent extends OpenAPIRendererEvent {}
+
 export interface ObserverEventData {
     emitter: Events;
     eventRef: EventRef;
