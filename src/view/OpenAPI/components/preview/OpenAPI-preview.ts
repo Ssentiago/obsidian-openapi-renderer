@@ -14,7 +14,7 @@ export default class OpenAPIPreview implements IOpenAPIViewComponent {
     constructor(
         public openAPIView: OpenAPIView,
         public plugin: OpenAPIRendererPlugin,
-        public contentEl: HTMLElement
+        public contentEl: HTMLDivElement
     ) {
         this.controller = new OpenAPIPreviewController(this);
     }

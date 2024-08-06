@@ -16,7 +16,7 @@ export class OpenAPISource implements IOpenAPIViewComponent {
     constructor(
         public view: OpenAPIView,
         public plugin: OpenAPIRendererPlugin,
-        public contentEl: HTMLElement
+        public contentEl: HTMLDivElement
     ) {
         this.controller = new SourceController(this);
     }

@@ -19,16 +19,26 @@ export class OpenAPIView extends TextFileView {
     preview: OpenAPIPreview;
     mode: RenderingMode;
     activeComponent!: IOpenAPIViewComponent;
+    sourceContainer: HTMLDivElement;
+    previewContainer: HTMLDivElement;
 
     constructor(
         leaf: WorkspaceLeaf,
         public plugin: OpenAPIRendererPlugin
     ) {
         super(leaf);
+        this.contentEl.addClass('fill-height-or-more');
+
+        this.sourceContainer = this.contentEl.createDiv({
+            cls: 'openapi-renderer-source-container',
+        });
+        this.previewContainer = this.contentEl.createDiv({
+            cls: 'openapi-renderer-preview-container',
+        });
         this.mode = RenderingMode.Preview;
         this.controller = new OpenAPIController(this);
-        this.source = new OpenAPISource(this, plugin, this.contentEl);
-        this.preview = new OpenAPIPreview(this, plugin, this.contentEl);
+        this.source = new OpenAPISource(this, plugin, this.sourceContainer);
+        this.preview = new OpenAPIPreview(this, plugin, this.previewContainer);
         this.initializeComponent();
     }
 
