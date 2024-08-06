@@ -5,38 +5,22 @@ import {
     MarkdownPostProcessorContext,
     MarkdownView,
     TextComponent,
-    TFile,
     WorkspaceLeaf,
 } from 'obsidian';
 import { OpenAPISettingTab } from '../settings/settings';
 import OpenAPIPluginContext from '../core/contextManager';
-import { OpenAPIRenderer, PreviewHandler } from 'rendering/openAPIRender';
 import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
 import OpenAPIRendererServer from '../server/server';
-import OpenAPIMarkdownProcessor from '../rendering/markdownProcessor';
 import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
-import UIManager from '../UI/UIManager';
 import { ButtonID, exportType } from './types';
 import { ButtonLocation, eventID, eventPublisher, Subject } from './constants';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 
 export interface DEFAULT_SETTINGS_Interface {
-    htmlFileName: string;
-    openapiSpecFileName: string;
-    iframeWidth: string;
-    iframeHeight: string;
-    isHTMLAutoUpdate: boolean;
     serverHostName: string;
     serverPort: number;
     isServerAutoStart: boolean;
-    isCreateServerButton: boolean;
-    isCreateCommandButtons: boolean;
-    serverButtonLocations: Set<ButtonLocation>;
-    renderButtonLocation: Set<ButtonLocation>;
-    refreshButtonLocation: Set<ButtonLocation>;
-    timeoutUnit: string;
-    timeout: number;
     exportType: exportType;
     isResourcesAutoUpdate: boolean;
     OpenAPIPreviewTheme: string;
@@ -56,13 +40,9 @@ export interface OpenAPIRendererPluginInterface {
     settings: DEFAULT_SETTINGS_Interface;
     settingsTab: OpenAPISettingTab;
     appContext: OpenAPIPluginContext;
-    openAPI: OpenAPIRenderer;
-    previewHandler: PreviewHandler;
     eventsHandler: OpenAPIRendererEventsHandler;
     server: OpenAPIRendererServer;
-    markdownProcessor: OpenAPIMarkdownProcessor;
     logger: OpenAPIRendererPluginLogger;
-    uiManager: UIManager;
 
     onload(): Promise<void>;
 
@@ -94,29 +74,9 @@ export interface PreviewHandlerInterface {
 export interface OpenAPIRendererEventsHandlerInterface {
     appContext: OpenAPIPluginContext;
 
-    modifyOpenAPISPec(file: TFile): Promise<void>;
-
-    handleSettingsTabOpenAPISpecBlur(
-        textComponent: TextComponent
-    ): Promise<void>;
-
-    handleSettingsTabHTMLFileNameBlur(
-        textComponent: TextComponent
-    ): Promise<void>;
-
-    handleSettingsTabIframeWidthBlur(
-        textComponent: TextComponent
-    ): Promise<void>;
-
-    handleSettingsTabIframeHeightBlur(
-        textComponent: TextComponent
-    ): Promise<void>;
-
     handleSettingsTabServerPortBlur(
         textComponent: TextComponent
     ): Promise<void>;
-
-    handleSettingsTabTimeoutBlur(textComponent: TextComponent): Promise<void>;
 }
 
 export interface OpenAPIRendererServerInterface {
@@ -213,6 +173,8 @@ export interface EditorChangedEvent extends OpenAPIRendererEvent {}
 export interface SourceThemeStateEvent extends OpenAPIRendererEvent {}
 
 export interface OpenAPIPreviewThemeStateEvent extends OpenAPIRendererEvent {}
+
+export interface LiveModeChangeStateEvent extends OpenAPIRendererEvent {}
 
 export interface ObserverEventData {
     emitter: Events;
