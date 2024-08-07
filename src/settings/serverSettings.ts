@@ -1,7 +1,7 @@
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import {OpenAPIRendererEventPublisher} from '../pluginEvents/eventManager';
-import {App, Setting} from 'obsidian';
-import {SettingSectionParams, SettingsSection} from '../typing/interfaces';
+import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
+import { App, Setting } from 'obsidian';
+import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
 
 /**
  * Represents the server settings section within the OpenAPI Renderer plugin settings.
