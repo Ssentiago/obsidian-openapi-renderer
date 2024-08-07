@@ -87,6 +87,16 @@ export class PreviewUtils {
                 );
             }
         );
+        plugin.observer.subscribe(
+            plugin.app.workspace,
+            eventID.PreviewThemeState,
+            async () => {
+                setIcon(
+                    themeButton,
+                    this.controller.themeManager.getThemeButtonIcon()
+                );
+            }
+        );
         const historyButton = view.addAction(
             'file-stack',
             'Version history',
