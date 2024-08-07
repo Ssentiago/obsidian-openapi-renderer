@@ -164,6 +164,8 @@ export interface ToggleButtonVisibilityEvent extends ButtonEvent {
     };
 }
 
+export interface SettingsTabStateEvent extends OpenAPIRendererEvent {}
+
 export interface ChangeServerStateEvent extends OpenAPIRendererEvent {}
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {}

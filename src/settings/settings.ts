@@ -7,10 +7,12 @@ import SettingsUtils from './utils';
 import GeneralSettings from './generalSettings';
 import { SourceSettings } from './source-settings';
 import { PreviewSettings } from './preview-settings';
+import { eventID } from '../typing/constants';
 
 export class OpenAPISettingTab extends PluginSettingTab {
     utils: SettingsUtils;
-    tabs: { name: string; section: SettingsSection }[];
+    tabs: Map<string, SettingsSection>;
+    activeTab: string;
     protected publisher: OpenAPIRendererEventPublisher;
     protected plugin: OpenAPIRendererPlugin;
 
@@ -23,15 +25,23 @@ export class OpenAPISettingTab extends PluginSettingTab {
 
         const params: SettingSectionParams = { app, plugin, publisher };
 
-        this.tabs = [
-            { name: 'General', section: new GeneralSettings(params, this, 0) },
-            { name: 'Server', section: new ServerSettings(params, 3) },
-            { name: 'Source', section: new SourceSettings(params) },
-            { name: 'Preview', section: new PreviewSettings(params) },
-        ];
+        this.tabs = new Map([
+            ['General', new GeneralSettings(params)],
+            ['Server', new ServerSettings(params)],
+            ['Source', new SourceSettings(params)],
+            ['Preview', new PreviewSettings(params)],
+        ]);
+        this.activeTab = 'General';
+        this.plugin.observer.subscribe(
+            this.app.workspace,
+            eventID.SettingsTabState,
+            async () => {
+                this.display();
+            }
+        );
     }
 
-    display(activeTabNumber: number | undefined = undefined): void {
+    display(): void {
         const { containerEl } = this;
         containerEl.empty();
         const navbar = containerEl.createEl('nav', {
@@ -42,28 +52,34 @@ export class OpenAPISettingTab extends PluginSettingTab {
             cls: 'openapi-renderer-settings',
         });
 
-        const displaySection = (index: number): void => {
+        const displaySection = (key: string): void => {
             contentEl.empty();
-            this.tabs[index].section.display(contentEl);
+            const tab = this.tabs.get(key);
+            if (tab) {
+                tab.display(contentEl);
+            }
         };
-        let activeTab = 0;
 
         containerEl.addClass('openapi-renderer-settings');
 
-        this.tabs.forEach((tab, index) => {
+        this.tabs.forEach((tab, key) => {
             const tabEl = navbar.createEl('div', {
                 cls: 'openapi-renderer-settings settings-navbar-tab',
             });
             const tabName = tabEl.createEl('div', {
                 cls: 'openapi-renderer-settings settings-navbar-tab-name',
-                text: tab.name,
+                text: key,
             });
-            if (index === (activeTabNumber ?? activeTab)) {
+            if (key === this.activeTab) {
                 tabEl.addClass('settings-navbar-tab-active');
             }
 
-            tabEl.addEventListener('click', () => {
-                activeTab = index;
+            tabEl.addEventListener('click', (event: MouseEvent) => {
+                const tab = tabName.textContent;
+                if (!tab) {
+                    return;
+                }
+                this.activeTab = tab;
                 navbar
                     .findAll('.settings-navbar-tab')
                     .forEach((button) =>
@@ -73,9 +89,9 @@ export class OpenAPISettingTab extends PluginSettingTab {
                     'openapi-renderer-settings',
                     'settings-navbar-tab-active',
                 ]);
-                displaySection(activeTab);
+                displaySection(this.activeTab);
             });
-            displaySection(activeTabNumber ?? activeTab);
         });
+        displaySection(this.activeTab);
     }
 }

@@ -1,6 +1,7 @@
 export enum eventID {
     ToggleButtonVisibility = 'toggle-button-visibility',
     ServerChangedState = 'openapi-renderer-server-started',
+    SettingsTabState = 'settings-tab-state',
     PowerOff = 'openapi-renderer-power-off',
     SourceThemeState = 'openapi-renderer-theme-state',
     EditorChanged = 'openapi-renderer-editor-changed',
@@ -20,6 +21,7 @@ export enum eventPublisher {
 export enum Subject {
     Button = 'button',
     Plugin = 'plugin',
+    Settings = 'settings',
     App = 'app',
     All = 'all-classes',
     Preview = 'preview',
