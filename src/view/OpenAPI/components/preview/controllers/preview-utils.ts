@@ -3,6 +3,7 @@ import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controller
 import yaml from 'js-yaml';
 import { eventID } from 'typing/constants';
 import { SettingsModal } from 'view/OpenAPI/modals/mode-settings-modal';
+import { setIcon } from 'obsidian';
 
 export class PreviewUtils {
     constructor(private controller: OpenAPIPreviewController) {}
@@ -80,6 +81,10 @@ export class PreviewUtils {
             async () => {
                 this.controller.themeManager.toggleThemeManually();
                 await this.controller.themeManager.requestPreviewThemeChange();
+                setIcon(
+                    themeButton,
+                    this.controller.themeManager.getThemeButtonIcon()
+                );
             }
         );
         const historyButton = view.addAction(
