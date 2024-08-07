@@ -1,10 +1,14 @@
-import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
+import {
+    SettingSectionParams,
+    SettingsSection,
+    SettingsTabStateEvent,
+} from '../typing/interfaces';
 import SettingsUtils from './utils';
 import { App, Setting } from 'obsidian';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
 import { exportType } from '../typing/types';
-import { OpenAPISettingTab } from './settings';
+import { eventID, eventPublisher, Subject } from '../typing/constants';
 
 export default class GeneralSettings implements SettingsSection {
     app: App;
@@ -12,11 +16,7 @@ export default class GeneralSettings implements SettingsSection {
     publisher: OpenAPIRendererEventPublisher;
     utils: SettingsUtils;
 
-    constructor(
-        { app, plugin, publisher }: SettingSectionParams,
-        private settingsTab: OpenAPISettingTab,
-        private position: number
-    ) {
+    constructor({ app, plugin, publisher }: SettingSectionParams) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;
@@ -37,7 +37,13 @@ export default class GeneralSettings implements SettingsSection {
                             'Settings have been reset to default'
                         );
                         setTimeout(() => {
-                            this.settingsTab.display();
+                            this.plugin.publisher.publish({
+                                eventID: eventID.SettingsTabState,
+                                publisher: eventPublisher.Settings,
+                                subject: Subject.Settings,
+                                timestamp: new Date(),
+                                emitter: this.app.workspace,
+                            } as SettingsTabStateEvent);
                         }, 100);
                     } catch (e: any) {
                         this.plugin.showNotice(
