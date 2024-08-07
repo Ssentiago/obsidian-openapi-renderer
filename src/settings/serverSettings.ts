@@ -1,7 +1,7 @@
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
-import { App, Setting } from 'obsidian';
-import { SettingSectionParams, SettingsSection } from '../typing/interfaces';
+import {OpenAPIRendererEventPublisher} from '../pluginEvents/eventManager';
+import {App, Setting} from 'obsidian';
+import {SettingSectionParams, SettingsSection} from '../typing/interfaces';
 
 /**
  * Represents the server settings section within the OpenAPI Renderer plugin settings.
@@ -12,10 +12,7 @@ export default class ServerSettings implements SettingsSection {
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
 
-    constructor(
-        { app, plugin, publisher }: SettingSectionParams,
-        private position: number
-    ) {
+    constructor({ app, plugin, publisher }: SettingSectionParams) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;

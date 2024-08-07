@@ -13,25 +13,18 @@ export class SourceSettings implements SettingsSection {
     plugin: OpenAPIRendererPlugin;
     publisher: OpenAPIRendererEventPublisher;
 
-    // settingsTab: OpenAPISettingTab;
-
-    constructor(
-        { app, plugin, publisher }: SettingSectionParams
-        // settingsTab: OpenAPISettingTab,
-        // private position: number
-    ) {
+    constructor({ app, plugin, publisher }: SettingSectionParams) {
         this.app = app;
         this.plugin = plugin;
         this.publisher = publisher;
-        // this.settingsTab = settingsTab;
     }
 
     display(containerEl: HTMLElement): void {
         new Setting(containerEl)
             .setName('OpenAPI editor theme mode')
             .setDesc('Select the theme mode for OpenAPI editor')
-            .addDropdown((drowdown: DropdownComponent) =>
-                drowdown
+            .addDropdown((dropdown: DropdownComponent) =>
+                dropdown
                     .addOptions({
                         dark: 'Dark',
                         light: 'Light',
@@ -71,7 +64,6 @@ export class SourceSettings implements SettingsSection {
                             timestamp: new Date(),
                             emitter: this.app.workspace,
                         } as SourceThemeStateEvent);
-                        // this.settingsTab.display(this.position);
                     })
             );
 

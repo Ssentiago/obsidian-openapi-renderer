@@ -25,8 +25,8 @@ export class PreviewSettings implements SettingsSection {
         new Setting(containerEl)
             .setName('OpenAPI preview theme mode')
             .setDesc('Select the theme mode for OpenAPI preview')
-            .addDropdown((drowdown: DropdownComponent) =>
-                drowdown
+            .addDropdown((dropdown: DropdownComponent) =>
+                dropdown
                     .addOptions({
                         dark: 'Dark',
                         light: 'Light',
@@ -63,7 +63,6 @@ export class PreviewSettings implements SettingsSection {
                             timestamp: new Date(),
                             emitter: this.app.workspace,
                         } as OpenAPIPreviewThemeStateEvent);
-                        // this.settingsTab.display(this.position);
                     })
             );
     }
