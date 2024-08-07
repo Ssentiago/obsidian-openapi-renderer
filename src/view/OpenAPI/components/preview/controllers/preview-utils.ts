@@ -71,11 +71,10 @@ export class PreviewUtils {
         const { plugin } = this.controller.preview.openAPIView;
         const view = this.controller.preview.openAPIView;
 
-        view.modifiedAddAction('settings', 'Settings', () =>
+        const settingsButton = view.addAction('settings', 'Settings', () =>
             new SettingsModal(plugin.app, plugin, 'Preview').open()
         );
-
-        view.modifiedAddAction(
+        const themeButton = view.addAction(
             this.controller.themeManager.getThemeButtonIcon(),
             'Theme',
             async () => {
@@ -83,10 +82,26 @@ export class PreviewUtils {
                 await this.controller.themeManager.requestPreviewThemeChange();
             }
         );
-
-        view.modifiedAddAction('file-stack', 'Version history', () => {});
-
-        view.modifiedAddAction('save', 'Save current version', () => {});
+        const historyButton = view.addAction(
+            'file-stack',
+            'Version history',
+            () => {}
+        );
+        const saveButton = view.addAction(
+            'save',
+            'Save current version',
+            () => {}
+        );
+        plugin.observer.subscribe(
+            plugin.app.workspace,
+            eventID.SwitchModeState,
+            async () => {
+                settingsButton.remove();
+                themeButton.remove();
+                historyButton.remove();
+                saveButton.remove();
+            }
+        );
     }
 
     setupEventListeners(): void {

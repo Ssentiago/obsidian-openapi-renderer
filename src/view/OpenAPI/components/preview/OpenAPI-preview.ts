@@ -26,7 +26,6 @@ export default class OpenAPIPreview implements IOpenAPIViewComponent {
 
     clear(): void {
         this.contentEl.hide();
-        this.openAPIView.controller.clearActions();
     }
 
     getComponentData(): string {

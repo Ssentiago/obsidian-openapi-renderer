@@ -200,14 +200,15 @@ export class SourceUtils {
 
     static initializeActions(controller: SourceController): void {
         const { app, plugin } = controller.editor.view;
+        const { view } = controller.editor;
 
-        const settingsButton = controller.editor.view.modifiedAddAction(
+        const settingsButton = view.addAction(
             'settings',
             'Editor settings',
             () => new SettingsModal(app, plugin, 'Source').open()
         );
 
-        const themeButton = controller.editor.view.modifiedAddAction(
+        const themeButton = view.addAction(
             controller.themeManager.getThemeButtonIcon(),
             'Theme',
             (ev: MouseEvent) => {
@@ -219,20 +220,38 @@ export class SourceUtils {
                 );
             }
         );
-        controller.editor.view.app.workspace.on(eventID.SourceThemeState, () =>
-            setIcon(themeButton, controller.themeManager.getThemeButtonIcon())
+
+        plugin.observer.subscribe(
+            app.workspace,
+            eventID.SourceThemeState,
+            async () =>
+                setIcon(
+                    themeButton,
+                    controller.themeManager.getThemeButtonIcon()
+                )
         );
 
-        const convertButton = controller.editor.view.modifiedAddAction(
+        const convertButton = view.addAction(
             'arrow-right-left',
             'Convert File between JSON and YAML',
             convertFile(controller.editor.view, controller.editor)
         );
 
-        const formatButton = controller.editor.view.modifiedAddAction(
+        const formatButton = view.addAction(
             'code',
             'Format',
             openAPIFormatter(controller.editor)
+        );
+
+        plugin.observer.subscribe(
+            app.workspace,
+            eventID.SwitchModeState,
+            async () => {
+                settingsButton.remove();
+                themeButton.remove();
+                convertButton.remove();
+                formatButton.remove();
+            }
         );
     }
 }

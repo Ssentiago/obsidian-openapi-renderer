@@ -1,4 +1,4 @@
-import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
+import { TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
 import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
 import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
@@ -73,7 +73,6 @@ export class OpenAPIView extends TextFileView {
     onSwitch(): void {
         this.data = this.activeComponent.getComponentData();
         this.clear();
-        this.controller.clearActions();
         this.mode = this.controller.newMode;
         this.plugin.publisher.publish({
             eventID: eventID.SwitchModeState,
@@ -84,16 +83,6 @@ export class OpenAPIView extends TextFileView {
         } as SwitchModeStateEvent);
         this.initializeComponent();
         this.activeComponent.render();
-    }
-
-    modifiedAddAction(
-        icon: IconName,
-        title: string,
-        callback: (evt: MouseEvent) => any
-    ): HTMLElement {
-        const button = super.addAction(icon, title, callback);
-        button.addClass('openapi-renderer-action-button');
-        return button;
     }
 
     async onLoadFile(file: TFile): Promise<void> {
@@ -125,6 +114,5 @@ export class OpenAPIView extends TextFileView {
 
     async onUnloadFile(file: TFile): Promise<void> {
         this.clear();
-        this.controller.clearActions();
     }
 }
