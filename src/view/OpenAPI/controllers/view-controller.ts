@@ -2,6 +2,8 @@ import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
 import { eventID, RenderingMode } from 'typing/constants';
 import { setIcon } from 'obsidian';
 
+import { OPENAPI_VERSION_VIEW_TYPE } from '../../types';
+
 export class OpenAPIController {
     constructor(public view: OpenAPIView) {
         this.initializeActions();
@@ -34,6 +36,43 @@ export class OpenAPIController {
             eventID.SwitchModeState,
             async () => {
                 setIcon(changeModeButton, this.modeIcon);
+            }
+        );
+
+        const versionViewButton = this.view.addAction(
+            'file-clock',
+            'Version control',
+            async () => {
+                const file = this.view.file;
+                if (!file) {
+                    return;
+                }
+
+                const openAPIVersionLeaves =
+                    this.view.app.workspace.getLeavesOfType(
+                        OPENAPI_VERSION_VIEW_TYPE
+                    );
+
+                const existingView = openAPIVersionLeaves.find(
+                    (leaf) => leaf.getViewState().state.file === file.path
+                );
+
+                if (existingView) {
+                    const newViewState = {
+                        ...existingView.getViewState(),
+                        active: true,
+                    };
+                    await existingView.setViewState(newViewState);
+                } else {
+                    const newLeaf = this.view.app.workspace.getLeaf(true);
+                    await newLeaf.setViewState({
+                        type: OPENAPI_VERSION_VIEW_TYPE,
+                        active: true,
+                        state: {
+                            file: file.path,
+                        },
+                    });
+                }
             }
         );
     }
