@@ -40,7 +40,7 @@ const create: (v: EditorView) => { dom: HTMLDivElement } = (v: EditorView) => {
 
 let fontSize = 16;
 const tooltip = document.createElement('div');
-tooltip.addClass('tooltip');
+tooltip.addClass('openapi-renderer-source-tooltip');
 document.body.appendChild(tooltip);
 
 function updateTooltip(x: number, y: number, fontSize: number): void {
