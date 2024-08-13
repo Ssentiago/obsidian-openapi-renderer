@@ -1,12 +1,14 @@
 import { App } from 'obsidian';
 import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
 import path from 'path';
+import { SwaggerUIBundle } from '../typing/swagger-ui-typings';
 
 export default class PluginResourceManager {
     private app: App;
     private plugin: OpenAPIRendererPlugin;
     resourceCache: Map<string, string> = new Map();
     assetsPath!: string;
+    public swaggerUIBundle: SwaggerUIBundle | null = null;
 
     constructor(app: App, plugin: OpenAPIRendererPlugin) {
         this.app = app;
@@ -18,13 +20,13 @@ export default class PluginResourceManager {
         });
     }
 
-    async initializeAssetsPath() {
+    async initializeAssetsPath(): Promise<void> {
         const pluginDir = this.plugin.manifest.dir;
         if (!pluginDir) {
             throw new Error('No plugin directory found');
         }
 
-        this.assetsPath = path.join(pluginDir, 'assets/swagger-ui');
+        this.assetsPath = path.join(pluginDir, 'assets');
     }
 
     private async getResource(resourcePath: string): Promise<string> {
@@ -49,12 +51,49 @@ export default class PluginResourceManager {
     }
 
     async getCSS(cssName: string): Promise<string> {
-        const cssPath = path.join(this.assetsPath, cssName);
+        const cssPath = path.join(this.assetsPath, 'swagger-ui', cssName);
         return this.getResource(cssPath);
     }
 
-    async getJS(jsName: string): Promise<string> {
-        const jsPath = path.join(this.assetsPath, jsName);
-        return this.getResource(jsPath);
+    async getjsondiffpatchDiffCSS(): Promise<string> {
+        const diffCSSPath = path.join(
+            this.assetsPath,
+            'jsondiffpatch/jsondiffpatch-visual-diff.css'
+        );
+        return this.getResource(diffCSSPath);
+    }
+
+    async initSwaggerUIBundle(): Promise<void> {
+        if (this.swaggerUIBundle) {
+            return;
+        }
+        const pluginDir = this.plugin.manifest.dir;
+        if (!pluginDir) {
+            throw new Error('No plugin dir found');
+        }
+
+        const assetsPath = path.join(
+            pluginDir,
+            'assets',
+            'swagger-ui',
+            'swagger-ui-bundle.js'
+        );
+
+        try {
+            const swaggerContent =
+                await this.plugin.app.vault.adapter.read(assetsPath);
+            this.swaggerUIBundle = new Function(
+                `${swaggerContent}
+                    return SwaggerUIBundle;`
+            )();
+        } catch (error: any) {
+            this.plugin.logger.error(
+                'Error initializing SwaggerUIBundle:',
+                error.message
+            );
+            this.plugin.showNotice(
+                'Failed to initialize SwaggerUI. Please check the logs for details.'
+            );
+        }
     }
 }
