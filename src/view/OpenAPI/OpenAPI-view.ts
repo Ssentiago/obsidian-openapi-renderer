@@ -10,7 +10,7 @@ import {
     Subject,
 } from 'typing/constants';
 import { IOpenAPIViewComponent, SwitchModeStateEvent } from 'typing/interfaces';
-import { OpenAPIView_TYPE } from '../types';
+import { OPENAPI_VIEW_TYPE } from '../types';
 
 export class OpenAPIView extends TextFileView {
     controller: OpenAPIController;
@@ -66,7 +66,7 @@ export class OpenAPIView extends TextFileView {
     }
 
     getViewType(): string {
-        return OpenAPIView_TYPE;
+        return OPENAPI_VIEW_TYPE;
     }
 
     getIcon(): IconName {
