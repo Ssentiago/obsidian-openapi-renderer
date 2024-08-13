@@ -1,9 +1,8 @@
-import { Notice, Plugin } from 'obsidian';
+import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 import {
     OpenAPIRendererEventObserver,
     OpenAPIRendererEventPublisher,
 } from 'pluginEvents/eventManager';
-
 import { DEFAULT_SETTINGS_Interface, PowerOffEvent } from 'typing/interfaces';
 import { OpenAPISettingTab } from 'settings/settings';
 import OpenAPIPluginContext from './contextManager';
@@ -16,7 +15,9 @@ import SettingsManager from './settingsManager';
 import PluginUtils from './pluginUtils';
 import PluginStateChecker from './pluginStateChecker';
 import PluginResourceManager from './pluginResourceManager';
-import { OpenAPIView, OpenAPIView_TYPE } from 'view/OpenAPI/OpenAPI-view';
+import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
+import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
+import { OPENAPI_VERSION_VIEW_TYPE, OpenAPIView_TYPE } from '../view/types';
 
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
@@ -173,6 +174,10 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.registerView(
             OpenAPIView_TYPE,
             (leaf) => new OpenAPIView(leaf, this)
+        );
+        this.registerView(
+            OPENAPI_VERSION_VIEW_TYPE,
+            (leaf: WorkspaceLeaf) => new OpenAPIVersionView(leaf, this)
         );
         this.registerExtensions(['yaml', 'yml', 'json'], OpenAPIView_TYPE);
     }
