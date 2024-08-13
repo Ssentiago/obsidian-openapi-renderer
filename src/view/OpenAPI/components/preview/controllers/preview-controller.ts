@@ -1,13 +1,11 @@
 import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
 import { ThemeController } from 'view/OpenAPI/components/preview/controllers/theme-controller';
 import { RenderController } from 'view/OpenAPI/components/preview/controllers/render-controller';
-import { SwaggerUIBundle } from 'typing/swagger-ui-typings';
 import { PreviewUtils } from 'view/OpenAPI/components/preview/controllers/preview-utils';
 
 export default class OpenAPIPreviewController {
     public themeManager: ThemeController;
     public renderManager: RenderController;
-    public swaggerUIBundle: SwaggerUIBundle | null = null;
     public previewUtils: PreviewUtils;
 
     constructor(public preview: OpenAPIPreview) {
@@ -42,6 +40,6 @@ export default class OpenAPIPreviewController {
     }
 
     private async initializeSwaggerUIBundle(): Promise<void> {
-        await this.previewUtils.initSwaggerUIBundle();
+        await this.preview.plugin.resourceManager.initSwaggerUIBundle();
     }
 }

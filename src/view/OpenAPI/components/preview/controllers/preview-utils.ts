@@ -1,4 +1,3 @@
-import path from 'path';
 import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 import yaml from 'js-yaml';
 import { eventID } from 'typing/constants';
@@ -7,42 +6,6 @@ import { setIcon } from 'obsidian';
 
 export class PreviewUtils {
     constructor(private controller: OpenAPIPreviewController) {}
-
-    async initSwaggerUIBundle(): Promise<void> {
-        if (this.controller.swaggerUIBundle) {
-            return;
-        }
-        const pluginDir = this.controller.preview.plugin.manifest.dir;
-        if (!pluginDir) {
-            throw new Error('No plugin dir found');
-        }
-
-        const assetsPath = path.join(
-            pluginDir,
-            'assets',
-            'swagger-ui',
-            'swagger-ui-bundle.js'
-        );
-
-        try {
-            const swaggerContent =
-                await this.controller.preview.plugin.app.vault.adapter.read(
-                    assetsPath
-                );
-            this.controller.swaggerUIBundle = new Function(
-                `${swaggerContent}
-                    return SwaggerUIBundle;`
-            )();
-        } catch (error: any) {
-            this.controller.preview.plugin.logger.error(
-                'Error initializing SwaggerUIBundle:',
-                error.message
-            );
-            this.controller.preview.plugin.showNotice(
-                'Failed to initialize SwaggerUI. Please check the logs for details.'
-            );
-        }
-    }
 
     async loadSpec(): Promise<object | null> {
         const file = this.controller.preview.openAPIView.file;
@@ -97,24 +60,12 @@ export class PreviewUtils {
                 );
             }
         );
-        const historyButton = view.addAction(
-            'file-stack',
-            'Version history',
-            () => {}
-        );
-        const saveButton = view.addAction(
-            'save',
-            'Save current version',
-            () => {}
-        );
         plugin.observer.subscribe(
             plugin.app.workspace,
             eventID.SwitchModeState,
             async () => {
                 settingsButton.remove();
                 themeButton.remove();
-                historyButton.remove();
-                saveButton.remove();
             }
         );
     }

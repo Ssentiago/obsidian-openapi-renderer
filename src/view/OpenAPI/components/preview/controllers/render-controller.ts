@@ -27,8 +27,9 @@ export class RenderController {
     }
 
     async renderSwaggerUI(containerEl: HTMLDivElement): Promise<void> {
-        if (!this.controller.swaggerUIBundle) {
-            await this.controller.previewUtils.initSwaggerUIBundle();
+        const { plugin } = this.controller.preview;
+        if (!plugin.resourceManager.swaggerUIBundle) {
+            await plugin.resourceManager.initSwaggerUIBundle();
         }
         if (this.controller.preview.cachedPreview) {
             containerEl.appendChild(this.controller.preview.cachedPreview);
@@ -43,15 +44,16 @@ export class RenderController {
         if (!parsedSpec) {
             return;
         }
-        if (!this.controller.swaggerUIBundle) {
+        if (!plugin.resourceManager.swaggerUIBundle) {
             return;
         }
-        this.controller.swaggerUIBundle({
+        plugin.resourceManager.swaggerUIBundle({
             spec: parsedSpec,
             domNode: renderContainer,
             presets: [
-                this.controller.swaggerUIBundle.presets.apis,
-                this.controller.swaggerUIBundle.SwaggerUIStandalonePreset,
+                plugin.resourceManager.swaggerUIBundle.presets.apis,
+                plugin.resourceManager.swaggerUIBundle
+                    .SwaggerUIStandalonePreset,
             ],
             layout: 'BaseLayout',
         });
