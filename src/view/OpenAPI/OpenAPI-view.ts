@@ -1,4 +1,4 @@
-import { TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
+import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
 import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
 import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
@@ -10,8 +10,7 @@ import {
     Subject,
 } from 'typing/constants';
 import { IOpenAPIViewComponent, SwitchModeStateEvent } from 'typing/interfaces';
-
-export const OpenAPIView_TYPE = 'openapi-view';
+import { OpenAPIView_TYPE } from '../types';
 
 export class OpenAPIView extends TextFileView {
     controller: OpenAPIController;
@@ -68,6 +67,17 @@ export class OpenAPIView extends TextFileView {
 
     getViewType(): string {
         return OpenAPIView_TYPE;
+    }
+
+    getIcon(): IconName {
+        return 'file-code';
+    }
+
+    getDisplayText(): string {
+        if (this.file) {
+            return `OpenAPI View: ${this.file.name}`;
+        }
+        return 'No file open';
     }
 
     onSwitch(): void {
