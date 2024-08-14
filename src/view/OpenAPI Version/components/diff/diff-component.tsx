@@ -5,6 +5,7 @@ import { Specification } from '../../../../indexedDB/database/specification';
 import HtmlFormatter, {
     hideUnchanged,
     showUnchanged,
+    // @ts-ignore
 } from 'jsondiffpatch/formatters/html';
 
 // Styled components for titles
