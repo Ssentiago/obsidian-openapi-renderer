@@ -1,12 +1,14 @@
+import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy';
-import typescript from '@rollup/plugin-typescript';
+import replace from "@rollup/plugin-replace";
 import terser from '@rollup/plugin-terser';
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
-import {visualizer} from 'rollup-plugin-visualizer';
+import typescript from '@rollup/plugin-typescript';
 import bundleStats from 'rollup-plugin-bundle-stats';
+import copy from 'rollup-plugin-copy';
+import {visualizer} from 'rollup-plugin-visualizer';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+
 
 const name = 'openapi-renderer';
 
@@ -19,7 +21,8 @@ const baseConfig = {
     plugins: [
         json(),
         nodeResolve({
-            preferBuiltins: true
+            preferBuiltins: true,
+            extensions: ['.js', '.jsx', '.ts', '.tsx']
         }),
         commonjs({
             include: 'node_modules/**'
@@ -75,6 +78,10 @@ const productionConfig = {
     },
     plugins: [
         ...baseConfig.plugins,
+        replace({
+            'process.env.NODE_ENV': JSON.stringify('production'),
+            preventAssignment: true,
+        }),
         copy({
             targets: [
                 {src: './styles.css', dest: 'dist/'},
