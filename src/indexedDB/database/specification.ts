@@ -1,4 +1,4 @@
-import { DiffController } from '../../view/common/controllers/diff-controller';
+import { DiffController } from '../../view/OpenAPI Version/controllers/diff-controller';
 
 export interface SpecParams {
     id: number;
