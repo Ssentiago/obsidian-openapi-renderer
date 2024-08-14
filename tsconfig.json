@@ -20,5 +20,5 @@
     "src/**/*.tsx",
     "obsidian-extensions.d.ts",
     "Globals.d.ts"
-  ],
-]}
+  ]
+}
