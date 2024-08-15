@@ -1,20 +1,28 @@
-import {Notice, Plugin, WorkspaceLeaf} from 'obsidian';
-import {OpenAPIRendererEventObserver, OpenAPIRendererEventPublisher,} from 'pluginEvents/eventManager';
-import {DEFAULT_SETTINGS_Interface, PowerOffEvent} from 'typing/interfaces';
-import {OpenAPISettingTab} from 'settings/settings';
+import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
+import {
+    OpenAPIRendererEventObserver,
+    OpenAPIRendererEventPublisher,
+} from 'pluginEvents/eventManager';
+import { DEFAULT_SETTINGS_Interface, PowerOffEvent } from 'typing/interfaces';
+import { OpenAPISettingTab } from 'settings/settings';
 import OpenAPIPluginContext from './contextManager';
-import {OpenAPIRendererEventsHandler} from 'pluginEvents/eventsHandler';
+import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
 import OpenAPIRendererServer from '../server/server';
 import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
-import {eventID, eventPublisher, Subject} from 'typing/constants';
+import { eventID, eventPublisher, Subject } from 'typing/constants';
 import GithubClient from '../github/github-client';
 import SettingsManager from './settingsManager';
 import PluginUtils from './pluginUtils';
 import PluginStateChecker from './pluginStateChecker';
 import PluginResourceManager from './pluginResourceManager';
-import {OpenAPIView} from 'view/OpenAPI/OpenAPI-view';
-import {OpenAPIVersionView} from '../view/OpenAPI Version/openapi-version-view';
-import {OPENAPI_VERSION_VIEW_TYPE, OPENAPI_VIEW_TYPE} from '../view/types';
+import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
+import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
+import {
+    OPENAPI_ENTRY_VIEW_TYPE,
+    OPENAPI_VERSION_VIEW_TYPE,
+    OPENAPI_VIEW_TYPE,
+} from '../view/types';
+import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
 
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
@@ -172,11 +180,47 @@ export default class OpenAPIRendererPlugin extends Plugin {
             OPENAPI_VIEW_TYPE,
             (leaf) => new OpenAPIView(leaf, this)
         );
+
+        this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW_TYPE);
+
         this.registerView(
             OPENAPI_VERSION_VIEW_TYPE,
             (leaf: WorkspaceLeaf) => new OpenAPIVersionView(leaf, this)
         );
-        this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW_TYPE);
+
+        this.registerView(
+            OPENAPI_ENTRY_VIEW_TYPE,
+            (leaf: WorkspaceLeaf) => new OpenAPIEntryView(leaf, this)
+        );
+
+        this.addRibbonIcon(
+            'file-search-2',
+            'Open OpenAPI Entry View',
+            async () => {
+                const leaf = this.app.workspace.getLeaf(true);
+                await leaf.setViewState({
+                    type: OPENAPI_ENTRY_VIEW_TYPE,
+                    active: true,
+                    state: {},
+                });
+                this.app.workspace.revealLeaf(leaf);
+            }
+        );
+
+        this.addCommand({
+            id: 'openapi-renderer-open-openapi-entry',
+            name: 'OpenAPI Entry',
+            icon: 'file-search-2',
+            callback: async () => {
+                const leaf = this.app.workspace.getLeaf(true);
+                await leaf.setViewState({
+                    type: OPENAPI_ENTRY_VIEW_TYPE,
+                    active: true,
+                    state: {},
+                });
+                this.app.workspace.revealLeaf(leaf);
+            },
+        });
     }
 
     private async initializeUtilities(): Promise<void> {
