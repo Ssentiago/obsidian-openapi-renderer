@@ -67,6 +67,13 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
                     payload: { data: isNextVersionFull },
                 });
                 break;
+            case MessageType.GetEntryViewData:
+                const data = await db.getEntryViewData();
+                self.postMessage({
+                    type: ResponseType.Success,
+                    payload: { data: data },
+                });
+                break;
             default:
                 self.postMessage({
                     type: ResponseType.Error,
@@ -76,7 +83,7 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
     } catch (err: any) {
         self.postMessage({
             type: ResponseType.Error,
-            payload: { message: err.message },
+            payload: { data: { message: err.message } },
         });
     }
 };
