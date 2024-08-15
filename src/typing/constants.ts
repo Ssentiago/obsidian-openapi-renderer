@@ -8,6 +8,8 @@ export enum eventID {
     PreviewThemeState = 'openapi-renderer-preview-theme-state-changed',
     LiveModeChangeState = 'openapi-renderer-live-mode-change-state',
     SwitchModeState = 'openapi-renderer-switch-mode',
+    ReloadOpenAPIEntryState = 'openapi-renderer-reload-openAPIEntryState',
+    ChangeGridColumnsState = 'openapi-renderer-change-grid-columns',
 }
 
 export enum eventPublisher {
