@@ -6,6 +6,7 @@ export enum MessageType {
     RestoreVersion = 'restore-version',
     DeletePermanently = 'delete-version-permanently',
     IsNextVersionFull = 'is-next-version-full',
+    GetEntryViewData = 'get-entry-view-data',
 }
 
 export const enum ResponseType {
@@ -25,4 +26,10 @@ export interface WorkerMessage {
 export interface WorkerResponse {
     type: ResponseType;
     payload: Payload;
+}
+
+export interface EntryViewData {
+    path: string;
+    versionCount: number;
+    lastUpdatedAt: string;
 }
