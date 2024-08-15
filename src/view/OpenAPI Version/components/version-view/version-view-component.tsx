@@ -10,6 +10,8 @@ import jsyaml from 'js-yaml';
 import PreviewComponent from '../preview/preview-component';
 import TwoPaneDiff from '../diff/diff-component';
 import { OPENAPI_VIEW_TYPE } from '../../../types';
+import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
+import { ReloadOpenAPIEntryStateEvent } from '../../../../typing/interfaces';
 
 const VersionViewComponent: React.FC<{
     specifications?: Specification[];
@@ -27,6 +29,16 @@ const VersionViewComponent: React.FC<{
         selectedSpecs,
         setSelectedSpecs,
     } = useSpecificationContext();
+
+    useEffect(() => {
+        view.plugin.publisher.publish({
+            eventID: eventID.ReloadOpenAPIEntryState,
+            subject: Subject.All,
+            publisher: eventPublisher.Settings,
+            emitter: view.app.workspace,
+            timestamp: new Date(),
+        } as ReloadOpenAPIEntryStateEvent);
+    }, [specs]);
 
     useEffect(() => {
         setSpecs(specifications);
