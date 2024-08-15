@@ -180,6 +180,14 @@ export interface LiveModeChangeStateEvent extends OpenAPIRendererEvent {}
 
 export interface SwitchModeStateEvent extends OpenAPIRendererEvent {}
 
+export interface ReloadOpenAPIEntryStateEvent extends OpenAPIRendererEvent {}
+
+export interface ChangeGridColumnsStateEvent extends OpenAPIRendererEvent {
+    data: {
+        value: number;
+    };
+}
+
 export interface ObserverEventData {
     emitter: Events;
     eventRef: EventRef;
