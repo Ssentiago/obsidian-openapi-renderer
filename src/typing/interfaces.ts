@@ -29,6 +29,8 @@ export interface DEFAULT_SETTINGS_Interface {
     OpenAPISourceLightTheme: string;
     OpenAPISourceDarkTheme: string;
     synchronizeOpenAPISourceTheme: boolean;
+    OpenAPIViewDefaultMode: string;
+    OpenAPIEntryGridColumns: number;
 }
 
 export interface OpenAPIPluginContextInterface {
@@ -187,6 +189,8 @@ export interface ChangeGridColumnsStateEvent extends OpenAPIRendererEvent {
         value: number;
     };
 }
+
+export interface ChangeOpenAPIModeStateEvent extends OpenAPIRendererEvent {}
 
 export interface ObserverEventData {
     emitter: Events;
