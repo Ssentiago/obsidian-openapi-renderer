@@ -9,6 +9,7 @@ import { ThemeController } from './theme-controller';
 import { VersionUtils } from './versionUtils';
 import jsyaml from 'js-yaml';
 import { DiffController } from './diff-controller';
+import pako from 'pako';
 
 export class VersionController {
     workerHelper: WorkerHelper;
@@ -110,7 +111,7 @@ export class VersionController {
         } else {
             const lastVersion = view.versions.last();
             const old = JSON.parse(
-                lastVersion!.getPatchedVersion(view.versions).diff
+                lastVersion!.getPatchedVersion(view.versions).diff as string
             );
             const _new = JSON.parse(currentViewData);
 
@@ -133,10 +134,12 @@ export class VersionController {
             }
         }
 
+        const gzippedDiff = pako.gzip(diff);
+
         const spec = {
             path: file.path,
             name: name,
-            diff: diff,
+            diff: gzippedDiff,
             version: version,
             createdAt: new Date().toString(),
             softDeleted: false,

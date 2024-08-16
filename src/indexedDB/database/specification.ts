@@ -1,10 +1,11 @@
 import { DiffController } from '../../view/OpenAPI Version/controllers/diff-controller';
+import pako from 'pako';
 
 export interface SpecParams {
     id: number;
     path: string;
     name: string;
-    diff: string;
+    diff: string | Uint8Array;
     version: string;
     createdAt: string;
     softDeleted: boolean;
@@ -15,7 +16,7 @@ export class BaseSpecification {
     id: number;
     path: string;
     name: string;
-    diff: string;
+    diff: string | Uint8Array;
     version: string;
     createdAt: string;
     softDeleted = false;
@@ -71,8 +72,13 @@ export class Specification extends BaseSpecification {
     getPatchedVersion(versions: Array<Specification>): Specification {
         const myIndex = versions.indexOf(this);
 
+        debugger;
         if (myIndex === -1 || myIndex === 0) {
-            return this;
+            const newSpec = {
+                ...this,
+                diff: pako.ungzip(this.diff as Uint8Array, { to: 'string' }),
+            };
+            return new Specification(newSpec);
         }
 
         const versionsBefore = [...versions].slice(0, myIndex + 1).reverse();
@@ -85,10 +91,18 @@ export class Specification extends BaseSpecification {
                 ? versionsBefore.length - 1
                 : nearestFullIndex;
 
-        let oldDiff: any = JSON.parse(versionsBefore[startIndex].diff);
+        let oldDiff: any = JSON.parse(
+            pako.ungzip(versionsBefore[startIndex].diff as Uint8Array, {
+                to: 'string',
+            })
+        );
 
         for (let i = startIndex - 1; i >= 0; i--) {
-            const newDiff = JSON.parse(versionsBefore[i].diff);
+            const newDiff = JSON.parse(
+                pako.ungzip(versionsBefore[i].diff as Uint8Array, {
+                    to: 'string',
+                })
+            );
             oldDiff = this.diffController.patch(oldDiff, newDiff);
         }
 

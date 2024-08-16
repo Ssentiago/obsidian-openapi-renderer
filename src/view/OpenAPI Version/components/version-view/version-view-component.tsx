@@ -146,7 +146,7 @@ const VersionViewComponent: React.FC<{
 
     const handlePreviewData = (spec: Specification | string): string => {
         if (spec instanceof Specification) {
-            return spec.getPatchedVersion(specs).diff;
+            return spec.getPatchedVersion(specs).diff as string;
         }
         return spec;
     };

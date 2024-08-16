@@ -5,7 +5,6 @@ import { Specification } from '../../../../indexedDB/database/specification';
 import HtmlFormatter, {
     hideUnchanged,
     showUnchanged,
-    // @ts-ignore
 } from 'jsondiffpatch/formatters/html';
 
 // Styled components for titles
@@ -63,14 +62,13 @@ const TwoPaneDiff: React.FC<TwoPaneProps> = ({ leftSpec, rightSpec, view }) => {
     const rightPaneRef = useRef<HTMLDivElement | null>(null);
     const diffContainerRef = useRef<HTMLDivElement | null>(null);
 
+    const leftDiff = leftSpec.diff as string;
+    const rightDiff = rightSpec.diff as string;
+    const parsedLeft = JSON.parse(leftDiff);
+    const parsedRight = JSON.parse(rightDiff);
+
     useEffect(() => {
         const handleDiff = async () => {
-            const leftDiff = leftSpec.diff;
-            const rightDiff = rightSpec.diff;
-
-            const parsedLeft = JSON.parse(leftDiff);
-            const parsedRight = JSON.parse(rightDiff);
-
             const delta = view.controller.diffController.diff(
                 parsedLeft,
                 parsedRight
@@ -142,12 +140,6 @@ const TwoPaneDiff: React.FC<TwoPaneProps> = ({ leftSpec, rightSpec, view }) => {
             }
         }
     }, [showUnchangedDiff]);
-
-    const leftDiff = leftSpec.diff;
-    const rightDiff = rightSpec.diff;
-
-    const parsedLeft = JSON.parse(leftDiff);
-    const parsedRight = JSON.parse(rightDiff);
 
     const leftContent = JSON.stringify(parsedLeft, null, 2);
     const rightContent = JSON.stringify(parsedRight, null, 2);
