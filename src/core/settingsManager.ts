@@ -34,6 +34,8 @@ export default class SettingsManager {
             OpenAPISourceDarkTheme: 'default',
             synchronizeOpenAPIPreviewTheme: true,
             synchronizeOpenAPISourceTheme: true,
+            OpenAPIViewDefaultMode: 'source',
+            OpenAPIEntryGridColumns: 4,
         };
     }
 
