@@ -30,7 +30,6 @@ import { lintGutter } from '@codemirror/lint';
 import { highlightSelectionMatches } from '@codemirror/search';
 import convertFile from '../extensions/yamlJsonConverter';
 import openAPIFormatter from '../extensions/formatter';
-import { SettingsModal } from '../../../modals/mode-settings-modal';
 import { EditorChangedEvent } from 'typing/interfaces';
 
 const create: (v: EditorView) => { dom: HTMLDivElement } = (v: EditorView) => {
@@ -202,12 +201,6 @@ export class SourceUtils {
         const { app, plugin } = controller.editor.view;
         const { view } = controller.editor;
 
-        const settingsButton = view.addAction(
-            'settings',
-            'Editor settings',
-            () => new SettingsModal(app, plugin, 'Source').open()
-        );
-
         const themeButton = view.addAction(
             controller.themeManager.getThemeButtonIcon(),
             'Theme',
@@ -247,7 +240,6 @@ export class SourceUtils {
             app.workspace,
             eventID.SwitchModeState,
             async () => {
-                settingsButton.remove();
                 themeButton.remove();
                 convertButton.remove();
                 formatButton.remove();

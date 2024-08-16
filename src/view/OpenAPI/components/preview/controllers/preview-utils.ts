@@ -1,7 +1,6 @@
 import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 import yaml from 'js-yaml';
 import { eventID } from 'typing/constants';
-import { SettingsModal } from 'view/OpenAPI/modals/mode-settings-modal';
 import { setIcon } from 'obsidian';
 
 export class PreviewUtils {
@@ -35,9 +34,6 @@ export class PreviewUtils {
         const { plugin } = this.controller.preview.openAPIView;
         const view = this.controller.preview.openAPIView;
 
-        const settingsButton = view.addAction('settings', 'Settings', () =>
-            new SettingsModal(plugin.app, plugin, 'Preview').open()
-        );
         const themeButton = view.addAction(
             this.controller.themeManager.getThemeButtonIcon(),
             'Theme',
@@ -64,7 +60,6 @@ export class PreviewUtils {
             plugin.app.workspace,
             eventID.SwitchModeState,
             async () => {
-                settingsButton.remove();
                 themeButton.remove();
             }
         );

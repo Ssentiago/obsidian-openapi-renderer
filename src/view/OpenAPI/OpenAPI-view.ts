@@ -34,7 +34,7 @@ export class OpenAPIView extends TextFileView {
         this.previewContainer = this.contentEl.createDiv({
             cls: 'openapi-renderer-preview-container',
         });
-        this.mode = RenderingMode.Preview;
+        this.mode = plugin.settings.OpenAPIViewDefaultMode as RenderingMode;
         this.controller = new OpenAPIController(this);
         this.source = new OpenAPISource(this, plugin, this.sourceContainer);
         this.preview = new OpenAPIPreview(this, plugin, this.previewContainer);
