@@ -31,15 +31,7 @@ const baseConfig = {
         webWorkerLoader({
             inline: true, forceInline: true, targetPlatform: "browser", format: "cjs",
         }),
-        visualizer({
-            open: false,
-            filename: 'bundle-analysis.html'
-        }),
-        bundleStats.bundleStats({
-            output: 'bundle-stats.json',
-        })
     ],
-
 };
 
 
@@ -69,12 +61,12 @@ const developmentConfig = {
 const productionConfig = {
     ...baseConfig,
     output: {
+        name,
         dir: 'dist',
         sourcemap: false,
         sourcemapExcludeSources: true,
         format: 'cjs',
         exports: 'auto',
-        name
     },
     plugins: [
         ...baseConfig.plugins,
@@ -92,6 +84,13 @@ const productionConfig = {
             compress: true,
             mangle: true
         }),
+        visualizer({
+            open: false,
+            filename: 'bundle-analysis.html'
+        }),
+        bundleStats.bundleStats({
+            output: 'bundle-stats.json',
+        })
     ],
 };
 
