@@ -186,7 +186,6 @@ const VersionViewComponent: React.FC<{
                     onSave={handleSaveCurrentVersion}
                     onSaveSuccess={updateSpecs}
                     onOpenInOpenAPIView={handleOpenInOpenAPIView}
-                    onRestoreTo={() => {}}
                 />
                 {specs.length === 0 ? (
                     <NoVersionsMessage />
