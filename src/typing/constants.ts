@@ -11,6 +11,7 @@ export enum eventID {
     ReloadOpenAPIEntryState = 'openapi-renderer-reload-openAPIEntryState',
     ChangeGridColumnsState = 'openapi-renderer-change-grid-columns',
     ChangeOpenAPIModeState = 'openapi-renderer-change-openAPIModeState',
+    UpdateOpenAPIViewState = 'openapi-renderer-update-openAPIViewState',
 }
 
 export enum eventPublisher {

@@ -191,6 +191,11 @@ export interface ChangeGridColumnsStateEvent extends OpenAPIRendererEvent {
 }
 
 export interface ChangeOpenAPIModeStateEvent extends OpenAPIRendererEvent {}
+export interface UpdateOpenAPIViewStateEvent extends OpenAPIRendererEvent {
+    data: {
+        file: string;
+    };
+}
 
 export interface ObserverEventData {
     emitter: Events;
@@ -221,7 +226,11 @@ export interface LinkedComponentOptions {
 export interface IOpenAPIViewComponent {
     render(): void;
 
+    hide(): void;
+
     clear(): void;
+
+    close(): void;
 
     getComponentData(): string;
 }
