@@ -160,7 +160,7 @@ export class VersionController {
                 if (lastVersion.type === ResponseType.Success) {
                     let spec = lastVersion.payload.data;
                     spec = new Specification(spec);
-                    this.versionView.versions?.push(spec);
+                    this.versionView.versions.push(spec);
                 }
                 return true;
             }
