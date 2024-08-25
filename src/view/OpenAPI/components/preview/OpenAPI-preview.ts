@@ -24,8 +24,17 @@ export default class OpenAPIPreview implements IOpenAPIViewComponent {
         await this.controller.render();
     }
 
-    clear(): void {
+    hide(): void {
         this.contentEl.hide();
+    }
+
+    clear(): void {
+        this.contentEl.empty();
+        this.cachedPreview = null;
+    }
+
+    close(): void {
+        this.clear();
     }
 
     getComponentData(): string {

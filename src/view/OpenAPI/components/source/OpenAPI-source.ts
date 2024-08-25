@@ -25,8 +25,24 @@ export class OpenAPISource implements IOpenAPIViewComponent {
         this.controller.initializeEditor();
     }
 
-    clear(): void {
+    hide(): void {
         this.contentEl.hide();
+    }
+
+    clear(): void {
+        if (this.editor) {
+            this.editor.dispatch({
+                changes: {
+                    from: 0,
+                    to: this.editor.state.doc.toString().length,
+                    insert: this.view.data,
+                },
+            });
+        }
+    }
+
+    close(): void {
+        this.editor?.destroy();
     }
 
     getComponentData(): string {
