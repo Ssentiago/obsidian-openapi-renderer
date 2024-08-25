@@ -17,6 +17,7 @@ import {
     Version,
 } from '../styled/styled-components';
 import {
+    FaCalendarAlt,
     FaCodeBranch,
     FaEye,
     FaTrash,
@@ -24,6 +25,9 @@ import {
     FaUndo,
 } from 'react-icons/fa';
 import { OpenAPIVersionView } from '../../openapi-version-view';
+import jsyaml from 'js-yaml';
+import { UpdateOpenAPIViewStateEvent } from '../../../../typing/interfaces';
+import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
 
 const getReadableDate: (date: Date) => { id: number; label: string } = (
     date: Date
@@ -91,6 +95,7 @@ const VersionListComponent: React.FC<VersionListProps> = ({
         setDiffMode,
         openGroups,
         setOpenGroups,
+        setRestored,
     } = useSpecificationContext();
 
     const handleToggleGroup = (dateGroup: string): void => {
@@ -110,6 +115,31 @@ const VersionListComponent: React.FC<VersionListProps> = ({
     ): Promise<void> => {
         await view.controller.deleteVersionPermanently(spec.id);
         updateSpecs();
+    };
+
+    const handleRestoreTo = async (spec: Specification) => {
+        const diff = spec.getPatchedVersion(specs).diff as string;
+        if (view.file) {
+            const content =
+                view.file.extension === 'json'
+                    ? JSON.stringify(diff)
+                    : jsyaml.dump(JSON.parse(diff));
+            await view.app.vault.adapter.write(view.file.path, content);
+            view.plugin.publisher.publish({
+                eventID: eventID.UpdateOpenAPIViewState,
+                publisher: eventPublisher.App,
+                subject: Subject.App,
+                timestamp: new Date(),
+                emitter: view.app.workspace,
+                data: {
+                    file: view.file.path,
+                },
+            } as UpdateOpenAPIViewStateEvent);
+            view.plugin.showNotice(
+                `The file ${view.file.path} has been restored to version ${spec.version}`
+            );
+            setRestored(spec);
+        }
     };
 
     const handleSelectForDiff = async (spec: Specification): Promise<void> => {
@@ -171,6 +201,18 @@ const VersionListComponent: React.FC<VersionListProps> = ({
                                             >
                                                 <FaEye /> Preview
                                             </PreviewButton>
+                                            <RestoreButton
+                                                onClick={() =>
+                                                    handleRestoreTo(spec)
+                                                }
+                                            >
+                                                <FaCalendarAlt
+                                                    style={{
+                                                        color: 'var(--icon-color)',
+                                                    }}
+                                                />
+                                                Restore to...
+                                            </RestoreButton>
                                             <DiffButton
                                                 onClick={() =>
                                                     handleSelectForDiff(spec)
