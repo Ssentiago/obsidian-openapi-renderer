@@ -24,22 +24,27 @@ export class IndexedDB extends Dexie implements Database {
     }
 
     async add(spec: BaseSpecification): Promise<void> {
-        await this.spec.add(spec);
-        debugger;
-
-        const specData = await this.entryViewData.get(spec.path);
-        if (specData) {
-            specData.versionCount++;
-            specData.lastUpdatedAt = new Date().toLocaleString();
-            await this.entryViewData.put(specData);
-        } else {
-            const newSpecData: EntryViewData = {
-                path: spec.path,
-                versionCount: 1,
-                lastUpdatedAt: new Date().toLocaleString(),
-            };
-            await this.entryViewData.add(newSpecData);
-        }
+        await this.transaction(
+            'rw',
+            this.spec,
+            this.entryViewData,
+            async () => {
+                await this.spec.add(spec);
+                const specData = await this.entryViewData.get(spec.path);
+                if (specData) {
+                    specData.versionCount++;
+                    specData.lastUpdatedAt = new Date().toLocaleString();
+                    await this.entryViewData.put(specData);
+                } else {
+                    const newSpecData: EntryViewData = {
+                        path: spec.path,
+                        versionCount: 1,
+                        lastUpdatedAt: new Date().toLocaleString(),
+                    };
+                    await this.entryViewData.add(newSpecData);
+                }
+            }
+        );
     }
 
     async getVersions(path: string): Promise<BaseSpecification[]> {
@@ -53,11 +58,8 @@ export class IndexedDB extends Dexie implements Database {
     }
 
     async getLastVersion(path: string): Promise<BaseSpecification | undefined> {
-        const specs = await this.spec
-            .where('path')
-            .equals(path)
-            .sortBy('createdAt');
-        return specs.at(-1);
+        const versions = await this.getVersions(path);
+        return versions.at(-1);
     }
 
     async deleteVersion(id: number): Promise<void> {
@@ -77,22 +79,27 @@ export class IndexedDB extends Dexie implements Database {
     }
 
     async deleteVersionPermanently(id: number): Promise<void> {
-        const spec = await this.spec.get(id);
-        if (spec) {
-            await this.spec.delete(id);
-
-            const specData = await this.entryViewData.get(spec.path);
-            if (specData) {
-                specData.versionCount--;
-                specData.lastUpdatedAt = new Date().toLocaleString();
-
-                if (specData.versionCount <= 0) {
-                    await this.entryViewData.delete(specData.path);
-                } else {
-                    await this.entryViewData.put(specData);
+        await this.transaction(
+            'rw',
+            this.spec,
+            this.entryViewData,
+            async () => {
+                const spec = await this.spec.get(id);
+                if (spec) {
+                    await this.spec.delete(id);
+                    const specData = await this.entryViewData.get(spec.path);
+                    if (specData) {
+                        specData.versionCount--;
+                        specData.lastUpdatedAt = new Date().toLocaleString();
+                        if (specData.versionCount <= 0) {
+                            await this.entryViewData.delete(specData.path);
+                        } else {
+                            await this.entryViewData.put(specData);
+                        }
+                    }
                 }
             }
-        }
+        );
     }
 
     async isNextVersionFull(path: string): Promise<boolean> {
@@ -100,7 +107,7 @@ export class IndexedDB extends Dexie implements Database {
         return (specs.length + 1) % 10 === 0;
     }
 
-    async getEntryViewData() {
+    async getEntryViewData(): Promise<EntryViewData[]> {
         return this.entryViewData.toArray();
     }
 
