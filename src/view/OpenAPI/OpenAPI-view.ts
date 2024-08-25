@@ -9,7 +9,11 @@ import {
     RenderingMode,
     Subject,
 } from 'typing/constants';
-import { IOpenAPIViewComponent, SwitchModeStateEvent } from 'typing/interfaces';
+import {
+    IOpenAPIViewComponent,
+    SwitchModeStateEvent,
+    UpdateOpenAPIViewStateEvent,
+} from 'typing/interfaces';
 import { OPENAPI_VIEW_TYPE } from '../types';
 
 export class OpenAPIView extends TextFileView {
@@ -39,6 +43,18 @@ export class OpenAPIView extends TextFileView {
         this.source = new OpenAPISource(this, plugin, this.sourceContainer);
         this.preview = new OpenAPIPreview(this, plugin, this.previewContainer);
         this.initializeComponent();
+        this.plugin.observer.subscribe(
+            this.app.workspace,
+            eventID.UpdateOpenAPIViewState,
+            async (event: UpdateOpenAPIViewStateEvent) => {
+                const file = event.data.file;
+                if (this.file && this.file.path === file) {
+                    const content = await this.app.vault.cachedRead(this.file);
+                    this.setViewData(content, true);
+                    await this.onLoadFile(this.file);
+                }
+            }
+        );
     }
 
     initializeComponent(): void {
@@ -62,7 +78,8 @@ export class OpenAPIView extends TextFileView {
 
     async onClose(): Promise<void> {
         this.data = '';
-        this.clear();
+        this.source.close();
+        this.preview.close();
     }
 
     getViewType(): string {
@@ -82,7 +99,7 @@ export class OpenAPIView extends TextFileView {
 
     onSwitch(): void {
         this.data = this.activeComponent.getComponentData();
-        this.clear();
+        this.activeComponent.hide();
         this.mode = this.controller.newMode;
         this.plugin.publisher.publish({
             eventID: eventID.SwitchModeState,
@@ -119,10 +136,16 @@ export class OpenAPIView extends TextFileView {
     }
 
     clear(): void {
-        this.activeComponent.clear();
+        this.preview.clear();
+        this.source.clear();
+        this.plugin.publisher.publish({
+            eventID: eventID.SwitchModeState,
+            publisher: eventPublisher.OpenAPIView,
+            subject: Subject.All,
+            timestamp: new Date(),
+            emitter: this.app.workspace,
+        } as SwitchModeStateEvent);
     }
 
-    async onUnloadFile(file: TFile): Promise<void> {
-        this.clear();
-    }
+    async onUnloadFile(file: TFile): Promise<void> {}
 }
