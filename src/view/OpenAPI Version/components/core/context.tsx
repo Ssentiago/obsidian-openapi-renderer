@@ -18,6 +18,10 @@ interface SpecificationContextProps {
     setOpenGroups: React.Dispatch<
         React.SetStateAction<Record<string, boolean>>
     >;
+    restored: Specification | undefined;
+    setRestored: React.Dispatch<
+        React.SetStateAction<Specification | undefined>
+    >;
 }
 
 const SpecificationContext = createContext<
@@ -35,7 +39,9 @@ export const SpecificationProvider: React.FC<{ children: ReactNode }> = ({
     >(undefined);
     const [selectedSpecs, setSelectedSpecs] = useState<Specification[]>([]);
     const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-
+    const [restored, setRestored] = useState<Specification | undefined>(
+        undefined
+    );
     return (
         <SpecificationContext.Provider
             value={{
@@ -51,6 +57,8 @@ export const SpecificationProvider: React.FC<{ children: ReactNode }> = ({
                 setSelectedSpecs,
                 openGroups,
                 setOpenGroups,
+                restored,
+                setRestored,
             }}
         >
             {children}
