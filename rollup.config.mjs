@@ -1,39 +1,37 @@
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import replace from "@rollup/plugin-replace";
+import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import bundleStats from 'rollup-plugin-bundle-stats';
 import copy from 'rollup-plugin-copy';
-import {visualizer} from 'rollup-plugin-visualizer';
+import { visualizer } from 'rollup-plugin-visualizer';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
-
 
 const name = 'openapi-renderer';
 
 const baseConfig = {
     input: 'src/main.ts',
-    external: [
-        "obsidian",
-        "electron",
-    ],
+    external: ['obsidian', 'electron'],
     plugins: [
         json(),
         nodeResolve({
             preferBuiltins: true,
-            extensions: ['.js', '.jsx', '.ts', '.tsx']
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
         }),
         commonjs({
-            include: 'node_modules/**'
+            include: 'node_modules/**',
         }),
         typescript(),
         webWorkerLoader({
-            inline: true, forceInline: true, targetPlatform: "browser", format: "cjs",
+            inline: true,
+            forceInline: true,
+            targetPlatform: 'browser',
+            format: 'cjs',
         }),
     ],
 };
-
 
 const developmentConfig = {
     ...baseConfig,
@@ -42,21 +40,32 @@ const developmentConfig = {
         sourcemap: false,
         format: 'cjs',
         exports: 'auto',
-        name
+        name,
     },
     plugins: [
         ...baseConfig.plugins,
         copy({
             targets: [
-                {src: './styles.css', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
-                {src: './manifest.json', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
-                {src: './src/assets', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
-                {src: './.hotreload', dest: 'test-vault/.obsidian/plugins/openapi-renderer/'},
+                {
+                    src: './styles.css',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
+                {
+                    src: './manifest.json',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
+                {
+                    src: './src/assets',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
+                {
+                    src: './.hotreload',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
             ],
         }),
     ],
 };
-
 
 const productionConfig = {
     ...baseConfig,
@@ -76,24 +85,24 @@ const productionConfig = {
         }),
         copy({
             targets: [
-                {src: './styles.css', dest: 'dist/'},
-                {src: './manifest.json', dest: 'dist/'},
+                { src: './styles.css', dest: 'dist/' },
+                { src: './manifest.json', dest: 'dist/' },
             ],
         }),
         terser({
             compress: true,
-            mangle: true
+            mangle: true,
         }),
         visualizer({
             open: false,
-            filename: 'bundle-analysis.html'
+            filename: 'bundle-analysis.html',
         }),
         bundleStats.bundleStats({
             output: 'bundle-stats.json',
-        })
+        }),
     ],
 };
 
-
-const config = process.env.PRODUCTION === '1' ? productionConfig : developmentConfig;
+const config =
+    process.env.PRODUCTION === '1' ? productionConfig : developmentConfig;
 export default config;
