@@ -21,7 +21,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
         );
     }
 
-    hide(): any {
+    hide(): void {
         this.root.unmount();
     }
 }
