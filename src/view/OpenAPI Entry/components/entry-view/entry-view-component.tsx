@@ -1,19 +1,19 @@
+import { EntryViewData } from 'indexedDB/interfaces';
 import React, { useEffect } from 'react';
+import { eventID } from 'typing/constants';
+import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 import NoTrackedFilesFound from '../core/no-tracked-files-found';
-import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
-import { EntryViewData } from 'indexedDB/interfaces';
 import GridContainerComponent from '../grid/grid-container-component';
+import Navbar from '../navbar/navbar-component';
 import {
     Description,
     EntryContainer,
     WelcomeMessage,
 } from './entry-view-styled-components';
-import Navbar from '../navbar/navbar-component';
-import { eventID } from 'typing/constants';
 
 const EntryViewComponent: React.FC<{
-    outerSpecData: EntryViewData[];
+    outerSpecData: EntryViewData;
     view: OpenAPIEntryView;
 }> = ({ outerSpecData, view }) => {
     const { setSpecData, specData, currentPage } = useEntryContext();
@@ -43,7 +43,7 @@ const EntryViewComponent: React.FC<{
     // }
 
     if (currentPage === 'browse') {
-        if (specData.length === 0) {
+        if (Object.keys(specData).length === 0) {
             return (
                 <>
                     <Navbar />
