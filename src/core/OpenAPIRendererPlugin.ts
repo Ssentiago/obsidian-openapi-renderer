@@ -23,6 +23,8 @@ import {
     OPENAPI_VIEW_TYPE,
 } from '../view/types';
 import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
+import Export from 'export/export';
+import { FileWatcher } from '../filewatcher/filewatcher';
 
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
@@ -51,6 +53,8 @@ export default class OpenAPIRendererPlugin extends Plugin {
     pluginUtils!: PluginUtils;
     stateChecker!: PluginStateChecker;
     resourceManager!: PluginResourceManager;
+    export!: Export;
+    fileWatcher!: FileWatcher;
 
     /**
      * Lifecycle method called when the plugin is loaded.
@@ -226,7 +230,8 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializeUtilities(): Promise<void> {
         this.pluginUtils = new PluginUtils(this.appContext);
         this.stateChecker = new PluginStateChecker(this, this.pluginUtils);
-        // this.export = new Export(this.appContext);
         await this.stateChecker.checkResources();
+        this.fileWatcher = new FileWatcher(this);
+        this.export = new Export(this);
     }
 }
