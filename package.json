@@ -12,7 +12,8 @@
         "build": "NODE_ENV=production yarn rollup -c rollup.config.mjs --environment PRODUCTION:1",
         "lint": "yarn eslint src --ext .ts",
         "start-obsidian": "node scripts/start-obsidian.mjs",
-        "rollup": "rollup"
+        "rollup": "rollup",
+        "changelog": "npx conventional-changelog -p conventionalcommits -i check.md -s -r 1 --append\n"
     },
     "keywords": [],
     "dependencies": {
@@ -27,6 +28,7 @@
         "@codemirror/view": "^6.30.0",
         "@octokit/rest": "^21.0.1",
         "@uiw/codemirror-theme-vscode": "^4.23.0",
+        "conventional-changelog-cli": "^5.0.0",
         "dexie": "^4.0.8",
         "express": "^4.19.2",
         "js-yaml": "^4.1.0",
@@ -38,7 +40,8 @@
         "rollup-plugin-polyfill-node": "^0.13.0",
         "styled-components": "^6.1.12",
         "swagger-parser": "^10.0.3",
-        "tar": "^7.4.0"
+        "tar": "^7.4.0",
+        "yazl": "^2.5.1"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^26.0.1",
@@ -54,6 +57,7 @@
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@types/tar": "^6.1.13",
+        "@types/yazl": "^2",
         "@typescript-eslint/eslint-plugin": "^7.16.1",
         "@typescript-eslint/parser": "^7.16.1",
         "@typescript-eslint/utils": "^7.16.1",
