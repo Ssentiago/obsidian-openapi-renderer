@@ -1,13 +1,11 @@
 openapi: 3.0.1
 info:
-  title: qц1
+  title: i love u
   description: This is qwwwwwwqsqq sample fuck specification. i dont want u
   version: 1.0.0
 servers:
   - url: https://api.example.com/v1
     description: Production server
-  - url: https://staging.api.example.com/v1
-    description: Staging server
 paths:
   /users/{userId}:
     get:
