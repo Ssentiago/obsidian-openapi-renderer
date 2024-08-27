@@ -15,7 +15,7 @@ export const DetailContainer = styled.div`
     padding: 16px;
 `;
 
-export const DetailContainerHeader = styled.h3<{ isOpen: boolean }>`
+export const DetailContainerHeader = styled.h3<{ $isOpen: boolean }>`
     margin: 0;
     padding: 12px 16px;
     color: var(--color-base-100);
@@ -30,7 +30,7 @@ export const DetailContainerHeader = styled.h3<{ isOpen: boolean }>`
     border: 1px solid var(--color-base-20);
 
     &:after {
-        content: '${(props) => (props.isOpen ? '▲' : '▼')}';
+        content: '${(props) => (props.$isOpen ? '▲' : '▼')}';
         margin-left: 10px;
         font-size: 0.8rem;
     }
