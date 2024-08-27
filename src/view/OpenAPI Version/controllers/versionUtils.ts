@@ -29,11 +29,17 @@ export class VersionUtils {
         { specName: string; specVersion: string } | undefined
     > {
         const modal = new SaveCurrentVersionModal(
-            this.controller.versionView.app
+            this.controller.versionView.app,
+            this.controller.versionView.versions
         );
         const formData: FormData = await new Promise<FormData>((resolve) => {
             modal.onClose = (): void => {
+                if (!modal.submitted) {
+                    resolve(modal.getBaseFormData());
+                }
                 resolve(modal.formData);
+                modal.contentEl.empty();
+                modal.containerEl.empty();
             };
             modal.open();
         });
