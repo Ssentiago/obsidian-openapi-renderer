@@ -8,43 +8,20 @@ interface Database extends Dexie {
 
 export class IndexedDB extends Dexie implements Database {
     spec: Dexie.Table<BaseSpecification, number>;
-    entryViewData: Dexie.Table<EntryViewData, string>;
 
     constructor() {
         super('OpenAPI Renderer');
 
         this.version(1).stores({
             spec: '++id, &[path+name+diff+version], createdAt, softDeleted',
-            entryViewData: '&path, versionCount, lastUpdatedAt',
         });
         this.spec = this.table('spec');
-        this.entryViewData = this.table('entryViewData');
 
         this.spec.mapToClass(BaseSpecification);
     }
 
     async add(spec: BaseSpecification): Promise<void> {
-        await this.transaction(
-            'rw',
-            this.spec,
-            this.entryViewData,
-            async () => {
-                await this.spec.add(spec);
-                const specData = await this.entryViewData.get(spec.path);
-                if (specData) {
-                    specData.versionCount++;
-                    specData.lastUpdatedAt = new Date().toLocaleString();
-                    await this.entryViewData.put(specData);
-                } else {
-                    const newSpecData: EntryViewData = {
-                        path: spec.path,
-                        versionCount: 1,
-                        lastUpdatedAt: new Date().toLocaleString(),
-                    };
-                    await this.entryViewData.add(newSpecData);
-                }
-            }
-        );
+        await this.spec.add(spec);
     }
 
     async getVersions(path: string): Promise<BaseSpecification[]> {
@@ -79,27 +56,7 @@ export class IndexedDB extends Dexie implements Database {
     }
 
     async deleteVersionPermanently(id: number): Promise<void> {
-        await this.transaction(
-            'rw',
-            this.spec,
-            this.entryViewData,
-            async () => {
-                const spec = await this.spec.get(id);
-                if (spec) {
-                    await this.spec.delete(id);
-                    const specData = await this.entryViewData.get(spec.path);
-                    if (specData) {
-                        specData.versionCount--;
-                        specData.lastUpdatedAt = new Date().toLocaleString();
-                        if (specData.versionCount <= 0) {
-                            await this.entryViewData.delete(specData.path);
-                        } else {
-                            await this.entryViewData.put(specData);
-                        }
-                    }
-                }
-            }
-        );
+        await this.spec.delete(id);
     }
 
     async isNextVersionFull(path: string): Promise<boolean> {
@@ -107,8 +64,48 @@ export class IndexedDB extends Dexie implements Database {
         return (specs.length + 1) % 10 === 0;
     }
 
-    async getEntryViewData(): Promise<EntryViewData[]> {
-        return this.entryViewData.toArray();
+    async getEntryViewData(): Promise<EntryViewData> {
+        const data: EntryViewData = {};
+
+        await this.spec.toCollection().each((record) => {
+            const path = record.path;
+            const time = new Date(record.createdAt).getTime();
+            if (!data[path]) {
+                data[path] = {
+                    count: 1,
+                    lastUpdate: time,
+                };
+            } else {
+                data[path].count++;
+                data[path].lastUpdate =
+                    time > data[path].lastUpdate ? time : data[path].lastUpdate;
+            }
+        });
+
+        return data;
+    }
+
+    async getAllData(): Promise<Array<BaseSpecification>> {
+        const data = await this.spec.toArray();
+        return data;
+    }
+
+    async renameFile(oldPath: string, newPath: string): Promise<void> {
+        const versions = await this.getVersions(oldPath);
+        const updatedVersions = versions.map((version) => ({
+            ...version,
+            path: newPath,
+        }));
+        await this.spec.bulkPut(updatedVersions);
+    }
+
+    async isFileTracked(path: string): Promise<boolean> {
+        const spec = await this.spec.where('path').equals(path).first();
+        return !!spec;
+    }
+
+    async deleteFile(path: string): Promise<void> {
+        await this.spec.where('path').equals(path).delete();
     }
 
     async removeAllVersions(path: string): Promise<void> {
