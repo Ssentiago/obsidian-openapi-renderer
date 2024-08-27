@@ -2,8 +2,8 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { EntryViewData } from '../../../../indexedDB/interfaces';
 
 interface EntryContextProps {
-    specData: EntryViewData[];
-    setSpecData: React.Dispatch<React.SetStateAction<EntryViewData[]>>;
+    specData: EntryViewData;
+    setSpecData: React.Dispatch<React.SetStateAction<EntryViewData>>;
     columnValue: number;
     setColumnValue: React.Dispatch<React.SetStateAction<number>>;
     detailsOpen: Record<string, boolean>;
@@ -19,7 +19,7 @@ const EntryContext = createContext<EntryContextProps | undefined>(undefined);
 export const EntryProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    const [specData, setSpecData] = useState<EntryViewData[]>([]);
+    const [specData, setSpecData] = useState<EntryViewData>({});
     const [columnValue, setColumnValue] = useState<number>(4);
     const [detailsOpen, setDetailsOpen] = useState<Record<string, boolean>>({});
     const [currentPage, setCurrentPage] = useState<string>('entry');
