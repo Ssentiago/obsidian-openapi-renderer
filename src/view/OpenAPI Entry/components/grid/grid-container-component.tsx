@@ -1,8 +1,8 @@
 import React from 'react';
+import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 import { GridContainer } from './grid-container-styled-component';
 import { GridItemComponent } from './grid-item-component';
-import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 
 const GridContainerComponent: React.FC<{
     view: OpenAPIEntryView;
@@ -12,13 +12,14 @@ const GridContainerComponent: React.FC<{
     return (
         <>
             <GridContainer columns={columnValue} gap={'20px'}>
-                {specData.map((entry) => (
+                {Object.entries(specData).map(([path, entry]) => (
                     <GridItemComponent
-                        key={entry.path}
+                        key={path}
+                        path={path}
                         view={view}
-                        title={entry.path}
-                        count={entry.versionCount}
-                        lastUpdate={entry.lastUpdatedAt}
+                        title={path}
+                        count={entry.count}
+                        lastUpdate={entry.lastUpdate}
                     />
                 ))}
             </GridContainer>
