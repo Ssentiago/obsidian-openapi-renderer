@@ -22,6 +22,8 @@ export class VersionController {
         this.themeController = new ThemeController(this);
         this.versionUtils = new VersionUtils(this);
         this.diffController = new DiffController();
+
+        this.initializeActions();
     }
 
     async getVersionHistory(): Promise<Array<Specification> | [] | undefined> {
@@ -170,5 +172,18 @@ export class VersionController {
             this.versionView.plugin.logger.error(error.message);
             return false;
         }
+    }
+
+    initializeActions(): void {
+        this.versionView.addAction(
+            'download',
+            'Export all versions of this file as a ZIP archive',
+            async () => {
+                await this.versionView.plugin.export.export(
+                    this.versionView.versions
+                );
+                this.versionView.plugin.showNotice('Exported successfully');
+            }
+        );
     }
 }
