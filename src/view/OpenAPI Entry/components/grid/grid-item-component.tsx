@@ -1,35 +1,53 @@
-import React from 'react';
+import jsyaml from 'js-yaml';
+import React, { useState } from 'react';
+import { BiExport } from 'react-icons/bi';
+import {
+    FaChevronDown,
+    FaCodeBranch,
+    FaHistory,
+    FaPlus,
+    FaTrash,
+} from 'react-icons/fa';
+import { SiOpenapiinitiative } from 'react-icons/si';
+import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
+import { ReloadOpenAPIEntryStateEvent } from '../../../../typing/interfaces';
+import { OPENAPI_VERSION_VIEW_TYPE, OPENAPI_VIEW_TYPE } from '../../../types';
+import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
+import { useEntryContext } from '../core/context';
+import {
+    ActionsContainer,
+    DeleteAction,
+    ExportAction,
+    MainActionButton,
+    MenuContainer,
+    OpenOpenAPIAction,
+    OpenVersionViewAction,
+    RestoreAction,
+} from './actions-styled-component';
 import {
     DetailContainer,
     DetailContainerHeader,
     DetailContent,
 } from './detail-container';
-import { useEntryContext } from '../core/context';
 import {
     GridItem,
     ItemCount,
     ItemDate,
     ItemTitle,
 } from './grid-item-styled-component';
-import {
-    ActionsContainer,
-    ExportAction,
-    OpenOpenAPIAction,
-    OpenVersionViewAction,
-} from './actions-styled-component';
-import { FaHistory } from 'react-icons/fa';
-import { SiOpenapiinitiative } from 'react-icons/si';
-import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
-import { OPENAPI_VERSION_VIEW_TYPE, OPENAPI_VIEW_TYPE } from '../../../types';
-import { BiExport } from 'react-icons/bi';
 
 export const GridItemComponent: React.FC<{
     view: OpenAPIEntryView;
     title: string;
     count: number;
-    lastUpdate: string;
-}> = ({ title, count, lastUpdate, view }) => {
+    lastUpdate: number;
+    path: string;
+}> = ({ title, count, lastUpdate, view, path }) => {
     const { detailsOpen, setDetailsOpen } = useEntryContext();
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleMenu = () => setIsOpen((prev) => !prev);
 
     const handleToggleDetails = (title: string): void => {
         setDetailsOpen((prev) => ({
@@ -94,6 +112,51 @@ export const GridItemComponent: React.FC<{
         }
     };
 
+    const handleExportFile = async () => {
+        const data = await view.controller.getAllVersionsForFile(path);
+        if (data) {
+            await view.plugin.export.export(data);
+            view.plugin.showNotice('Exported successfully');
+        }
+    };
+
+    const handleRestoreFile = async (path: string) => {
+        const versions = await view.controller.getAllVersionsForFile(path);
+        if (!versions) {
+            return;
+        }
+        const lastVersion = versions[versions.length - 1];
+        const data = lastVersion.getPatchedVersion(versions).diff as string;
+        const extension = lastVersion.path.match(/\.(.+)/)?.[1];
+        if (!extension) {
+            return;
+        }
+
+        await view.app.vault.adapter.write(
+            lastVersion.path,
+            extension === 'json'
+                ? JSON.stringify(JSON.parse(data), null, 2)
+                : (jsyaml.dump(JSON.parse(data), {
+                      indent: 2,
+                  }) as string)
+        );
+        view.plugin.showNotice('Restored successfully');
+    };
+
+    const handleDelete = async (path: string) => {
+        const deleted = await view.controller.deleteFile(path);
+        if (deleted) {
+            view.plugin.publisher.publish({
+                eventID: eventID.ReloadOpenAPIEntryState,
+                subject: Subject.All,
+                publisher: eventPublisher.Settings,
+                emitter: view.plugin.app.workspace,
+                timestamp: new Date(),
+            } as ReloadOpenAPIEntryStateEvent);
+            view.plugin.showNotice('Deleted successfully');
+        }
+    };
+
     return (
         <GridItem>
             <ItemTitle onClick={() => handleClickOnTitle(title)}>
@@ -101,7 +164,7 @@ export const GridItemComponent: React.FC<{
             </ItemTitle>
             <DetailContainer>
                 <DetailContainerHeader
-                    isOpen={detailsOpen[title]}
+                    $isOpen={detailsOpen[title]}
                     onClick={() => handleToggleDetails(title)}
                 >
                     Details
@@ -109,27 +172,49 @@ export const GridItemComponent: React.FC<{
                 {detailsOpen[title] && (
                     <DetailContent>
                         <ItemCount>Version count: {count}</ItemCount>
-                        <ItemDate>Last update: {lastUpdate}</ItemDate>
+                        <ItemDate>
+                            Last update: {new Date(lastUpdate).toLocaleString()}
+                        </ItemDate>
                     </DetailContent>
                 )}
             </DetailContainer>
-            <ActionsContainer>
-                <OpenOpenAPIAction
-                    title="Open in OpenAPI View"
-                    onClick={() => handleOpenOpenAPIView(title)}
+            <MenuContainer>
+                <MainActionButton
+                    title={`${!isOpen ? 'Show' : 'Hide'} actions`}
+                    onClick={toggleMenu}
                 >
-                    <SiOpenapiinitiative />
-                </OpenOpenAPIAction>
-                <OpenVersionViewAction
-                    title="Open in Version View"
-                    onClick={() => handleOpenVersionView(title)}
-                >
-                    <FaHistory />
-                </OpenVersionViewAction>
-                <ExportAction>
-                    <BiExport />
-                </ExportAction>
-            </ActionsContainer>
+                    {!isOpen ? <FaPlus /> : <FaChevronDown />}
+                </MainActionButton>
+                <ActionsContainer $isOpen={isOpen}>
+                    <OpenOpenAPIAction
+                        title="Open in OpenAPI View"
+                        onClick={() => handleOpenOpenAPIView(title)}
+                    >
+                        <SiOpenapiinitiative />
+                    </OpenOpenAPIAction>
+                    <OpenVersionViewAction
+                        title="Open in Version View"
+                        onClick={() => handleOpenVersionView(title)}
+                    >
+                        <FaCodeBranch />
+                    </OpenVersionViewAction>
+                    <ExportAction title="Export" onClick={handleExportFile}>
+                        <BiExport />
+                    </ExportAction>
+                    <RestoreAction
+                        title="Restore last file version (if it was deleted from the vault)"
+                        onClick={() => handleRestoreFile(title)}
+                    >
+                        <FaHistory />
+                    </RestoreAction>
+                    <DeleteAction
+                        title="Remove file from tracking (file remains in vault)"
+                        onClick={() => handleDelete(title)}
+                    >
+                        <FaTrash />
+                    </DeleteAction>
+                </ActionsContainer>
+            </MenuContainer>
         </GridItem>
     );
 };
