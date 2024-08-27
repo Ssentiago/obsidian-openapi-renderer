@@ -7,6 +7,10 @@ export enum MessageType {
     DeletePermanently = 'delete-version-permanently',
     IsNextVersionFull = 'is-next-version-full',
     GetEntryViewData = 'get-entry-view-data',
+    GetAllData = 'get-all-data',
+    RenameFile = 'rename-file',
+    IsFileTracked = 'is-file-tracked',
+    DeleteFile = 'delete-file',
 }
 
 export const enum ResponseType {
@@ -29,7 +33,8 @@ export interface WorkerResponse {
 }
 
 export interface EntryViewData {
-    path: string;
-    versionCount: number;
-    lastUpdatedAt: string;
+    [key: string]: {
+        lastUpdate: number;
+        count: number;
+    };
 }
