@@ -128,6 +128,7 @@ export const DeleteButton = styled(ButtonBase)`
     }
 `;
 export const DeletePermanentlyButton = styled(DeleteButton)``;
+export const ExportButton = styled(DeleteButton)``;
 export const OpenInOpenAPIButton = styled(ButtonBase)`
     background-color: var(--interactive-normal);
     color: var(--text-normal);
