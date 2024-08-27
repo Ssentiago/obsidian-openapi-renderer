@@ -72,7 +72,6 @@ export class Specification extends BaseSpecification {
     getPatchedVersion(versions: Array<Specification>): Specification {
         const myIndex = versions.indexOf(this);
 
-        debugger;
         if (myIndex === -1 || myIndex === 0) {
             const newSpec = {
                 ...this,
