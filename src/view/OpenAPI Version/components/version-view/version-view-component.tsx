@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
 import { Specification } from 'indexedDB/database/specification';
-import { OpenAPIVersionView } from '../../openapi-version-view';
-import { ButtonBase, Container } from '../styled/styled-components';
-import { useSpecificationContext } from '../core/context';
-import DraftVersionComponent from '../draft-version/draft-version-component';
-import NoVersionsMessage from '../core/no-versions-available';
-import VersionListComponent from '../version-list/version-list-component';
 import jsyaml from 'js-yaml';
-import PreviewComponent from '../preview/preview-component';
-import TwoPaneDiff from '../diff/diff-component';
-import { OPENAPI_VIEW_TYPE } from '../../../types';
+import React, { useEffect } from 'react';
 import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
 import { ReloadOpenAPIEntryStateEvent } from '../../../../typing/interfaces';
+import { OPENAPI_VIEW_TYPE } from '../../../types';
+import { OpenAPIVersionView } from '../../openapi-version-view';
+import { useSpecificationContext } from '../core/context';
+import NoVersionsMessage from '../core/no-versions-available';
+import TwoPaneDiff from '../diff/diff-component';
+import DraftVersionComponent from '../draft-version/draft-version-component';
+import PreviewComponent from '../preview/preview-component';
+import { ButtonBase, Container } from '../styled/styled-components';
+import VersionListComponent from '../version-list/version-list-component';
 
 const VersionViewComponent: React.FC<{
     specifications?: Specification[];
