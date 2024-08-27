@@ -74,6 +74,38 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
                     payload: { data: data },
                 });
                 break;
+            case MessageType.GetAllData:
+                const allData = await db.getAllData();
+                self.postMessage({
+                    type: ResponseType.Success,
+                    payload: { data: allData },
+                });
+
+                break;
+            case MessageType.IsFileTracked:
+                const filePath = payload.data.path;
+                const isFileTracked = await db.isFileTracked(filePath);
+                self.postMessage({
+                    type: ResponseType.Success,
+                    payload: { data: isFileTracked },
+                });
+                break;
+            case MessageType.RenameFile:
+                const { oldPath, newPath } = payload.data;
+                await db.renameFile(oldPath, newPath);
+                self.postMessage({
+                    type: ResponseType.Success,
+                    payload: null,
+                });
+                break;
+            case MessageType.DeleteFile:
+                const { path: deletePath } = payload.data;
+                await db.deleteFile(deletePath);
+                self.postMessage({
+                    type: ResponseType.Success,
+                    payload: null,
+                });
+                break;
             default:
                 self.postMessage({
                     type: ResponseType.Error,
