@@ -1,6 +1,19 @@
-import React from 'react';
+import jsyaml from 'js-yaml';
 import { moment } from 'obsidian';
+import React from 'react';
+import {
+    FaCalendarAlt,
+    FaCodeBranch,
+    FaDownload,
+    FaEye,
+    FaTrash,
+    FaTrashAlt,
+    FaUndo,
+} from 'react-icons/fa';
 import { Specification } from '../../../../indexedDB/database/specification';
+import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
+import { UpdateOpenAPIViewStateEvent } from '../../../../typing/interfaces';
+import { OpenAPIVersionView } from '../../openapi-version-view';
 import { useSpecificationContext } from '../core/context';
 import {
     ButtonGroup,
@@ -10,24 +23,13 @@ import {
     DeletePermanentlyButton,
     Details,
     DiffButton,
+    ExportButton,
     GroupTitle,
     PreviewButton,
     RestoreButton,
     Title,
     Version,
 } from '../styled/styled-components';
-import {
-    FaCalendarAlt,
-    FaCodeBranch,
-    FaEye,
-    FaTrash,
-    FaTrashAlt,
-    FaUndo,
-} from 'react-icons/fa';
-import { OpenAPIVersionView } from '../../openapi-version-view';
-import jsyaml from 'js-yaml';
-import { UpdateOpenAPIViewStateEvent } from '../../../../typing/interfaces';
-import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
 
 const getReadableDate: (date: Date) => { id: number; label: string } = (
     date: Date
@@ -117,7 +119,7 @@ const VersionListComponent: React.FC<VersionListProps> = ({
         updateSpecs();
     };
 
-    const handleRestoreTo = async (spec: Specification) => {
+    const handleRestoreTo = async (spec: Specification): Promise<void> => {
         const diff = spec.getPatchedVersion(specs).diff as string;
         if (view.file) {
             const content =
@@ -156,6 +158,17 @@ const VersionListComponent: React.FC<VersionListProps> = ({
                 setSelectedSpecs([spec]);
             }
         }
+    };
+
+    const handleExportOneVersion = async (
+        spec: Specification
+    ): Promise<void> => {
+        const data = {
+            spec: spec,
+            specs: specs,
+        };
+        await view.plugin.export.export(data);
+        view.plugin.showNotice('Exported successfully');
     };
 
     const groupedSpecs = groupSpecificationsByDate(specs);
@@ -231,6 +244,15 @@ const VersionListComponent: React.FC<VersionListProps> = ({
                                             >
                                                 <FaTrash /> Delete
                                             </DeleteButton>
+                                            <ExportButton
+                                                onClick={async () =>
+                                                    await handleExportOneVersion(
+                                                        spec
+                                                    )
+                                                }
+                                            >
+                                                <FaDownload /> Export
+                                            </ExportButton>
                                         </>
                                     ) : (
                                         <>
