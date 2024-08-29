@@ -231,7 +231,6 @@
 
 [data-link="true"], [data-link="true"] > span {
     color: #007bff !important;
-    cursor: pointer;
 }
 
 .cm-link {
