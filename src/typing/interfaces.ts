@@ -184,7 +184,11 @@ export interface OpenAPIPreviewThemeStateEvent extends OpenAPIRendererEvent {}
 
 export interface LiveModeChangeStateEvent extends OpenAPIRendererEvent {}
 
-export interface SwitchModeStateEvent extends OpenAPIRendererEvent {}
+export interface SwitchModeStateEvent extends OpenAPIRendererEvent {
+    data: {
+        leaf: WorkspaceLeaf;
+    };
+}
 
 export interface ReloadOpenAPIEntryStateEvent extends OpenAPIRendererEvent {}
 
