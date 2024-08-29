@@ -1,19 +1,15 @@
-import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
-import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
-import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
-import { OpenAPIController } from 'view/OpenAPI/controllers/view-controller';
+import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import {
     eventID,
     eventPublisher,
     RenderingMode,
     Subject,
 } from 'typing/constants';
-import {
-    IOpenAPIViewComponent,
-    SwitchModeStateEvent,
-    UpdateOpenAPIViewStateEvent,
-} from 'typing/interfaces';
+import { IOpenAPIViewComponent, SwitchModeStateEvent } from 'typing/interfaces';
+import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
+import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
+import { OpenAPIController } from 'view/OpenAPI/controllers/view-controller';
 import { OPENAPI_VIEW_TYPE } from '../types';
 
 export class OpenAPIView extends TextFileView {
@@ -31,7 +27,6 @@ export class OpenAPIView extends TextFileView {
     ) {
         super(leaf);
         this.contentEl.addClass('fill-height-or-more');
-
         this.sourceContainer = this.contentEl.createDiv({
             cls: 'openapi-renderer-source-container',
         });
@@ -43,18 +38,7 @@ export class OpenAPIView extends TextFileView {
         this.source = new OpenAPISource(this, plugin, this.sourceContainer);
         this.preview = new OpenAPIPreview(this, plugin, this.previewContainer);
         this.initializeComponent();
-        this.plugin.observer.subscribe(
-            this.app.workspace,
-            eventID.UpdateOpenAPIViewState,
-            async (event: UpdateOpenAPIViewStateEvent) => {
-                const file = event.data.file;
-                if (this.file && this.file.path === file) {
-                    const content = await this.app.vault.cachedRead(this.file);
-                    this.setViewData(content, true);
-                    await this.onLoadFile(this.file);
-                }
-            }
-        );
+        this.leaf.setGroup('openapi-renderer-view-group');
     }
 
     initializeComponent(): void {
@@ -107,6 +91,9 @@ export class OpenAPIView extends TextFileView {
             subject: Subject.All,
             timestamp: new Date(),
             emitter: this.app.workspace,
+            data: {
+                leaf: this.leaf,
+            },
         } as SwitchModeStateEvent);
         this.initializeComponent();
         this.activeComponent.render();
@@ -144,6 +131,9 @@ export class OpenAPIView extends TextFileView {
             subject: Subject.All,
             timestamp: new Date(),
             emitter: this.app.workspace,
+            data: {
+                leaf: this.leaf,
+            },
         } as SwitchModeStateEvent);
     }
 
