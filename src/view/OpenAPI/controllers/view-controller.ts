@@ -1,6 +1,14 @@
+import {
+    eventID,
+    eventPublisher,
+    RenderingMode,
+    Subject,
+} from 'typing/constants';
 import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
-import { eventID, RenderingMode } from 'typing/constants';
-import { setIcon } from 'obsidian';
+import {
+    SwitchModeStateEvent,
+    UpdateOpenAPIViewStateEvent,
+} from '../../../typing/interfaces';
 
 import { OPENAPI_VERSION_VIEW_TYPE } from '../../types';
 
@@ -25,20 +33,39 @@ export class OpenAPIController {
         return this.view.mode === RenderingMode.Preview ? 'book-open' : 'pen';
     }
 
-    initializeActions(): void {
+    get modeTitle() {
+        const currentMode = this.view.mode;
+        return `Current view: ${currentMode === RenderingMode.Preview ? 'reading' : 'editing'}\nClick to ${currentMode === RenderingMode.Preview ? 'edit' : 'read'}\nCtrl+Click to open to the right\nAlt+Click to open in floating window`;
+    }
+
+    createActions(): {
+        versionViewButton: HTMLElement;
+        changeModeButton: HTMLElement;
+    } {
         const changeModeButton = this.view.addAction(
             this.modeIcon,
-            'Change mode',
-            () => this.view.onSwitch()
-        );
-        this.view.plugin.observer.subscribe(
-            this.view.plugin.app.workspace,
-            eventID.SwitchModeState,
-            async () => {
-                setIcon(changeModeButton, this.modeIcon);
+            this.modeTitle,
+            async (event: MouseEvent) => {
+                const oldState = this.view.leaf.getViewState();
+                if (event.ctrlKey) {
+                    const leaf = this.view.app.workspace.getLeaf('split');
+                    await leaf.setViewState({
+                        ...oldState,
+                    });
+                    leaf.setGroup('openapi-renderer-view-group');
+                    this.view.leaf.setGroupMember(leaf);
+                } else if (event.altKey) {
+                    const leaf = this.view.app.workspace.getLeaf('window');
+                    await leaf.setViewState({
+                        ...oldState,
+                    });
+                    leaf.setGroup('openapi-renderer-view-group');
+                    this.view.leaf.setGroupMember(leaf);
+                } else {
+                    this.view.onSwitch();
+                }
             }
         );
-
         const versionViewButton = this.view.addAction(
             'file-clock',
             'Version control',
@@ -75,6 +102,26 @@ export class OpenAPIController {
                 }
             }
         );
+
+        return { changeModeButton, versionViewButton };
+    }
+
+    initializeActions(): void {
+        let { changeModeButton, versionViewButton } = this.createActions();
+        this.view.plugin.observer.subscribe(
+            this.view.plugin.app.workspace,
+            eventID.SwitchModeState,
+            async (event: SwitchModeStateEvent) => {
+                const leaf = event.data.leaf;
+                if (leaf === this.view.leaf) {
+                    changeModeButton.remove();
+                    versionViewButton.remove();
+                    const actions = this.createActions();
+                    changeModeButton = actions.changeModeButton;
+                    versionViewButton = actions.versionViewButton;
+                }
+            }
+        );
     }
 
     setupEventListeners(): void {
@@ -86,6 +133,30 @@ export class OpenAPIController {
             (event: KeyboardEvent) => {
                 if (event.ctrlKey && event.code === 'KeyE') {
                     this.view.onSwitch();
+                }
+            }
+        );
+        this.view.plugin.observer.subscribe(
+            this.view.app.workspace,
+            eventID.UpdateOpenAPIViewState,
+            async (event: UpdateOpenAPIViewStateEvent) => {
+                const file = event.data.file;
+                if (this.view.file?.path === file) {
+                    const content = await this.view.app.vault.cachedRead(
+                        this.view.file
+                    );
+                    this.view.setViewData(content, false);
+                    this.view.plugin.publisher.publish({
+                        eventID: eventID.SwitchModeState,
+                        publisher: eventPublisher.OpenAPIView,
+                        subject: Subject.All,
+                        timestamp: new Date(),
+                        emitter: this.view.app.workspace,
+                        data: {
+                            leaf: this.view.leaf,
+                        },
+                    } as SwitchModeStateEvent);
+                    this.view.activeComponent.render();
                 }
             }
         );
