@@ -1,12 +1,30 @@
-import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 import { RESOURCE_NAME } from 'typing/constants';
+import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 
 export class RenderController {
+    private ui: any;
     constructor(public controller: OpenAPIPreviewController) {}
 
     async render(): Promise<void> {
         const { contentEl } = this.controller.preview;
-        contentEl.empty();
+        await this.renderSwaggerUI(contentEl);
+    }
+
+    async renderSwaggerUI(containerEl: HTMLDivElement): Promise<void> {
+        const { plugin } = this.controller.preview;
+        if (!plugin.resourceManager.swaggerUIBundle) {
+            await plugin.resourceManager.initSwaggerUIBundle();
+        }
+
+        if (this.ui) {
+            const spec = await this.controller.previewUtils.loadSpec();
+            if (spec) {
+                this.ui.specActions.updateJsonSpec(spec);
+                return;
+            }
+        }
+
+        containerEl.empty();
 
         const additionalCSSName = this.controller.preview.currentThemeCSS;
 
@@ -20,34 +38,24 @@ export class RenderController {
             return;
         }
 
-        const style = contentEl.createEl('style');
+        const style = containerEl.createEl('style');
         style.textContent = baseCSS + additionalCSS;
-
-        await this.renderSwaggerUI(contentEl);
-    }
-
-    async renderSwaggerUI(containerEl: HTMLDivElement): Promise<void> {
-        const { plugin } = this.controller.preview;
-        if (!plugin.resourceManager.swaggerUIBundle) {
-            await plugin.resourceManager.initSwaggerUIBundle();
-        }
-        if (this.controller.preview.cachedPreview) {
-            containerEl.appendChild(this.controller.preview.cachedPreview);
-            return;
-        }
 
         const renderContainer = containerEl.createDiv({
             cls: 'fill-height-or-more',
         });
 
         const parsedSpec = await this.controller.previewUtils.loadSpec();
+
         if (!parsedSpec) {
             return;
         }
+
         if (!plugin.resourceManager.swaggerUIBundle) {
             return;
         }
-        plugin.resourceManager.swaggerUIBundle({
+
+        this.ui = plugin.resourceManager.swaggerUIBundle({
             spec: parsedSpec,
             domNode: renderContainer,
             presets: [
@@ -57,10 +65,10 @@ export class RenderController {
             ],
             layout: 'BaseLayout',
         });
-        this.controller.preview.cachedPreview = renderContainer;
     }
 
     async rerender(): Promise<void> {
+        this.ui = null;
         await this.render();
     }
 }
