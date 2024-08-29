@@ -1,7 +1,11 @@
-import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 import yaml from 'js-yaml';
-import { eventID } from 'typing/constants';
 import { setIcon } from 'obsidian';
+import { eventID } from 'typing/constants';
+import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
+import {
+    EditorChangedEvent,
+    SwitchModeStateEvent,
+} from '../../../../../typing/interfaces';
 
 export class PreviewUtils {
     constructor(private controller: OpenAPIPreviewController) {}
@@ -59,8 +63,11 @@ export class PreviewUtils {
         plugin.observer.subscribe(
             plugin.app.workspace,
             eventID.SwitchModeState,
-            async () => {
-                themeButton.remove();
+            async (event: SwitchModeStateEvent) => {
+                const leaf = event.data.leaf;
+                if (leaf === this.controller.preview.openAPIView.leaf) {
+                    themeButton.remove();
+                }
             }
         );
     }
@@ -70,8 +77,15 @@ export class PreviewUtils {
         plugin.observer.subscribe(
             plugin.app.workspace,
             eventID.EditorChanged,
-            async () => {
-                this.controller.preview.cachedPreview = null;
+            async (event: EditorChangedEvent) => {
+                const leaf = event.data.leaf;
+                if (this.controller.preview.openAPIView.leaf === leaf) {
+                    if (
+                        this.controller.preview.openAPIView.mode === 'preview'
+                    ) {
+                        await this.controller.render();
+                    }
+                }
             }
         );
 
