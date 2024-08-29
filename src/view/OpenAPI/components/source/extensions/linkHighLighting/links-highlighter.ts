@@ -1,89 +1,19 @@
+import { Extension, RangeSetBuilder } from '@codemirror/state';
 import {
     Decoration,
     DecorationSet,
     EditorView,
     ViewPlugin,
     ViewUpdate,
-    WidgetType,
 } from '@codemirror/view';
-import {
-    Extension,
-    RangeSetBuilder,
-    StateEffect,
-    StateField,
-} from '@codemirror/state';
 
-const linkRegex = /https?:\/\/[^\s"'()<>]+/g;
+const linkRegex =
+    /((https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/gi;
 const linkMark = Decoration.mark({
     attributes: {
         'data-link': 'true',
         class: 'cm-link',
     },
-});
-
-const addWidgetEffect = StateEffect.define<{
-    pos: number;
-    url: string;
-}>();
-
-class LinkWidget extends WidgetType {
-    dom!: HTMLElement;
-
-    constructor(private url: string) {
-        super();
-    }
-
-    toDOM(view: EditorView): HTMLElement {
-        const dom = document.createElement('div');
-        this.dom = dom;
-        dom.addClass('cm-confirm-link-widget');
-
-        const question = dom.createEl('div');
-        question.textContent = `Would you like to follow the link?`;
-
-        const confirmButton = dom.createEl('button', { text: 'Open' });
-        confirmButton.onclick = (): void => {
-            window.open(this.url, '_blank');
-            this.removeWidget(view);
-        };
-
-        const cancelButton = dom.createEl('button', { text: 'Close' });
-        cancelButton.onclick = (): void => this.removeWidget(view);
-
-        return dom;
-    }
-
-    removeWidget(view: EditorView): void {
-        view.dispatch({});
-    }
-}
-
-const widgetField = StateField.define<DecorationSet>({
-    create() {
-        return Decoration.none;
-    },
-    update(decorations, transaction) {
-        decorations = decorations.update({
-            filter: (_, __, decoration) => !decoration.spec.widget,
-        });
-
-        for (const effect of transaction.effects) {
-            if (effect.is(addWidgetEffect)) {
-                const { pos, url } = effect.value;
-
-                const widget = Decoration.widget({
-                    widget: new LinkWidget(url),
-                    side: 1,
-                });
-                decorations = decorations.update({
-                    add: [widget.range(pos)],
-                });
-            }
-        }
-
-        return decorations;
-    },
-    provide: (field) => EditorView.decorations.from(field),
 });
 
 function updateLinks(view: EditorView): DecorationSet {
@@ -100,6 +30,16 @@ function updateLinks(view: EditorView): DecorationSet {
     }
 
     return builder.finish();
+}
+
+function ctrlHandler(target: HTMLElement) {
+    return function inner(e: KeyboardEvent): void {
+        if (e.key === 'Control') {
+            target.style.cursor = '';
+            target.title = '';
+            window.removeEventListener('keyup', inner);
+        }
+    };
 }
 
 const linkHighlighter = ViewPlugin.fromClass(
@@ -125,26 +65,34 @@ const linkHighlighter = ViewPlugin.fromClass(
         eventHandlers: {
             mousedown: (e: MouseEvent, view: EditorView) => {
                 const target = e.target as HTMLElement;
+                if (target.style.cursor !== 'pointer') {
+                    return;
+                }
                 const linkElement = target.closest('.cm-link');
                 if (linkElement) {
                     e.preventDefault();
-                    const pos = view.posAtCoords({
-                        x: e.clientX,
-                        y: e.clientY,
-                    });
-                    if (!pos) {
-                        return;
+                    if (linkElement.textContent) {
+                        let url = linkElement.textContent;
+                        if (url.startsWith('www.')) {
+                            url = `https://${url}`;
+                        }
+                        window.open(url, '_blank');
                     }
-                    view.dispatch({
-                        effects: addWidgetEffect.of({
-                            pos: pos,
-                            url: linkElement.textContent ?? '',
-                        }),
-                    });
+                }
+            },
+            mouseover: (e: MouseEvent, view: EditorView) => {
+                const target = e.target as HTMLElement;
+                if (target.hasClass('cm-link')) {
+                    target.title = 'Ctrl + click to open link';
+                    if (e.ctrlKey) {
+                        target.style.cursor = 'pointer';
+                        target.title = 'Open link';
+                        window.addEventListener('keyup', ctrlHandler(target));
+                    }
                 }
             },
         },
     }
 );
 
-export const linkHighlightExtension: Extension = [linkHighlighter, widgetField];
+export const linkHighlightExtension: Extension = [linkHighlighter];
