@@ -7,15 +7,15 @@ import {
     TextComponent,
     WorkspaceLeaf,
 } from 'obsidian';
-import { OpenAPISettingTab } from '../settings/settings';
-import OpenAPIPluginContext from '../core/contextManager';
 import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
+import OpenAPIPluginContext from '../core/contextManager';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
-import OpenAPIRendererServer from '../server/server';
-import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
-import { ButtonID, exportType } from './types';
-import { ButtonLocation, eventID, eventPublisher, Subject } from './constants';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
+import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
+import OpenAPIRendererServer from '../server/server';
+import { OpenAPISettingTab } from '../settings/settings';
+import { ButtonLocation, eventID, eventPublisher, Subject } from './constants';
+import { ButtonID, exportType } from './types';
 
 export interface DEFAULT_SETTINGS_Interface {
     serverHostName: string;
@@ -172,7 +172,11 @@ export interface ChangeServerStateEvent extends OpenAPIRendererEvent {}
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {}
 
-export interface EditorChangedEvent extends OpenAPIRendererEvent {}
+export interface EditorChangedEvent extends OpenAPIRendererEvent {
+    data: {
+        leaf: WorkspaceLeaf;
+    };
+}
 
 export interface SourceThemeStateEvent extends OpenAPIRendererEvent {}
 
