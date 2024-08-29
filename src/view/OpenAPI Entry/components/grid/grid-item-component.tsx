@@ -10,7 +10,10 @@ import {
 } from 'react-icons/fa';
 import { SiOpenapiinitiative } from 'react-icons/si';
 import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
-import { ReloadOpenAPIEntryStateEvent } from '../../../../typing/interfaces';
+import {
+    ReloadOpenAPIEntryStateEvent,
+    UpdateOpenAPIViewStateEvent,
+} from '../../../../typing/interfaces';
 import { OPENAPI_VERSION_VIEW_TYPE, OPENAPI_VIEW_TYPE } from '../../../types';
 import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
@@ -141,6 +144,16 @@ export const GridItemComponent: React.FC<{
                   }) as string)
         );
         view.plugin.showNotice('Restored successfully');
+        view.plugin.publisher.publish({
+            eventID: eventID.UpdateOpenAPIViewState,
+            publisher: eventPublisher.App,
+            subject: Subject.App,
+            timestamp: new Date(),
+            emitter: view.app.workspace,
+            data: {
+                file: lastVersion.path,
+            },
+        } as UpdateOpenAPIViewStateEvent);
     };
 
     const handleDelete = async (path: string) => {
