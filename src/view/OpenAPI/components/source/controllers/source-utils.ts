@@ -1,13 +1,7 @@
-import { OpenAPISource } from '../OpenAPI-source';
-import yamlJsonLinter from '../extensions/linter';
 import { closeBrackets } from '@codemirror/autocomplete';
-import {
-    EditorView,
-    highlightActiveLine,
-    keymap,
-    lineNumbers,
-    ViewUpdate,
-} from '@codemirror/view';
+import { history } from '@codemirror/commands';
+import { json } from '@codemirror/lang-json';
+import { yaml } from '@codemirror/lang-yaml';
 import {
     bracketMatching,
     defaultHighlightStyle,
@@ -16,21 +10,28 @@ import {
     LanguageSupport,
     syntaxHighlighting,
 } from '@codemirror/language';
-import createBoundKeymap from '../extensions/keymap';
-import { history } from '@codemirror/commands';
-import { EditorState, Extension } from '@codemirror/state';
-import { eventID, eventPublisher, Subject } from 'typing/constants';
-import { json } from '@codemirror/lang-json';
-import { yaml } from '@codemirror/lang-yaml';
-import { setIcon } from 'obsidian';
-import { SourceController } from './source-controller';
-import OpenAPICompletionExtension from '../extensions/openapi-completion';
-import { linkHighlightExtension } from '../extensions/linkHighLighting';
 import { lintGutter } from '@codemirror/lint';
 import { highlightSelectionMatches } from '@codemirror/search';
-import convertFile from '../extensions/yamlJsonConverter';
+import { Annotation, EditorState, Extension } from '@codemirror/state';
+import {
+    EditorView,
+    highlightActiveLine,
+    keymap,
+    lineNumbers,
+    ViewUpdate,
+} from '@codemirror/view';
+import { setIcon } from 'obsidian';
+import { eventID, eventPublisher, Subject } from 'typing/constants';
+import { EditorChangedEvent, SwitchModeStateEvent } from 'typing/interfaces';
+import { OpenAPIView } from '../../../OpenAPI-view';
 import openAPIFormatter from '../extensions/formatter';
-import { EditorChangedEvent } from 'typing/interfaces';
+import createBoundKeymap from '../extensions/keymap';
+import { linkHighlightExtension } from '../extensions/linkHighLighting';
+import yamlJsonLinter from '../extensions/linter';
+import OpenAPICompletionExtension from '../extensions/openapi-completion';
+import convertFile from '../extensions/yamlJsonConverter';
+import { OpenAPISource } from '../OpenAPI-source';
+import { SourceController } from './source-controller';
 
 const create: (v: EditorView) => { dom: HTMLDivElement } = (v: EditorView) => {
     const dom = document.createElement('div');
@@ -50,7 +51,7 @@ function updateTooltip(x: number, y: number, fontSize: number): void {
 }
 
 function changeFontSize(view: EditorView, delta: number): void {
-    fontSize = Math.max(10, fontSize + delta); // Убедитесь, что размер не становится слишком маленьким
+    fontSize = Math.max(10, fontSize + delta);
     view.dom.style.fontSize = `${fontSize}px`;
 
     updateTooltip(
@@ -60,12 +61,11 @@ function changeFontSize(view: EditorView, delta: number): void {
     );
 }
 
-function handleEditorEvents(view: EditorView) {
+function handleEditorMouseEvents() {
     let timeout: NodeJS.Timeout | null = null;
-    return function (event: Event): void {
-        if (event.type === 'wheel' && (event as WheelEvent).ctrlKey) {
-            const wheelEvent = event as WheelEvent;
-            const delta = wheelEvent.deltaY > 0 ? -1 : 1;
+    return function (event: WheelEvent, view: EditorView): void {
+        if (event.ctrlKey) {
+            const delta = event.deltaY > 0 ? -1 : 1;
             changeFontSize(view, delta);
             if (timeout) {
                 clearTimeout(timeout);
@@ -78,30 +78,85 @@ function handleEditorEvents(view: EditorView) {
     };
 }
 
-function onChange(editor: OpenAPISource) {
-    let timeout: NodeJS.Timeout | null = null;
-    return (): void => {
-        if (timeout) {
-            clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-            const event = {
+const syncAnnotation = Annotation.define<boolean>();
+
+function onChange(editorView: OpenAPISource, update: ViewUpdate): void {
+    if (!update.transactions.some((tr) => tr.annotation(syncAnnotation))) {
+        document.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                key: 's',
+                code: 'KeyS',
+                ctrlKey: true,
+                bubbles: true,
+                cancelable: true,
+                composed: true,
+            })
+        );
+
+        const openApiGroupedLeaves =
+            editorView.plugin.app.workspace.getGroupLeaves(
+                'openapi-renderer-view-group'
+            );
+
+        for (const leaf of openApiGroupedLeaves) {
+            if (leaf !== editorView.view.leaf) {
+                const view = leaf.view as OpenAPIView;
+
+                const editor = view.source.editor;
+
+                editor.dispatch({
+                    changes: update.changes,
+                    annotations: syncAnnotation.of(true),
+                });
+
+                view.setViewData(editor.state.doc.toString(), false);
+            }
+            editorView.plugin.publisher.publish({
                 eventID: eventID.EditorChanged,
                 publisher: eventPublisher.Editor,
                 subject: Subject.Preview,
                 timestamp: new Date(),
-                emitter: editor.plugin.app.workspace,
-            } as EditorChangedEvent;
-            editor.plugin.publisher.publish(event);
-        }, 300);
-    };
+                emitter: editorView.plugin.app.workspace,
+                data: {
+                    leaf: leaf,
+                },
+            } as EditorChangedEvent);
+        }
+    }
+}
+
+function handleScroll(editorView: OpenAPISource, event: Event): void {
+    const groupedLeaves = editorView.plugin.app.workspace.getGroupLeaves(
+        'openapi-renderer-view-group'
+    );
+    const target = event.target as HTMLElement;
+
+    const { scrollTop: top, scrollLeft: left } = target;
+
+    const scrollAxis = target.hasClass('view-content') ? 'top' : 'left';
+
+    for (const leaf of groupedLeaves) {
+        if (leaf === editorView.view.leaf) {
+            continue;
+        }
+        const view = leaf.view as OpenAPIView;
+
+        if (view.mode === 'preview') {
+            continue;
+        }
+        if (scrollAxis === 'top') {
+            view.contentEl.scrollTop = top;
+        } else {
+            view.source.editor.scrollDOM.scrollLeft = left;
+        }
+    }
 }
 
 export class SourceUtils {
     static createExtensions(
         editor: OpenAPISource
     ): ({ extension: Extension } | readonly Extension[] | LanguageSupport)[] {
-        const onChangeHandler = onChange(editor);
+        const boundWheelHandler = handleEditorMouseEvents();
         return [
             editor.controller.themeManager.themeConfigurator.of(
                 editor.currentTheme
@@ -109,8 +164,18 @@ export class SourceUtils {
             editor.languageExtension(),
             EditorView.updateListener.of((update: ViewUpdate) => {
                 if (update.docChanged) {
-                    onChangeHandler();
+                    onChange(editor, update);
                 }
+            }),
+            EditorView.domEventHandlers({
+                wheel(event, view) {
+                    boundWheelHandler(event, view);
+                    return false;
+                },
+                scroll(event, view) {
+                    handleScroll(editor, event);
+                    return false;
+                },
             }),
             closeBrackets(),
             yamlJsonLinter,
@@ -188,13 +253,6 @@ export class SourceUtils {
             }),
             parent: controller.editor.contentEl,
         });
-        const { dom } = controller.editor.editor;
-        const boundHandler = handleEditorEvents(controller.editor.editor);
-        controller.editor.editor.dom.addEventListener('wheel', boundHandler, {
-            passive: true,
-        });
-        dom.addEventListener('mousemove', boundHandler, { passive: true });
-        dom.addEventListener('mouseup', boundHandler, { passive: true });
     }
 
     static initializeActions(controller: SourceController): void {
@@ -239,10 +297,13 @@ export class SourceUtils {
         plugin.observer.subscribe(
             app.workspace,
             eventID.SwitchModeState,
-            async () => {
-                themeButton.remove();
-                convertButton.remove();
-                formatButton.remove();
+            async (event: SwitchModeStateEvent) => {
+                const leaf = event.data.leaf;
+                if (leaf === controller.editor.view.leaf) {
+                    themeButton.remove();
+                    convertButton.remove();
+                    formatButton.remove();
+                }
             }
         );
     }
