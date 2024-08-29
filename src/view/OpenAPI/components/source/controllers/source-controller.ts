@@ -1,6 +1,6 @@
 import { OpenAPISource } from '../OpenAPI-source';
-import { ThemeController } from './theme-controller';
 import { SourceUtils } from './source-utils';
+import { ThemeController } from './theme-controller';
 
 export class SourceController {
     themeManager: ThemeController;
@@ -16,6 +16,14 @@ export class SourceController {
         this.editor.contentEl.show();
         if (!this.editor.editor) {
             SourceUtils.initializeEditor(this);
+        } else {
+            this.editor.editor.dispatch({
+                changes: {
+                    from: 0,
+                    to: this.editor.editor.state.doc.length,
+                    insert: this.editor.view.data,
+                },
+            });
         }
     }
 
