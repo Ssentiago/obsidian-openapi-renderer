@@ -49,8 +49,6 @@ export class OpenAPIView extends TextFileView {
             case RenderingMode.Preview:
                 this.activeComponent = this.preview;
                 break;
-            case RenderingMode.live:
-                break;
             default:
                 throw new Error(`Unsupported mode: ${this.mode}`);
         }

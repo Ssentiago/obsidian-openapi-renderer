@@ -6,7 +6,6 @@ export enum eventID {
     SourceThemeState = 'openapi-renderer-theme-state',
     EditorChanged = 'openapi-renderer-editor-changed',
     PreviewThemeState = 'openapi-renderer-preview-theme-state-changed',
-    LiveModeChangeState = 'openapi-renderer-live-mode-change-state',
     SwitchModeState = 'openapi-renderer-switch-mode',
     ReloadOpenAPIEntryState = 'openapi-renderer-reload-openAPIEntryState',
     ChangeGridColumnsState = 'openapi-renderer-change-grid-columns',
@@ -59,5 +58,4 @@ export const enum OpenAPIThemeMode {
 export const enum RenderingMode {
     Source = 'source',
     Preview = 'preview',
-    live = 'live',
 }
