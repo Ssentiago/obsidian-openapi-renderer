@@ -7,7 +7,6 @@ import {
     TextComponent,
     WorkspaceLeaf,
 } from 'obsidian';
-import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
 import OpenAPIPluginContext from '../core/contextManager';
 import OpenAPIRendererPlugin from '../core/OpenAPIRendererPlugin';
 import { OpenAPIRendererEventPublisher } from '../pluginEvents/eventManager';
@@ -42,7 +41,6 @@ export interface OpenAPIRendererPluginInterface {
     settings: DEFAULT_SETTINGS_Interface;
     settingsTab: OpenAPISettingTab;
     appContext: OpenAPIPluginContext;
-    eventsHandler: OpenAPIRendererEventsHandler;
     server: OpenAPIRendererServer;
     logger: OpenAPIRendererPluginLogger;
 

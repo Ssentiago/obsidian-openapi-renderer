@@ -4,7 +4,6 @@ import GeneralSectionComponent from '../general-section-component/general-sectio
 import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
 import { App } from 'obsidian';
 import Navbar from '../navbar/navbar-component';
-import ServerSectionComponent from '../server-section-component/server-section-component';
 import OpenapiViewMainSectionComponent from '../openapi-view-section-component/openapi-view-main-section-component';
 import OpenAPIEntrySectionComponent from '../openapi-entry-section-component/openapi-entry-section-component';
 
@@ -18,8 +17,8 @@ const SettingsTab: React.FC<{
         switch (currentTab) {
             case 'general':
                 return <GeneralSectionComponent app={app} plugin={plugin} />;
-            case 'server':
-                return <ServerSectionComponent app={app} plugin={plugin} />;
+            // case 'server':
+            //     return <ServerSectionComponent app={app} plugin={plugin} />;
             case 'openapi-view':
                 return (
                     <OpenapiViewMainSectionComponent

@@ -6,8 +6,6 @@ import {
 import { DEFAULT_SETTINGS_Interface, PowerOffEvent } from 'typing/interfaces';
 import { OpenAPISettingTab } from 'settings/settings';
 import OpenAPIPluginContext from './contextManager';
-import { OpenAPIRendererEventsHandler } from 'pluginEvents/eventsHandler';
-import OpenAPIRendererServer from '../server/server';
 import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
 import { eventID, eventPublisher, Subject } from 'typing/constants';
 import GithubClient from '../github/github-client';
@@ -43,8 +41,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
     settings!: DEFAULT_SETTINGS_Interface;
     settingsTab!: OpenAPISettingTab;
     appContext!: OpenAPIPluginContext;
-    eventsHandler!: OpenAPIRendererEventsHandler;
-    server!: OpenAPIRendererServer;
+    // server!: OpenAPIRendererServer;
     logger!: OpenAPIRendererPluginLogger;
     publisher!: OpenAPIRendererEventPublisher;
     observer!: OpenAPIRendererEventObserver;
@@ -148,7 +145,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private initializeEventSystem(): void {
         this.publisher = new OpenAPIRendererEventPublisher(this.appContext);
         this.observer = new OpenAPIRendererEventObserver(this.appContext);
-        this.eventsHandler = new OpenAPIRendererEventsHandler(this.appContext);
     }
 
     /**
@@ -163,9 +159,9 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * @private
      */
     private async initializeNetworking(): Promise<void> {
-        this.server = new OpenAPIRendererServer(this.appContext);
+        // this.server = new OpenAPIRendererServer(this.appContext);
         this.githubClient = new GithubClient(this.appContext);
-        this.settings.isServerAutoStart && (await this.server.start());
+        // this.settings.isServerAutoStart && (await this.server.start());
     }
 
     /**

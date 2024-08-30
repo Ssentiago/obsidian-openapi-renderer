@@ -47,17 +47,17 @@ const Navbar: React.FC = () => {
                     </TabIcon>
                     OpenAPI View
                 </NavbarTab>
-                <NavbarTab
-                    className={
-                        currentTab === 'openapi-version-view' ? 'active' : ''
-                    }
-                    onClick={() => handleTabCluck('openapi-version-view')}
-                >
-                    <TabIcon>
-                        <PiGitDiff />
-                    </TabIcon>
-                    OpenAPI Version View
-                </NavbarTab>
+                {/*<NavbarTab*/}
+                {/*    className={*/}
+                {/*        currentTab === 'openapi-version-view' ? 'active' : ''*/}
+                {/*    }*/}
+                {/*    onClick={() => handleTabCluck('openapi-version-view')}*/}
+                {/*>*/}
+                {/*    <TabIcon>*/}
+                {/*        <PiGitDiff />*/}
+                {/*    </TabIcon>*/}
+                {/*    OpenAPI Version View*/}
+                {/*</NavbarTab>*/}
                 <NavbarTab
                     className={
                         currentTab === 'openapi-entry-view' ? 'active' : ''
