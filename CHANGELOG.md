@@ -1,3 +1,75 @@
+# 4.0.0
+
+### Breaking Changes
+
+- **Removed server functionality from the plugin:** The plugin no longer includes built-in server
+  capabilities. If your workflow relied on this feature, consider using external server options or
+  alternative methods.
+- **Removed deprecated markdown codeblock swagger-ui rendering:** The support for rendering Swagger
+  UI directly from markdown codeblocks has been discontinued. Please update your documentation and
+  workflows accordingly.
+
+### Features
+
+- **Add new Obsidian OpenAPI View** for managing YAML and JSON files (they are considered OpenAPI
+  specifications by the plugin - be careful)  
+  **Features:**
+    - **Source and Preview Modes**
+    - **Source:**
+        - Supports YAML and JSON files for editing
+        - Includes extensions: linter, formatter, YAML/JSON converter, keyword completion
+        - Light and dark theme modes. Two themes for each mode: default and VS Code
+        - Action buttons for formatting content and converting between JSON/YAML
+    - **Preview:**
+        - Renders specification to Swagger UI
+        - Light and dark theme modes
+    - Action to open Version view in a new tab
+    - **Action to change modes:**
+        - Click to change mode
+        - Ctrl + Click to open OpenAPI view to the right split and link it with the source view
+        - Alt + Click to open a new OpenAPI View in a floating window and link it with the source
+          view
+        - Linked views synchronize content between all instances and synchronize scrolling between
+          views in source mode
+
+- **Add new Obsidian OpenAPI Version View** for managing versioning-related stuff linked with
+  OpenAPI specifications.  
+  **Features:**
+    - Show the current file content as a Draft version card. You can open a preview of the current
+      file version, save the draft version (triggers modal windows), and open it in a new OpenAPI
+      view
+    - Group all saved specifications by creation date, using relative dates (e.g., today, yesterday,
+      N days ago)
+    - **Actions for each specification card:**
+        - **Preview:** Renders Swagger UI instantly
+        - **Restore to...:** Restore the current file (draft) version to the specified version
+        - **Diff:** Select versions for diff viewing (requires selecting two versions)
+        - **Delete:** Soft delete version  
+          For softly deleted version cards:  
+          - Restore  
+          - Delete permanently
+        - **Export:** Export specified version as an HTML file with embedded CDN links to related
+          resources (CSS and JS)
+    - **View Actions:**
+        - **Export all versions:** Export all versions of a file as a Zip file
+
+- **Add new Obsidian OpenAPI Entry View**  
+  **Features:**
+    - Show all the trackable files in the vault in one grid interface as cards
+    - **For each card:**
+        - Show details: version count, last update
+        - **Actions:**
+            - **Open in OpenAPI View:** Opens the last draft version (i.e., opens OpenAPI view with
+              the specified file path)
+            - **Open in Version View**
+            - **Export:** Similar to the OpenAPI Version view export action, exporting all the file
+              versions
+            - **Restore last file version:** Resets the file in the vault to the last saved version.
+              If it’s deleted, it will be created
+            - **Remove file from tracking** (the file remains in the vault)
+        - **View Actions:**
+            - **Export all versions of all tracked files:** Export as a Zip file
+
 # 3.1.0
 
 ### Added
