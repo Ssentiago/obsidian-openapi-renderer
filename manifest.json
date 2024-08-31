@@ -1,10 +1,10 @@
 {
-  "id": "openapi-renderer",
-  "name": "OpenAPI Renderer",
-  "version": "3.1.0",
-  "minAppVersion": "1.6.5",
-  "author": "Sentiago",
-  "authorUrl": "https://github.com/Ssentiago",
-  "description": "Generates a Swagger-UI interface and embeds it as an iframe",
-  "isDesktopOnly": true
+    "id": "openapi-renderer",
+    "name": "OpenAPI Renderer",
+    "version": "4.0.0",
+    "minAppVersion": "1.6.5",
+    "author": "Sentiago",
+    "authorUrl": "https://github.com/Ssentiago",
+    "description": "Integrate OpenAPI specification management into Obsidian with features for version control, visualization, editing, and easy navigation of API specs.",
+    "isDesktopOnly": true
 }
