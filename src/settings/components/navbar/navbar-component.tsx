@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBook, FaCog, FaEye, FaServer } from 'react-icons/fa';
+import { FaBook, FaCog, FaEye } from 'react-icons/fa';
 
 import { useSettingsContext } from '../core/context';
 import {
@@ -8,7 +8,6 @@ import {
     NavbarTabs,
     TabIcon,
 } from './navbar-styled-components';
-import { PiGitDiff } from 'react-icons/pi';
 
 const Navbar: React.FC = () => {
     const { currentTab, setCurrentTab } = useSettingsContext();
@@ -29,15 +28,15 @@ const Navbar: React.FC = () => {
                     </TabIcon>
                     General
                 </NavbarTab>
-                <NavbarTab
-                    className={currentTab === 'server' ? 'active' : ''}
-                    onClick={() => handleTabCluck('server')}
-                >
-                    <TabIcon>
-                        <FaServer />
-                    </TabIcon>
-                    Server
-                </NavbarTab>
+                {/*<NavbarTab*/}
+                {/*    className={currentTab === 'server' ? 'active' : ''}*/}
+                {/*    onClick={() => handleTabCluck('server')}*/}
+                {/*>*/}
+                {/*    <TabIcon>*/}
+                {/*        <FaServer />*/}
+                {/*    </TabIcon>*/}
+                {/*    Server*/}
+                {/*</NavbarTab>*/}
                 <NavbarTab
                     className={currentTab === 'openapi-view' ? 'active' : ''}
                     onClick={() => handleTabCluck('openapi-view')}

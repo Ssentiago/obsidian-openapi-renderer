@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
-import { useSettingsContext } from '../core/context';
 import { App, Setting } from 'obsidian';
+import React, { useEffect } from 'react';
+import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
 import { eventID, eventPublisher, Subject } from '../../../typing/constants';
 import { SettingsTabStateEvent } from '../../../typing/interfaces';
-import { exportType } from '../../../typing/types';
-import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
 import SettingsUtils from '../../utils';
 import { SettingsContainer } from '../container-styled-component';
+import { useSettingsContext } from '../core/context';
 
 const GeneralSectionComponent: React.FC<{
     app: App;
@@ -69,38 +68,6 @@ const GeneralSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                         });
                 });
-
-            utils.createLinkedComponents({
-                containerEl: containerEl,
-                name: 'Default export option',
-                desc: 'What export format would you like to use by default?',
-                type: 'dropdown',
-                options: {
-                    none: 'None',
-                    cdn: 'CDN',
-                    'all-in-the-one': 'All-in-the-one',
-                    zip: 'ZIP',
-                },
-                setValue: plugin.settings.exportType,
-                tooltips: {
-                    none: 'A modal window will appear each time you export, allowing you to choose the export option.',
-                    'all-in-the-one':
-                        'Includes all resources, such as code and CSS, ' +
-                        'embedded directly into the HTML file. Ideal for offline use, ' +
-                        'though the file size will be larger.',
-                    zip:
-                        'Exports all files and assets in a ZIP archive, ' +
-                        'ensuring that all resources are included without external dependencies.',
-                    cdn:
-                        'The HTML file will link to external CDN resources. ' +
-                        'This keeps the file size small but requires an internet ' +
-                        'connection to access resources.',
-                },
-                onChange: async (value) => {
-                    plugin.settings.exportType = value as exportType;
-                    await plugin.settingsManager.saveSettings();
-                },
-            });
         }
     }, [ref]);
 
