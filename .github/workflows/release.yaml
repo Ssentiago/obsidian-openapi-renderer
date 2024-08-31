@@ -6,48 +6,22 @@ on:
       - '*.*.*'
 
 jobs:
-  check-documentation:
-    runs-on: ubuntu-latest
-    outputs:
-      docs_updated: ${{ steps.doc_check.outputs.updated }}
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Check if documentation and manifest are updated
-      id: doc_check
-      run: |
-        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
-        echo "Previous tag: $PREV_TAG"
-        echo "Current tag: $(git describe --tags --abbrev=0 HEAD)"
-        echo "Files changed:"
-        git diff $PREV_TAG..HEAD --name-only
-        if git diff $PREV_TAG..HEAD --name-only | grep -E 'CHANGELOG.md|README.md|package.json|manifest.json'; then
-          echo "Documentation and manifest updated"
-          echo "::set-output name=updated::true"
-        else
-          echo "Documentation or manifest not updated"
-          echo "::set-output name=updated::false"
-        fi
-
   build-and-release:
     runs-on: ubuntu-latest
     needs: check-documentation
-    if: needs.check-documentation.outputs.docs_updated == 'true'
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: '22.4.1'
 
     - name: Install dependencies
-      run: npm install
+      run: yarn install
 
     - name: Build
-      run: npm run build
+      run: yarn build
 
     - name: Package assets
       run: tar -czf dist/assets.tar.gz -C src assets
