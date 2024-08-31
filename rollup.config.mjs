@@ -4,7 +4,6 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
-import bundleStats from 'rollup-plugin-bundle-stats';
 import copy from 'rollup-plugin-copy';
 import { visualizer } from 'rollup-plugin-visualizer';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
@@ -96,9 +95,6 @@ const productionConfig = {
         visualizer({
             open: false,
             filename: 'bundle-analysis.html',
-        }),
-        bundleStats.bundleStats({
-            output: 'bundle-stats.json',
         }),
     ],
 };
