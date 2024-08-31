@@ -1,7 +1,7 @@
 import { Compartment, Extension } from '@codemirror/state';
-import { SourceController } from './source-controller';
-import { themes } from '../extensions/themes';
 import { RenderingMode } from 'typing/constants';
+import { themes } from '../extensions/themes';
+import { SourceController } from './source-controller';
 
 export class ThemeController {
     themeConfigurator: Compartment = new Compartment();
@@ -15,7 +15,7 @@ export class ThemeController {
         return themes
             .get(mode)
             ?.get(
-                this.controller.editor.currentThemeMode === 'dark'
+                mode === 'dark'
                     ? settings.OpenAPISourceDarkTheme
                     : settings.OpenAPISourceLightTheme
             );
