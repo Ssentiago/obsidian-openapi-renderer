@@ -96,11 +96,11 @@ export const CreatedAt = styled.span`
     color: var(--text-muted);
 `;
 export const PreviewButton = styled(ButtonBase)`
-    background-color: var(--interactive-accent);
+    background-color: var(--interactive-normal);
     color: var(--text-normal);
 
     &:hover {
-        background-color: var(--interactive-accent-hover);
+        background-color: var(--interactive-hover);
     }
 `;
 export const SaveButton = styled(ButtonBase)`
