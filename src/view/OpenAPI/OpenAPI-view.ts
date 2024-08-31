@@ -20,19 +20,42 @@ export class OpenAPIView extends TextFileView {
     activeComponent!: IOpenAPIViewComponent;
     sourceContainer: HTMLDivElement;
     previewContainer: HTMLDivElement;
+    private shadowDom: HTMLDivElement;
+    private shadowRoot: ShadowRoot;
 
     constructor(
         leaf: WorkspaceLeaf,
         public plugin: OpenAPIRendererPlugin
     ) {
         super(leaf);
-        this.contentEl.addClass('fill-height-or-more');
-        this.sourceContainer = this.contentEl.createDiv({
-            cls: 'openapi-renderer-source-container',
+        this.shadowDom = this.contentEl.createDiv({
+            cls: 'fill-height-or-more',
         });
-        this.previewContainer = this.contentEl.createDiv({
-            cls: 'openapi-renderer-preview-container',
-        });
+        this.shadowRoot = this.shadowDom.attachShadow({ mode: 'open' });
+
+        const style = document.createElement('style');
+        style.textContent = `
+          .fill-height-or-more {
+            display: flex;
+            flex-direction: column;
+          }
+        
+          .fill-height-or-more > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+          }
+        `;
+        this.shadowRoot.appendChild(style);
+
+        this.sourceContainer = document.createElement('div');
+        this.sourceContainer.className = 'openapi-renderer-source-container';
+        this.shadowRoot.appendChild(this.sourceContainer);
+
+        this.previewContainer = document.createElement('div');
+        this.previewContainer.className = 'openapi-renderer-preview-container';
+        this.shadowRoot.appendChild(this.previewContainer);
+
         this.mode = plugin.settings.OpenAPIViewDefaultMode as RenderingMode;
         this.controller = new OpenAPIController(this);
         this.source = new OpenAPISource(this, plugin, this.sourceContainer);
