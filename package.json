@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "version": "4.0.0",
     "type": "module",
-    "description": "Integrate OpenAPI specification management into Obsidian with features for version control, visualization, editing, and easy navigation of API specs.",
+    "description": "Integrate OpenAPI specification management with features for version control, visualization, editing, and easy navigation of API specs.",
     "main": "src/main.ts",
     "scripts": {
         "dev": "yarn concurrently \"yarn rollup -c rollup.config.mjs -w --environment PRODUCTION:0\" \"yarn start-obsidian\"",
