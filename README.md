@@ -9,6 +9,10 @@ visualization, editing, and easy navigation of API specs.
 - Manage specification versions: create, view, restore, and delete
 - Access all tracked OpenAPI specifications in your vault
 
+## Roadmap
+- Enhancing views with new features and improvements
+- Adding support for $ref links
+
 ## Installation
 
 1. Copy plugin files to `.obsidian/plugins/openapi-renderer/` in your Obsidian vault. Or just
