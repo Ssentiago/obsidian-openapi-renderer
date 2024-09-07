@@ -1,5 +1,6 @@
 import { Compartment, Extension } from '@codemirror/state';
-import { RenderingMode } from 'typing/constants';
+
+import { RenderingMode } from '../../../../typing/constants';
 import { themes } from '../extensions/themes';
 import { SourceController } from './source-controller';
 

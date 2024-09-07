@@ -1,11 +1,11 @@
 import yaml from 'js-yaml';
 import { setIcon } from 'obsidian';
-import { eventID } from 'typing/constants';
 import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
+import { eventID } from '../../../../../events-management/typing/constants';
 import {
     EditorChangedEvent,
     SwitchModeStateEvent,
-} from '../../../../../typing/interfaces';
+} from '../../../../../events-management/typing/interfaces';
 
 export class PreviewUtils {
     constructor(private controller: OpenAPIPreviewController) {}

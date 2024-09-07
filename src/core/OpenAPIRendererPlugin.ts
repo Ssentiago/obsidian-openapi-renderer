@@ -1,28 +1,21 @@
-import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
-import {
-    OpenAPIRendererEventObserver,
-    OpenAPIRendererEventPublisher,
-} from 'pluginEvents/eventManager';
-import { DEFAULT_SETTINGS_Interface, PowerOffEvent } from 'typing/interfaces';
-import { OpenAPISettingTab } from 'settings/settings';
-import OpenAPIPluginContext from './contextManager';
-import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
-import { eventID, eventPublisher, Subject } from 'typing/constants';
-import GithubClient from '../github/github-client';
-import SettingsManager from './settingsManager';
-import PluginUtils from './pluginUtils';
-import PluginStateChecker from './pluginStateChecker';
-import PluginResourceManager from './pluginResourceManager';
-import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
-import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
-import {
-    OPENAPI_ENTRY_VIEW_TYPE,
-    OPENAPI_VERSION_VIEW_TYPE,
-    OPENAPI_VIEW_TYPE,
-} from '../view/types';
-import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
+import { OpenAPIRendererEventObserver, OpenAPIRendererEventPublisher } from 'events-management/events-management';
 import Export from 'export/export';
+import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
+import { OpenAPISettingTab } from 'settings/settings';
+import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
+import { eventID } from '../events-management/typing/constants';
+import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
+import GithubClient from '../github/github-client';
+import OpenAPIRendererPluginLogger from '../pluginLogging/loggingManager';
+import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
+import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
+import { OPENAPI_ENTRY_VIEW_TYPE, OPENAPI_VERSION_VIEW_TYPE, OPENAPI_VIEW_TYPE } from '../view/typing/types';
+import OpenAPIPluginContext from './contextManager';
+import PluginResourceManager from './pluginResourceManager';
+import PluginStateChecker from './pluginStateChecker';
+import PluginUtils from './pluginUtils';
+import SettingsManager, { DEFAULT_SETTINGS_Interface } from './settingsManager';
 
 /**
  * OpenAPI Renderer Plugin for initializing, configuring, and managing OpenAPI resources.
@@ -41,7 +34,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
     settings!: DEFAULT_SETTINGS_Interface;
     settingsTab!: OpenAPISettingTab;
     appContext!: OpenAPIPluginContext;
-    // server!: OpenAPIRendererServer;
     logger!: OpenAPIRendererPluginLogger;
     publisher!: OpenAPIRendererEventPublisher;
     observer!: OpenAPIRendererEventObserver;
@@ -76,8 +68,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
         const event = {
             eventID: eventID.PowerOff,
             timestamp: new Date(),
-            publisher: eventPublisher.Plugin,
-            subject: Subject.All,
             emitter: this.app.workspace,
         } as PowerOffEvent;
         this.publisher.publish(event);

@@ -28,15 +28,6 @@ const Navbar: React.FC = () => {
                     </TabIcon>
                     General
                 </NavbarTab>
-                {/*<NavbarTab*/}
-                {/*    className={currentTab === 'server' ? 'active' : ''}*/}
-                {/*    onClick={() => handleTabCluck('server')}*/}
-                {/*>*/}
-                {/*    <TabIcon>*/}
-                {/*        <FaServer />*/}
-                {/*    </TabIcon>*/}
-                {/*    Server*/}
-                {/*</NavbarTab>*/}
                 <NavbarTab
                     className={currentTab === 'openapi-view' ? 'active' : ''}
                     onClick={() => handleTabCluck('openapi-view')}

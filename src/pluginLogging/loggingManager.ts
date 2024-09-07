@@ -1,11 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import OpenAPIPluginContext from '../core/contextManager';
-import { OpenAPIRendererPluginLoggerInterface } from '../typing/interfaces';
 
-export default class OpenAPIRendererPluginLogger
-    implements OpenAPIRendererPluginLoggerInterface
-{
+export default class OpenAPIRendererPluginLogger {
     appContext;
     private maxFileSize = 1024 * 1024; // Maximum log file size in bytes (1 MB)
     private readonly logDir;

@@ -1,7 +1,7 @@
 import { App } from 'obsidian';
 import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
 import path from 'path';
-import { SwaggerUIBundle } from '../typing/swagger-ui-typings';
+import { SwaggerUIBundle } from '../view/typing/swagger-ui-typings';
 
 export default class PluginResourceManager {
     private app: App;

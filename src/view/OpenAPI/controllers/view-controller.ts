@@ -1,16 +1,12 @@
-import {
-    eventID,
-    eventPublisher,
-    RenderingMode,
-    Subject,
-} from 'typing/constants';
 import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
+import { eventID } from '../../../events-management/typing/constants';
 import {
     SwitchModeStateEvent,
     UpdateOpenAPIViewStateEvent,
-} from '../../../typing/interfaces';
+} from '../../../events-management/typing/interfaces';
+import { RenderingMode } from '../../typing/constants';
 
-import { OPENAPI_VERSION_VIEW_TYPE } from '../../types';
+import { OPENAPI_VERSION_VIEW_TYPE } from '../../typing/types';
 
 export class OpenAPIController {
     constructor(public view: OpenAPIView) {
@@ -148,8 +144,6 @@ export class OpenAPIController {
                     this.view.setViewData(content, false);
                     this.view.plugin.publisher.publish({
                         eventID: eventID.SwitchModeState,
-                        publisher: eventPublisher.OpenAPIView,
-                        subject: Subject.All,
                         timestamp: new Date(),
                         emitter: this.view.app.workspace,
                         data: {

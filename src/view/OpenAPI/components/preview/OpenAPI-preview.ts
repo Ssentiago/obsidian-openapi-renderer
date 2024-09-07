@@ -1,8 +1,8 @@
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
-import { RESOURCE_NAME } from 'typing/constants';
-import { IOpenAPIViewComponent } from 'typing/interfaces';
 import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
+import { RESOURCE_NAME } from '../../../typing/constants';
+import { IOpenAPIViewComponent } from '../../../typing/interfaces';
 
 export default class OpenAPIPreview implements IOpenAPIViewComponent {
     renderTimeout: NodeJS.Timeout | null = null;

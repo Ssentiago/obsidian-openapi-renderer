@@ -1,16 +1,13 @@
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
 import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
-import {
-    eventID,
-    eventPublisher,
-    RenderingMode,
-    Subject,
-} from 'typing/constants';
-import { IOpenAPIViewComponent, SwitchModeStateEvent } from 'typing/interfaces';
 import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
 import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
 import { OpenAPIController } from 'view/OpenAPI/controllers/view-controller';
-import { OPENAPI_VIEW_TYPE } from '../types';
+import { eventID } from '../../events-management/typing/constants';
+import { SwitchModeStateEvent } from '../../events-management/typing/interfaces';
+import { RenderingMode } from '../typing/constants';
+import { IOpenAPIViewComponent } from '../typing/interfaces';
+import { OPENAPI_VIEW_TYPE } from '../typing/types';
 
 export class OpenAPIView extends TextFileView {
     controller: OpenAPIController;
@@ -108,8 +105,6 @@ export class OpenAPIView extends TextFileView {
         this.mode = this.controller.newMode;
         this.plugin.publisher.publish({
             eventID: eventID.SwitchModeState,
-            publisher: eventPublisher.OpenAPIView,
-            subject: Subject.All,
             timestamp: new Date(),
             emitter: this.app.workspace,
             data: {
@@ -148,8 +143,6 @@ export class OpenAPIView extends TextFileView {
         this.source.clear();
         this.plugin.publisher.publish({
             eventID: eventID.SwitchModeState,
-            publisher: eventPublisher.OpenAPIView,
-            subject: Subject.All,
             timestamp: new Date(),
             emitter: this.app.workspace,
             data: {

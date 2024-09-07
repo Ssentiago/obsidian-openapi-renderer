@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
 import { App, DropdownComponent, Setting } from 'obsidian';
+import React, { useEffect } from 'react';
 import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
-import { eventID, eventPublisher, Subject } from '../../../typing/constants';
-import { OpenAPIPreviewThemeStateEvent } from '../../../typing/interfaces';
+import { eventID } from '../../../events-management/typing/constants';
+import { OpenAPIPreviewThemeStateEvent } from '../../../events-management/typing/interfaces';
 
 const PreviewSectionComponent: React.FC<{
     app: App;
@@ -26,8 +26,6 @@ const PreviewSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.PreviewThemeState,
-                                publisher: eventPublisher.Settings,
-                                subject: Subject.Preview,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                             } as OpenAPIPreviewThemeStateEvent);
@@ -50,8 +48,6 @@ const PreviewSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.PreviewThemeState,
-                                publisher: eventPublisher.Settings,
-                                subject: Subject.Plugin,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                             } as OpenAPIPreviewThemeStateEvent);

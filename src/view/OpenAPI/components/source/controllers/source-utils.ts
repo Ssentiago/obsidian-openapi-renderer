@@ -21,8 +21,11 @@ import {
     ViewUpdate,
 } from '@codemirror/view';
 import { setIcon } from 'obsidian';
-import { eventID, eventPublisher, Subject } from 'typing/constants';
-import { EditorChangedEvent, SwitchModeStateEvent } from 'typing/interfaces';
+import { eventID } from '../../../../../events-management/typing/constants';
+import {
+    EditorChangedEvent,
+    SwitchModeStateEvent,
+} from '../../../../../events-management/typing/interfaces';
 import { OpenAPIView } from '../../../OpenAPI-view';
 import openAPIFormatter from '../extensions/formatter';
 import createBoundKeymap from '../extensions/keymap';
@@ -113,8 +116,6 @@ function onChange(editorView: OpenAPISource, update: ViewUpdate): void {
             }
             editorView.plugin.publisher.publish({
                 eventID: eventID.EditorChanged,
-                publisher: eventPublisher.Editor,
-                subject: Subject.Preview,
                 timestamp: new Date(),
                 emitter: editorView.plugin.app.workspace,
                 data: {
