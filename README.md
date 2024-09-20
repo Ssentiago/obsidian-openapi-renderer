@@ -130,7 +130,7 @@ Special thanks to [mnaoumov](https://github.com/mnaoumov/) for valuable insights
 
 ## Reporting Issues
 
-If you encounter any bugs or unexpected behavior,
-please [open an issue on GitHub](https://github.com/ssentiago/openapi-renderer/issues). Your
-feedback helps improve the plugin for
-everyone.
+If you encounter any bugs or unexpected behavior, please [open an issue on GitHub](https://github.com/ssentiago/openapi-renderer/issues). If you want to offer a new feature, feel free to suggest.
+
+Your involvement makes the plugin better for everyone.
+
