@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
 import { App, DropdownComponent, Setting } from 'obsidian';
+import React, { useEffect } from 'react';
 import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
-import { eventID, eventPublisher, Subject } from '../../../typing/constants';
-import { SourceThemeStateEvent } from '../../../typing/interfaces';
+import { eventID } from '../../../events-management/typing/constants';
+import { SourceThemeStateEvent } from '../../../events-management/typing/interfaces';
 
 const SourceSectionComponent: React.FC<{
     app: App;
@@ -26,8 +26,6 @@ const SourceSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.SourceThemeState,
-                                publisher: eventPublisher.Settings,
-                                subject: Subject.Plugin,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                             } as SourceThemeStateEvent);
@@ -48,8 +46,6 @@ const SourceSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.SourceThemeState,
-                                publisher: eventPublisher.Settings,
-                                subject: Subject.Plugin,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                             } as SourceThemeStateEvent);
@@ -71,8 +67,6 @@ const SourceSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.SourceThemeState,
-                                publisher: eventPublisher.Settings,
-                                subject: Subject.Plugin,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                             } as SourceThemeStateEvent);
@@ -94,8 +88,6 @@ const SourceSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.SourceThemeState,
-                                publisher: eventPublisher.Settings,
-                                subject: Subject.Plugin,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                             } as SourceThemeStateEvent);

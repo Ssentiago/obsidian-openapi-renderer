@@ -1,5 +1,5 @@
-import { RESOURCE_NAME } from 'typing/constants';
 import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
+import { RESOURCE_NAME } from '../../../../typing/constants';
 
 export class RenderController {
     private ui: any;

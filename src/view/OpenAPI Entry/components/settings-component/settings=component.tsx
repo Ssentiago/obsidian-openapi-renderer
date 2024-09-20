@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { eventID } from '../../../../typing/constants';
-import { ChangeGridColumnsStateEvent } from '../../../../typing/interfaces';
+import { eventID } from '../../../../events-management/typing/constants';
+import { ChangeGridColumnsStateEvent } from '../../../../events-management/typing/interfaces';
 import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 

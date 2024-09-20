@@ -1,10 +1,10 @@
+import { LanguageSupport } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { LanguageSupport } from '@codemirror/language';
 import OpenAPIRendererPlugin from 'core/OpenAPIRendererPlugin';
-import { SourceController } from './controllers/source-controller';
 import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
-import { IOpenAPIViewComponent } from 'typing/interfaces';
+import { IOpenAPIViewComponent } from '../../../typing/interfaces';
+import { SourceController } from './controllers/source-controller';
 
 export class OpenAPISource implements IOpenAPIViewComponent {
     editor!: EditorView;

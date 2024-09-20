@@ -1,9 +1,9 @@
-import { VersionController } from './version-controller';
-import { RESOURCE_NAME } from '../../../typing/constants';
+import { RESOURCE_NAME } from '../../typing/constants';
 import {
     FormData,
     SaveCurrentVersionModal,
 } from '../modals/save-current-version-modal';
+import { VersionController } from './version-controller';
 
 export class VersionUtils {
     constructor(private controller: VersionController) {}

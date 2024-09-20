@@ -10,9 +10,9 @@ import {
     FaTrashAlt,
     FaUndo,
 } from 'react-icons/fa';
+import { eventID } from '../../../../events-management/typing/constants';
+import { UpdateOpenAPIViewStateEvent } from '../../../../events-management/typing/interfaces';
 import { Specification } from '../../../../indexedDB/database/specification';
-import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
-import { UpdateOpenAPIViewStateEvent } from '../../../../typing/interfaces';
 import { OpenAPIVersionView } from '../../openapi-version-view';
 import { useSpecificationContext } from '../core/context';
 import {
@@ -129,8 +129,6 @@ const VersionListComponent: React.FC<VersionListProps> = ({
             await view.app.vault.adapter.write(view.file.path, content);
             view.plugin.publisher.publish({
                 eventID: eventID.UpdateOpenAPIViewState,
-                publisher: eventPublisher.App,
-                subject: Subject.App,
                 timestamp: new Date(),
                 emitter: view.app.workspace,
                 data: {

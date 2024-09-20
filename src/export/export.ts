@@ -1,24 +1,8 @@
 import { Specification } from 'indexedDB/database/specification';
 import OpenAPIRendererPlugin from 'main';
-import Yazl from 'yazl';
 import { moment } from 'obsidian';
-
-interface specData {
-    name: string;
-    version: string;
-    time: number;
-    diff: string;
-}
-
-interface renderData {
-    path: string;
-    data: specData[];
-}
-
-interface OneFileVersionData {
-    specs: Specification[];
-    spec: Specification;
-}
+import Yazl from 'yazl';
+import { OneFileVersionData, renderData, specData } from './interfaces';
 
 export default class Export {
     constructor(public plugin: OpenAPIRendererPlugin) {}

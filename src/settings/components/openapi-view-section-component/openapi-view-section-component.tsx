@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
 import { App, Setting } from 'obsidian';
+import React, { useEffect } from 'react';
 import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
-import { eventID, eventPublisher, Subject } from '../../../typing/constants';
-import { ChangeOpenAPIModeStateEvent } from '../../../typing/interfaces';
+import { eventID } from '../../../events-management/typing/constants';
+import { ChangeOpenAPIModeStateEvent } from '../../../events-management/typing/interfaces';
 
 const OpenAPIViewSectionComponent: React.FC<{
     app: App;
@@ -24,10 +24,8 @@ const OpenAPIViewSectionComponent: React.FC<{
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
                                 eventID: eventID.ChangeOpenAPIModeState,
-                                subject: Subject.Plugin,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                                publisher: eventPublisher.Settings,
                             } as ChangeOpenAPIModeStateEvent);
                         });
                 });

@@ -1,6 +1,7 @@
 import { EntryViewData } from 'indexedDB/interfaces';
 import React, { useEffect } from 'react';
-import { eventID } from 'typing/constants';
+
+import { eventID } from '../../../../events-management/typing/constants';
 import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 import NoTrackedFilesFound from '../core/no-tracked-files-found';

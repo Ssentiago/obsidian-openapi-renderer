@@ -9,12 +9,15 @@ import {
     FaTrash,
 } from 'react-icons/fa';
 import { SiOpenapiinitiative } from 'react-icons/si';
-import { eventID, eventPublisher, Subject } from '../../../../typing/constants';
+import { eventID } from '../../../../events-management/typing/constants';
 import {
     ReloadOpenAPIEntryStateEvent,
     UpdateOpenAPIViewStateEvent,
-} from '../../../../typing/interfaces';
-import { OPENAPI_VERSION_VIEW_TYPE, OPENAPI_VIEW_TYPE } from '../../../types';
+} from '../../../../events-management/typing/interfaces';
+import {
+    OPENAPI_VERSION_VIEW_TYPE,
+    OPENAPI_VIEW_TYPE,
+} from '../../../typing/types';
 import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 import {
@@ -146,8 +149,6 @@ export const GridItemComponent: React.FC<{
         view.plugin.showNotice('Restored successfully');
         view.plugin.publisher.publish({
             eventID: eventID.UpdateOpenAPIViewState,
-            publisher: eventPublisher.App,
-            subject: Subject.App,
             timestamp: new Date(),
             emitter: view.app.workspace,
             data: {
@@ -161,8 +162,6 @@ export const GridItemComponent: React.FC<{
         if (deleted) {
             view.plugin.publisher.publish({
                 eventID: eventID.ReloadOpenAPIEntryState,
-                subject: Subject.All,
-                publisher: eventPublisher.Settings,
                 emitter: view.plugin.app.workspace,
                 timestamp: new Date(),
             } as ReloadOpenAPIEntryStateEvent);

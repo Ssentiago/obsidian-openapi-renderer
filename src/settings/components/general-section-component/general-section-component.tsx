@@ -1,8 +1,8 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
 import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
-import { eventID, eventPublisher, Subject } from '../../../typing/constants';
-import { SettingsTabStateEvent } from '../../../typing/interfaces';
+import { eventID } from '../../../events-management/typing/constants';
+import { SettingsTabStateEvent } from '../../../events-management/typing/interfaces';
 import SettingsUtils from '../../utils';
 import { SettingsContainer } from '../container-styled-component';
 import { useSettingsContext } from '../core/context';
@@ -30,8 +30,6 @@ const GeneralSectionComponent: React.FC<{
                             setTimeout(() => {
                                 plugin.publisher.publish({
                                     eventID: eventID.SettingsTabState,
-                                    publisher: eventPublisher.Settings,
-                                    subject: Subject.Settings,
                                     timestamp: new Date(),
                                     emitter: app.workspace,
                                 } as SettingsTabStateEvent);

@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
 import { App, Setting } from 'obsidian';
+import React, { useEffect } from 'react';
 import OpenAPIRendererPlugin from '../../../core/OpenAPIRendererPlugin';
-import { useSettingsContext } from '../core/context';
-import { eventID, eventPublisher, Subject } from '../../../typing/constants';
-import { ChangeGridColumnsStateEvent } from '../../../typing/interfaces';
+import { eventID } from '../../../events-management/typing/constants';
+import { ChangeGridColumnsStateEvent } from '../../../events-management/typing/interfaces';
 import { SettingsContainer } from '../container-styled-component';
+import { useSettingsContext } from '../core/context';
 
 const OpenAPIEntrySectionComponent: React.FC<{
     app: App;
@@ -34,8 +34,6 @@ const OpenAPIEntrySectionComponent: React.FC<{
                         await plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: eventID.ChangeGridColumnsState,
-                            subject: Subject.All,
-                            publisher: eventPublisher.Settings,
                             emitter: app.workspace,
                             timestamp: new Date(),
                             data: { value: parseInt(value, 10) },

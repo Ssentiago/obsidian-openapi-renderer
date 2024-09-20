@@ -1,10 +1,17 @@
-import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
 import path from 'path';
-import { eventID, eventPublisher, Subject } from '../typing/constants';
-import {
-    DEFAULT_SETTINGS_Interface,
-    ToggleButtonVisibilityEvent,
-} from '../typing/interfaces';
+import OpenAPIRendererPlugin from './OpenAPIRendererPlugin';
+
+export interface DEFAULT_SETTINGS_Interface {
+    isResourcesAutoUpdate: boolean;
+    OpenAPIPreviewTheme: string;
+    synchronizeOpenAPIPreviewTheme: boolean;
+    OpenAPISourceThemeMode: string;
+    OpenAPISourceLightTheme: string;
+    OpenAPISourceDarkTheme: string;
+    synchronizeOpenAPISourceTheme: boolean;
+    OpenAPIViewDefaultMode: string;
+    OpenAPIEntryGridColumns: number;
+}
 
 export default class SettingsManager {
     plugin: OpenAPIRendererPlugin;
@@ -23,10 +30,6 @@ export default class SettingsManager {
      */
     get defaultSettings(): DEFAULT_SETTINGS_Interface {
         return {
-            serverHostName: '127.0.0.1',
-            serverPort: 8080,
-            isServerAutoStart: false,
-            exportType: 'none',
             isResourcesAutoUpdate: false,
             OpenAPIPreviewTheme: 'dark',
             OpenAPISourceThemeMode: 'dark',
@@ -90,17 +93,6 @@ export default class SettingsManager {
                 await this.plugin.app.vault.adapter.remove(configPath);
             }
             await this.loadSettings();
-            const event = {
-                eventID: eventID.ToggleButtonVisibility,
-                timestamp: new Date(),
-                publisher: eventPublisher.App,
-                subject: Subject.All,
-                emitter: this.plugin.app.workspace,
-                data: {
-                    buttonID: null,
-                },
-            } as ToggleButtonVisibilityEvent;
-            this.plugin.publisher.publish(event);
         }
     }
 }

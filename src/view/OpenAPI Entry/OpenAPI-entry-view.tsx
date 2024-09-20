@@ -1,7 +1,7 @@
 import { IconName, ItemView, WorkspaceLeaf } from 'obsidian';
-import { OPENAPI_ENTRY_VIEW_TYPE } from '../types';
 import { createRoot, Root } from 'react-dom/client';
 import OpenAPIRendererPlugin from '../../core/OpenAPIRendererPlugin';
+import { OPENAPI_ENTRY_VIEW_TYPE } from '../typing/types';
 import EntryViewEntry from './components/entry-component';
 import { EntryController } from './controllers/entry-controller';
 
