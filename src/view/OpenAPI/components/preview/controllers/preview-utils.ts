@@ -1,5 +1,8 @@
+import { ApiRefOptions, ApiRefResolution } from '@apiture/api-ref-resolver';
+import { ApiRefResolver } from '@apiture/api-ref-resolver/lib/src/ApiRefResolver';
 import yaml from 'js-yaml';
-import { setIcon } from 'obsidian';
+import { Notice, setIcon } from 'obsidian';
+import path from 'path';
 import OpenAPIPreviewController from 'view/OpenAPI/components/preview/controllers/preview-controller';
 import { eventID } from '../../../../../events-management/typing/constants';
 import {
@@ -15,23 +18,40 @@ export class PreviewUtils {
         if (!file) {
             return null;
         }
-        const data = this.controller.preview.openAPIView.data;
 
-        let spec: any;
-        switch (file.extension) {
+        const relativePath = file.path;
+        const basePath =
+            this.controller.preview.plugin.app.vault.adapter.basePath;
+
+        const resolver = new ApiRefResolver(path.join(basePath, relativePath));
+        const options: ApiRefOptions = {
+            verbose: false,
+            conflictStrategy: 'rename',
+        };
+        let out: ApiRefResolution;
+        try {
+            out = await resolver.resolve(options);
+        } catch (err: any) {
+            new Notice(
+                'Oops... Something went wrong while resolving $refs. Please ensure your spec file is valid and check the logs for more details.',
+                10000
+            );
+            this.controller.preview.plugin.logger.error(err.message);
+            return null;
+        }
+        return out.api as object;
+    }
+
+    convertData(data: string, extension: string): Record<string, any> {
+        switch (extension) {
             case 'yaml':
             case 'yml':
-                spec = yaml.load(data);
-                break;
+                return yaml.load(data) as Record<string, any>;
             case 'json':
-                spec = JSON.parse(data);
-                break;
+                return JSON.parse(data) as Record<string, any>;
             default:
-                throw new Error(
-                    `Unsupported file extension: ${file.extension}`
-                );
+                throw new Error(`Unsupported file extension: ${extension}`);
         }
-        return spec;
     }
 
     initializeActions(): void {
