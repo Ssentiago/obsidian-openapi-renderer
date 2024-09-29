@@ -54,7 +54,7 @@ export const SettingProvider: React.FC<{ children: ReactNode }> = ({
 export const useSettingsContext = (): SettingsContextProps => {
     const context = useContext(SettingsContext);
     if (context === undefined) {
-        throw new Error('useEntryContext must be used within an EntryProvider');
+        throw new Error('useSettingsContext must be used within an EntryProvider');
     }
     return context;
 };
