@@ -16,6 +16,15 @@ const SettingsContext = createContext<SettingsContextProps | undefined>(
     undefined
 );
 
+/**
+ * Provides a context for the settings tabs.
+ *
+ * @param {{ children: ReactNode }} props
+ * @param {ReactNode} props.children - The content to be rendered within the
+ * context.
+ *
+ * @returns {ReactElement}
+ */
 export const SettingProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
@@ -35,6 +44,13 @@ export const SettingProvider: React.FC<{ children: ReactNode }> = ({
     );
 };
 
+/**
+ * Retrieves the settings context.
+ *
+ * @returns {SettingsContextProps} The settings context.
+ *
+ * @throws {Error} If the context is used outside a `SettingsProvider`.
+ */
 export const useSettingsContext = (): SettingsContextProps => {
     const context = useContext(SettingsContext);
     if (context === undefined) {
