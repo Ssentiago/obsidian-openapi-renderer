@@ -1,5 +1,5 @@
 import path from 'path';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export interface DEFAULT_SETTINGS_Interface {
     resourcesAutoUpdate: boolean;

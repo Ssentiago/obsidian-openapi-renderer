@@ -1,5 +1,5 @@
 import { App, PluginSettingTab } from 'obsidian';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 import { createRoot, Root } from 'react-dom/client';
 import EntryComponent from './components/EntryComponent';
 

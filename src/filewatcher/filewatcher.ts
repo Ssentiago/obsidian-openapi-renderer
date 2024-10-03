@@ -1,5 +1,5 @@
 import { TAbstractFile } from 'obsidian';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 import { eventID } from '../events-management/typing/constants';
 import { ReloadOpenAPIEntryStateEvent } from '../events-management/typing/interfaces';
 import { WorkerHelper } from '../indexedDB/worker/helper';

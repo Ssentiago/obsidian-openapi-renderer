@@ -1,7 +1,7 @@
 import { App } from 'obsidian';
 import path from 'path';
 import { SwaggerUIBundle } from '../view/typing/swagger-ui-typings';
-import OpenAPIRendererPlugin from './openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from './openapi-renderer-plugin';
 
 export default class ResourceManager {
     private resourceCache: Map<string, string> = new Map();

@@ -1,6 +1,6 @@
 import { App } from 'obsidian';
 import React, { useEffect, useRef, useState } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
 import { SettingsContainer } from '../styled/container-styled';
 import OpenAPIViewSubSection from './OpenAPIViewSubSection';
 import PreviewSubSection from './PreviewSubSection';

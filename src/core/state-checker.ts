@@ -1,4 +1,4 @@
-import OpenAPIRendererPlugin from './openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from './openapi-renderer-plugin';
 
 export const enum State {
     UPDATE = 'update',

@@ -1,5 +1,5 @@
 import { EventRef, Events } from 'obsidian';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 import { eventID } from './typing/constants';
 import { ObserverEventData, OpenAPIRendererEvent } from './typing/interfaces';

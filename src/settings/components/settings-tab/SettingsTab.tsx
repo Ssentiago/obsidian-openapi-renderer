@@ -1,6 +1,6 @@
 import { App } from 'obsidian';
 import React from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
 import { useSettingsContext } from '../core/context';
 import GeneralSection from '../general-section/GeneralSection';
 import Navbar from '../navbar/Navbar';

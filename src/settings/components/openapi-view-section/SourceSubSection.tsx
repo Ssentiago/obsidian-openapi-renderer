@@ -1,6 +1,6 @@
 import { App, DropdownComponent, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
 import { eventID } from '../../../events-management/typing/constants';
 import { SourceThemeStateEvent } from '../../../events-management/typing/interfaces';
 

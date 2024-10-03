@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { moment } from 'obsidian';
 import * as path from 'path';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 import os from 'os';
 
 export default class LoggingManager {

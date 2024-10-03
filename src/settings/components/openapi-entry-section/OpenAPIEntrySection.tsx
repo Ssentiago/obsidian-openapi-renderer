@@ -1,6 +1,6 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
 import { eventID } from '../../../events-management/typing/constants';
 import { ChangeGridColumnsStateEvent } from '../../../events-management/typing/interfaces';
 import { useSettingsContext } from '../core/context';

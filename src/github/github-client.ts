@@ -5,7 +5,7 @@ import path from 'path';
 import { pipeline } from 'stream/promises';
 import * as tar from 'tar';
 import { createGunzip } from 'zlib';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin ';
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export default class GithubClient {
     private octokit: Octokit;
