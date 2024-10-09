@@ -1,21 +1,20 @@
 import { App } from 'obsidian';
 import path from 'path';
-import { SwaggerUIBundle } from '../view/typing/swagger-ui-typings';
+import { SwaggerUIBundle } from 'view/typing/swagger-ui-typings';
 import OpenAPIRendererPlugin from './openapi-renderer-plugin';
 
 export default class ResourceManager {
-    private resourceCache: Map<string, string> = new Map();
+    private readonly resourceCache: Map<string, string> = new Map();
     private assetsPath!: string;
     public swaggerUIBundle: SwaggerUIBundle | null = null;
 
     constructor(
         public app: App,
         public plugin: OpenAPIRendererPlugin
-    ) {
-        this.initializeAssetsPath().catch((err: any) => {
-            this.plugin.showNotice(err.message);
-            throw err;
-        });
+    ) {}
+
+    async initializeResourceManager(): Promise<void> {
+        await this.initializeAssetsPath();
     }
 
     /**
@@ -27,7 +26,8 @@ export default class ResourceManager {
     async initializeAssetsPath(): Promise<void> {
         const pluginDir = this.plugin.manifest.dir;
         if (!pluginDir) {
-            throw new Error('No plugin directory found');
+            this.plugin.showNotice('No plugin directory found');
+            return;
         }
 
         this.assetsPath = path.join(pluginDir, 'assets');
@@ -106,7 +106,8 @@ export default class ResourceManager {
         }
         const pluginDir = this.plugin.manifest.dir;
         if (!pluginDir) {
-            throw new Error('No plugin dir found');
+            this.plugin.showNotice('No plugin dir found!');
+            return;
         }
 
         const assetsPath = path.join(
