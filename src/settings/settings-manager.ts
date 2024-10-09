@@ -1,7 +1,8 @@
 import path from 'path';
+import { BaseExtensionsStorage } from 'view/OpenAPI/components/source/typing/interfaces';
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
-export interface DEFAULT_SETTINGS_Interface {
+export interface DEFAULT_SETTINGS {
     resourcesAutoUpdate: boolean;
     OpenAPIPreviewTheme: string;
     syncOpenAPIPreviewTheme: boolean;
@@ -11,6 +12,7 @@ export interface DEFAULT_SETTINGS_Interface {
     syncOpenAPISourceTheme: boolean;
     OpenAPIViewDefaultMode: string;
     OpenAPIEntryGridLayoutColumns: number;
+    extensions: BaseExtensionsStorage;
 }
 
 export default class SettingsManager {
@@ -25,7 +27,7 @@ export default class SettingsManager {
      *
      * @returns The default settings.
      */
-    get defaultSettings(): DEFAULT_SETTINGS_Interface {
+    get defaultSettings(): DEFAULT_SETTINGS {
         return {
             resourcesAutoUpdate: false,
             OpenAPIPreviewTheme: 'dark',
@@ -36,6 +38,8 @@ export default class SettingsManager {
             syncOpenAPISourceTheme: true,
             OpenAPIViewDefaultMode: 'source',
             OpenAPIEntryGridLayoutColumns: 4,
+            extensions:
+                this.plugin.sourceExtensionsManager.pluginSettingsExtensions,
         };
     }
 
