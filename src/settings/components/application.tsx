@@ -4,13 +4,13 @@ import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { SettingProvider } from './core/context';
 import SettingsTab from './settings-tab/SettingsTab';
 
-const EntryComponent: React.FC<{
+const Application: React.FC<{
     app: App;
     plugin: OpenAPIRendererPlugin;
 }> = ({ app, plugin }) => (
-    <SettingProvider>
-        <SettingsTab app={app} plugin={plugin} />
+    <SettingProvider app={app} plugin={plugin}>
+        <SettingsTab />
     </SettingProvider>
 );
 
-export default EntryComponent;
+export default Application;
