@@ -1,9 +1,8 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
-import { eventID } from '../../../events-management/typing/constants';
-import { ChangeGridColumnsStateEvent } from '../../../events-management/typing/interfaces';
-import { useSettingsContext } from '../core/context';
+import { eventID } from 'events-management/typing/constants';
+import { ChangeGridColumnsStateEvent } from 'events-management/typing/interfaces';
+import { useSettingsContext } from 'settings/components/core/context';
 import { SettingsContainer } from '../styled/container-styled';
 
 /**
@@ -12,16 +11,12 @@ import { SettingsContainer } from '../styled/container-styled';
  * This component renders several settings:
  *  - Grid Layout Columns
  *
- * @param {App} app - The Obsidian app instance.
- * @param {OpenAPIRendererPlugin} plugin - The OpenAPI Renderer plugin instance.
  *
  * @returns {React.ReactElement} A React element.
  */
-const OpenAPIEntrySection: React.FC<{
-    app: App;
-    plugin: OpenAPIRendererPlugin;
-}> = ({ app, plugin }) => {
+const OpenAPIEntrySection: React.FC = () => {
     const { ref } = useSettingsContext();
+    const { app, plugin } = useSettingsContext();
 
     useEffect(() => {
         if (ref.current) {

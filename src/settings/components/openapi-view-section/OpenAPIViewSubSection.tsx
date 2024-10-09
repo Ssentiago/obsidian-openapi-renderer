@@ -1,7 +1,6 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
-import { eventID } from '../../../events-management/typing/constants';
+import { useSettingsContext } from 'settings/components/core/context';
 
 /**
  * A React component that renders the OpenAPI View settings sub-section.
@@ -9,16 +8,14 @@ import { eventID } from '../../../events-management/typing/constants';
  * This component renders a settings dropdown for selecting the default mode for viewing OpenAPI View.
  *
  * @param {App} app - The Obsidian app instance.
- * @param {OpenAPIRendererPlugin} plugin - The OpenAPI Renderer plugin instance.
  * @param {HTMLElement | null} containerEl - The container element for the settings sub-section.
  *
  * @returns {React.ReactElement | null} A React element or null if the container element is null.
  */
 const OpenAPIViewSubSection: React.FC<{
-    app: App;
-    plugin: OpenAPIRendererPlugin;
     containerEl: HTMLElement | null;
-}> = ({ app, plugin, containerEl }) => {
+}> = ({ containerEl }) => {
+    const { plugin } = useSettingsContext();
     useEffect(() => {
         if (containerEl) {
             new Setting(containerEl)

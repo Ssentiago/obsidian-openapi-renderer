@@ -1,8 +1,7 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
-import { eventID } from '../../../events-management/typing/constants';
-import { SettingsTabStateEvent } from '../../../events-management/typing/interfaces';
+import { eventID } from 'events-management/typing/constants';
+import { SettingsTabStateEvent } from 'events-management/typing/interfaces';
 import { useSettingsContext } from '../core/context';
 import { SettingsContainer } from '../styled/container-styled';
 
@@ -14,16 +13,12 @@ import { SettingsContainer } from '../styled/container-styled';
  *  - Download plugin`s assets from Github release
  *  - Resources autoupdate
  *
- * @param {App} app - The Obsidian app instance.
- * @param {OpenAPIRendererPlugin} plugin - The OpenAPI Renderer plugin instance.
  *
  * @returns {React.ReactElement} A React element.
  */
-const GeneralSection: React.FC<{
-    app: App;
-    plugin: OpenAPIRendererPlugin;
-}> = ({ app, plugin }) => {
+const GeneralSection: React.FC = () => {
     const { ref } = useSettingsContext();
+    const { app, plugin } = useSettingsContext();
 
     useEffect(() => {
         if (ref.current) {
@@ -60,7 +55,7 @@ const GeneralSection: React.FC<{
                 .addButton((button) => {
                     button
                         .setIcon('github')
-                        .onClick(async (cb): Promise<void> => {
+                        .onClick(async (): Promise<void> => {
                             await plugin.githubClient.downloadAssetsFromLatestRelease();
                         });
                 });

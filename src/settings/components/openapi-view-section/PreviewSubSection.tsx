@@ -1,8 +1,8 @@
+import { eventID } from 'events-management/typing/constants';
+import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import { App, DropdownComponent, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
-import { eventID } from '../../../events-management/typing/constants';
-import { OpenAPIPreviewThemeStateEvent } from '../../../events-management/typing/interfaces';
+import { useSettingsContext } from 'settings/components/core/context';
 
 /**
  * A React component that renders the preview settings section.
@@ -12,16 +12,14 @@ import { OpenAPIPreviewThemeStateEvent } from '../../../events-management/typing
  *  - Synchronize preview theme
  *
  * @param {App} app - The Obsidian app instance.
- * @param {OpenAPIRendererPlugin} plugin - The OpenAPI Renderer plugin instance.
  * @param {HTMLElement | null} containerEl - The container element to render the settings in.
  *
  * @returns {React.ReactElement} A React element.
  */
 const PreviewSubSection: React.FC<{
-    app: App;
-    plugin: OpenAPIRendererPlugin;
     containerEl: HTMLElement | null;
-}> = ({ app, plugin, containerEl }) => {
+}> = ({ containerEl }) => {
+    const { app, plugin } = useSettingsContext();
     useEffect(() => {
         if (containerEl) {
             new Setting(containerEl)
@@ -38,10 +36,13 @@ const PreviewSubSection: React.FC<{
                             plugin.settings.OpenAPIPreviewTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.PreviewThemeState,
+                                eventID: eventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                            } as OpenAPIPreviewThemeStateEvent);
+                                data: {
+                                    mode: 'preview',
+                                },
+                            } as OpenAPIThemeChangeState);
                         })
                 );
 
@@ -57,10 +58,13 @@ const PreviewSubSection: React.FC<{
                             plugin.settings.syncOpenAPIPreviewTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.PreviewThemeState,
+                                eventID: eventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                            } as OpenAPIPreviewThemeStateEvent);
+                                data: {
+                                    mode: 'preview',
+                                },
+                            } as OpenAPIThemeChangeState);
                         })
                 );
         }
