@@ -1,8 +1,9 @@
 import { App, DropdownComponent, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import OpenAPIRendererPlugin from '../../../core/openapi-renderer-plugin';
-import { eventID } from '../../../events-management/typing/constants';
-import { SourceThemeStateEvent } from '../../../events-management/typing/interfaces';
+import { useSettingsContext } from 'settings/components/core/context';
+import { UserExtensions } from 'view/OpenAPI/components/source/typing/interfaces';
+import { eventID } from 'events-management/typing/constants';
+import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 
 /**
  * A React component that renders the OpenAPI Source settings section.
@@ -14,15 +15,14 @@ import { SourceThemeStateEvent } from '../../../events-management/typing/interfa
  *  - OpenAPI source dark theme
  *
  * @param {App} app - The Obsidian app instance.
- * @param {OpenAPIRendererPlugin} plugin - The OpenAPI Renderer plugin instance.
  *
  * @returns {React.ReactElement} A React element.
  */
 const SourceSubSection: React.FC<{
-    app: App;
-    plugin: OpenAPIRendererPlugin;
     containerEl: HTMLElement | null;
-}> = ({ app, plugin, containerEl }) => {
+}> = ({ containerEl }) => {
+    const { app, plugin } = useSettingsContext();
+
     useEffect(() => {
         if (containerEl) {
             new Setting(containerEl)
@@ -39,10 +39,13 @@ const SourceSubSection: React.FC<{
                             plugin.settings.OpenAPISourceThemeMode = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.SourceThemeState,
+                                eventID: eventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                            } as SourceThemeStateEvent);
+                                data: {
+                                    mode: 'source',
+                                },
+                            } as OpenAPIThemeChangeState);
                         })
                 );
 
@@ -58,10 +61,13 @@ const SourceSubSection: React.FC<{
                             plugin.settings.syncOpenAPISourceTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.SourceThemeState,
+                                eventID: eventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                            } as SourceThemeStateEvent);
+                                data: {
+                                    mode: 'source',
+                                },
+                            } as OpenAPIThemeChangeState);
                         })
                 );
 
@@ -79,10 +85,13 @@ const SourceSubSection: React.FC<{
                             plugin.settings.OpenAPISourceLightTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.SourceThemeState,
+                                eventID: eventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                            } as SourceThemeStateEvent);
+                                data: {
+                                    mode: 'source',
+                                },
+                            } as OpenAPIThemeChangeState);
                         });
                 });
 
@@ -100,12 +109,38 @@ const SourceSubSection: React.FC<{
                             plugin.settings.OpenAPISourceDarkTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.SourceThemeState,
+                                eventID: eventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
-                            } as SourceThemeStateEvent);
+                                data: {
+                                    mode: 'source',
+                                },
+                            } as OpenAPIThemeChangeState);
                         });
                 });
+
+            const extensions = containerEl.createEl('details', {});
+            const summary = extensions.createEl('summary', {
+                text: 'Extensions',
+            });
+            summary.ariaLabel =
+                'These options are applied as global defaults for all the new OpenAPI Views';
+
+            Object.entries(plugin.settings.extensions).forEach(
+                ([id, extension]) => {
+                    new Setting(extensions)
+                        .setName(extension.name)
+                        .addToggle((toggle) => {
+                            toggle.setValue(extension.on);
+                            toggle.onChange(async (value) => {
+                                plugin.settings.extensions[
+                                    id as UserExtensions
+                                ].on = value;
+                                await plugin.settingsManager.saveSettings();
+                            });
+                        });
+                }
+            );
         }
     }, [containerEl]);
 
