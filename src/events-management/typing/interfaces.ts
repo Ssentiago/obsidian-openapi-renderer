@@ -11,19 +11,27 @@ export interface SettingsTabStateEvent extends OpenAPIRendererEvent {}
 
 export interface PowerOffEvent extends OpenAPIRendererEvent {}
 
-export interface EditorChangedEvent extends OpenAPIRendererEvent {
+export interface SourceChangedEvent extends OpenAPIRendererEvent {
+    data: {
+        file: string;
+    };
+}
+
+export interface OpenAPIThemeChangeState extends OpenAPIRendererEvent {
+    data: {
+        mode: 'source' | 'preview';
+    };
+}
+
+export interface SwitchModeStateEvent extends OpenAPIRendererEvent {
     data: {
         leaf: WorkspaceLeaf;
     };
 }
 
-export interface SourceThemeStateEvent extends OpenAPIRendererEvent {}
-
-export interface OpenAPIPreviewThemeStateEvent extends OpenAPIRendererEvent {}
-
-export interface SwitchModeStateEvent extends OpenAPIRendererEvent {
+export interface PreviewStateEvent extends OpenAPIRendererEvent {
     data: {
-        leaf: WorkspaceLeaf;
+        state: 'full' | 'fast';
     };
 }
 
