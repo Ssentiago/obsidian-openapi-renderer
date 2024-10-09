@@ -1,12 +1,17 @@
+import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
+import { App } from 'obsidian';
 import React, {
     createContext,
     ReactNode,
     useContext,
+    useMemo,
     useRef,
     useState,
 } from 'react';
 
 interface SettingsContextProps {
+    plugin: OpenAPIRendererPlugin;
+    app: App;
     ref: React.RefObject<HTMLDivElement>;
     currentTab: string;
     setCurrentTab: React.Dispatch<React.SetStateAction<string>>;
@@ -25,20 +30,27 @@ const SettingsContext = createContext<SettingsContextProps | undefined>(
  *
  * @returns {ReactElement}
  */
-export const SettingProvider: React.FC<{ children: ReactNode }> = ({
-    children,
-}) => {
+export const SettingProvider: React.FC<{
+    app: App;
+    plugin: OpenAPIRendererPlugin;
+    children: ReactNode;
+}> = ({ app, plugin, children }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [currentTab, setCurrentTab] = useState<string>('general');
 
+    const contextValue = useMemo(
+        () => ({
+            app,
+            plugin,
+            ref,
+            currentTab,
+            setCurrentTab,
+        }),
+        [app, plugin, ref, currentTab]
+    );
+
     return (
-        <SettingsContext.Provider
-            value={{
-                ref,
-                currentTab,
-                setCurrentTab,
-            }}
-        >
+        <SettingsContext.Provider value={contextValue}>
             {children}
         </SettingsContext.Provider>
     );
@@ -54,7 +66,9 @@ export const SettingProvider: React.FC<{ children: ReactNode }> = ({
 export const useSettingsContext = (): SettingsContextProps => {
     const context = useContext(SettingsContext);
     if (context === undefined) {
-        throw new Error('useSettingsContext must be used within an EntryProvider');
+        throw new Error(
+            'useSettingsContext must be used within an EntryProvider'
+        );
     }
     return context;
 };
