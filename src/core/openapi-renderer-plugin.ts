@@ -97,6 +97,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
         await this.settingsManager.loadSettings();
         this.logger = new LoggingManager(this);
         this.resourceManager = new ResourceManager(this.app, this);
+        await this.resourceManager.initializeResourceManager();
     }
 
     /**
