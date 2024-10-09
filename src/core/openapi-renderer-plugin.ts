@@ -13,7 +13,7 @@ import { FileWatcher } from '../filewatcher/filewatcher';
 import GithubClient from '../github/github-client';
 import { WorkerHelper } from '../indexedDB/worker/helper';
 import LoggingManager from '../logging/logging-manager';
-import SettingsManager, { DEFAULT_SETTINGS } from 'settings/settings-manager';
+import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
 import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
 import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
 import {
@@ -25,7 +25,7 @@ import ResourceManager from './resource-manager';
 import StateChecker from './state-checker';
 
 export default class OpenAPIRendererPlugin extends Plugin {
-    settings!: DEFAULT_SETTINGS;
+    settings!: DefaultSettings;
     settingsTab!: OpenAPISettingTab;
     logger!: LoggingManager;
     publisher!: EventPublisher;

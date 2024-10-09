@@ -2,7 +2,7 @@ import path from 'path';
 import { BaseExtensionsStorage } from 'view/OpenAPI/components/source/typing/interfaces';
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
-export interface DEFAULT_SETTINGS {
+export interface DefaultSettings {
     resourcesAutoUpdate: boolean;
     OpenAPIPreviewTheme: string;
     syncOpenAPIPreviewTheme: boolean;
@@ -27,7 +27,7 @@ export default class SettingsManager {
      *
      * @returns The default settings.
      */
-    get defaultSettings(): DEFAULT_SETTINGS {
+    get defaultSettings(): DefaultSettings {
         return {
             resourcesAutoUpdate: false,
             OpenAPIPreviewTheme: 'dark',
