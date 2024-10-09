@@ -3,30 +3,29 @@ import {
     EventPublisher,
 } from 'events-management/events-management';
 import Export from 'export/export';
-import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
+import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
-import { OpenAPIView } from 'view/OpenAPI/OpenAPI-view';
+import { ExtensionManager } from 'view/OpenAPI/components/source/managers/extension-manager';
+import { OpenAPIView } from 'view/OpenAPI/openapi-view';
 import { eventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
 import GithubClient from '../github/github-client';
 import { WorkerHelper } from '../indexedDB/worker/helper';
 import LoggingManager from '../logging/logging-manager';
-import SettingsManager, {
-    DEFAULT_SETTINGS_Interface,
-} from '../settings/settingsManager';
+import SettingsManager, { DEFAULT_SETTINGS } from 'settings/settings-manager';
 import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
 import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
 import {
-    OPENAPI_ENTRY_VIEW_TYPE,
-    OPENAPI_VERSION_VIEW_TYPE,
-    OPENAPI_VIEW_TYPE,
+    OPENAPI_ENTRY_VIEW,
+    OPENAPI_VERSION_VIEW,
+    OPENAPI_VIEW,
 } from '../view/typing/types';
 import ResourceManager from './resource-manager';
-import StateChecker, { State } from './state-checker';
+import StateChecker from './state-checker';
 
 export default class OpenAPIRendererPlugin extends Plugin {
-    settings!: DEFAULT_SETTINGS_Interface;
+    settings!: DEFAULT_SETTINGS;
     settingsTab!: OpenAPISettingTab;
     logger!: LoggingManager;
     publisher!: EventPublisher;
@@ -39,6 +38,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
     export!: Export;
     fileWatcher!: FileWatcher;
     workerHelper!: WorkerHelper;
+    sourceExtensionsManager!: ExtensionManager;
 
     /**
      * Lifecycle method called when the plugin is loaded.
@@ -77,6 +77,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * @returns A promise that resolves when the plugin has been initialized.
      */
     private async initializePlugin(): Promise<void> {
+        this.initializeManagers();
         await this.initializeCore();
         this.initializeEventSystem();
         await this.initializeNetworking();
@@ -93,10 +94,22 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * @returns A promise that resolves when the core components have been initialized.
      */
     private async initializeCore(): Promise<void> {
-        this.settingsManager = new SettingsManager(this);
         await this.settingsManager.loadSettings();
         this.logger = new LoggingManager(this);
         this.resourceManager = new ResourceManager(this.app, this);
+    }
+
+    /**
+     * Initializes the plugin's managers.
+     *
+     * This method creates and initializes the settings manager and source extensions manager.
+     *
+     * @private
+     * @returns {void} No return value.
+     */
+    private initializeManagers(): void {
+        this.settingsManager = new SettingsManager(this);
+        this.sourceExtensionsManager = new ExtensionManager(this);
     }
 
     /**
@@ -135,20 +148,17 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * @returns A promise that resolves when the UI components have been initialized.
      */
     private async initializeUI(): Promise<void> {
-        this.registerView(
-            OPENAPI_VIEW_TYPE,
-            (leaf) => new OpenAPIView(leaf, this)
-        );
+        this.registerView(OPENAPI_VIEW, (leaf) => new OpenAPIView(leaf, this));
 
-        this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW_TYPE);
+        this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW);
 
         this.registerView(
-            OPENAPI_VERSION_VIEW_TYPE,
+            OPENAPI_VERSION_VIEW,
             (leaf: WorkspaceLeaf) => new OpenAPIVersionView(leaf, this)
         );
 
         this.registerView(
-            OPENAPI_ENTRY_VIEW_TYPE,
+            OPENAPI_ENTRY_VIEW,
             (leaf: WorkspaceLeaf) => new OpenAPIEntryView(leaf, this)
         );
 
@@ -158,7 +168,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
             async () => {
                 const leaf = this.app.workspace.getLeaf(true);
                 await leaf.setViewState({
-                    type: OPENAPI_ENTRY_VIEW_TYPE,
+                    type: OPENAPI_ENTRY_VIEW,
                     active: true,
                     state: {},
                 });
@@ -173,13 +183,18 @@ export default class OpenAPIRendererPlugin extends Plugin {
             callback: async () => {
                 const leaf = this.app.workspace.getLeaf(true);
                 await leaf.setViewState({
-                    type: OPENAPI_ENTRY_VIEW_TYPE,
+                    type: OPENAPI_ENTRY_VIEW,
                     active: true,
                     state: {},
                 });
                 this.app.workspace.revealLeaf(leaf);
             },
         });
+        addIcon('green-dot', `<circle cx="50" cy="50" r="30" fill="green" />`);
+        addIcon(
+            'yellow-dot',
+            `<circle cx="50" cy="50" r="30" fill="yellow" />`
+        );
     }
 
     /**
@@ -207,6 +222,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
      *
      * @param message The message to be displayed to the user.
      * @param duration The duration, in milliseconds, that the notice should be displayed.
+     * @param messageType The message type of the notice.
      */
     showNotice(message: string, duration?: number): void {
         new Notice(message, duration);
