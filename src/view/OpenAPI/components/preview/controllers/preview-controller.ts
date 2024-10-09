@@ -1,44 +1,78 @@
-import OpenAPIPreview from 'view/OpenAPI/components/preview/OpenAPI-preview';
-import { ThemeController } from 'view/OpenAPI/components/preview/controllers/theme-controller';
+import { PreviewUtilController } from 'view/OpenAPI/components/preview/controllers/preview-util-controller';
 import { RenderController } from 'view/OpenAPI/components/preview/controllers/render-controller';
-import { PreviewUtils } from 'view/OpenAPI/components/preview/controllers/preview-utils';
+import { ThemeController } from 'view/OpenAPI/components/preview/controllers/theme-controller';
+import OpenAPIPreview from 'view/OpenAPI/components/preview/openapi-preview';
 
 export default class OpenAPIPreviewController {
-    public themeManager: ThemeController;
-    public renderManager: RenderController;
-    public previewUtils: PreviewUtils;
+    public themeController: ThemeController;
+    public renderController: RenderController;
+    public previewUtilController: PreviewUtilController;
 
     constructor(public preview: OpenAPIPreview) {
-        this.themeManager = new ThemeController(this);
-        this.renderManager = new RenderController(this);
-        this.previewUtils = new PreviewUtils(this);
+        this.themeController = new ThemeController(this);
+        this.renderController = new RenderController(this);
+        this.previewUtilController = new PreviewUtilController(this);
 
         this.initializeTheme();
         this.setupEventListeners();
     }
 
+    /**
+     * Initializes the preview.
+     *
+     * This method is called when the preview opens.
+     * It initializes the theme controller, sets up the actions,
+     * initializes the Swagger UI bundle, and shows the preview.
+     *
+     * @returns {Promise<void>} A promise that resolves when the preview is initialized.
+     */
     async initializePreview(): Promise<void> {
         this.initializeActions();
         await this.initializeSwaggerUIBundle();
-        this.preview.contentEl.show();
+        this.preview.show();
     }
 
+    /**
+     * Renders the preview.
+     *
+     * @returns {Promise<void>} No return value.
+     */
     async render(): Promise<void> {
-        await this.renderManager.render();
+        await this.renderController.render();
     }
 
+    /**
+     * Initializes the theme of the preview.
+     *
+     * @returns {void} No return value.
+     */
     private initializeTheme(): void {
-        this.themeManager.initializeTheme();
+        this.themeController.initializeTheme();
     }
 
+    /**
+     * Sets up event listeners.
+     *
+     * @returns {void}
+     */
     private setupEventListeners(): void {
-        this.previewUtils.setupEventListeners();
+        this.previewUtilController.setupEventListeners();
     }
 
+    /**
+     * Initializes the actions for the preview component.
+     *
+     * @returns {void} No return value.
+     */
     private initializeActions(): void {
-        this.previewUtils.initializeActions();
+        this.previewUtilController.initializeActions();
     }
 
+    /**
+     * Initializes the Swagger UI bundle.
+     *
+     * @returns {Promise<void>} A promise that resolves when the Swagger UI bundle is initialized.
+     */
     private async initializeSwaggerUIBundle(): Promise<void> {
         await this.preview.plugin.resourceManager.initSwaggerUIBundle();
     }
