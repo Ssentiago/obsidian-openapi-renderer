@@ -9,10 +9,14 @@ visualization, editing, and easy navigation of API specs.
 - Manage specification versions: create, view, restore, and delete
 - Access all tracked OpenAPI specifications in your vault
 
-## Roadmap
-- Enhance Version and Entry views
-~~- Enhancing views with new features and improvements~~
-~~- Adding support for $ref links~~
+<details>
+  <summary><h2>Roadmap</h2></summary>
+
+  - Enhance Version and Entry views  
+ <s> Enhancing views with new features and improvements</s>  
+  <s>Adding support for $ref links~</s>
+
+</details>
 
 ## Installation
 
