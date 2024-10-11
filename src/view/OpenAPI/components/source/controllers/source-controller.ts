@@ -1,41 +1,63 @@
-import { OpenAPISource } from '../OpenAPI-source';
-import { SourceUtils } from './source-utils';
+import { ExtensionController } from 'view/OpenAPI/components/source/controllers/extension-controller';
+import { RenderController } from 'view/OpenAPI/components/source/controllers/rendering/render-controller';
+import { SourceUtilController } from 'view/OpenAPI/components/source/controllers/source-util-controller';
+import { OpenAPISource } from 'view/OpenAPI/components/source/openapi-source';
 import { ThemeController } from './theme-controller';
 
 export class SourceController {
-    themeManager: ThemeController;
+    themeController: ThemeController;
+    extensionController: ExtensionController;
+    utilController: SourceUtilController;
+    renderController: RenderController;
 
-    constructor(public editor: OpenAPISource) {
-        this.themeManager = new ThemeController(this);
+    constructor(public source: OpenAPISource) {
+        this.themeController = new ThemeController(this);
+        this.extensionController = new ExtensionController(this);
+        this.utilController = new SourceUtilController(this);
+        this.renderController = new RenderController(this);
+
         this.initializeTheme();
-        this.setupEventListeners();
     }
 
+    /**
+     * Initializes the source code editor.
+     *
+     * This method initializes the actions and checks if the editor has been
+     * initialized. If the editor has not been initialized, it calls
+     * {@link RenderController.initializeEditor}. Otherwise, it calls
+     * {@link RenderController.updateEditor}. Finally, it shows the content element.
+     *
+     * @returns {void} No return value.
+     */
     initializeEditor(): void {
         this.initializeActions();
-        this.editor.contentEl.show();
-        if (!this.editor.editor) {
-            SourceUtils.initializeEditor(this);
+        if (!this.source.editor) {
+            this.renderController.initializeEditor();
         } else {
-            this.editor.editor.dispatch({
-                changes: {
-                    from: 0,
-                    to: this.editor.editor.state.doc.length,
-                    insert: this.editor.view.data,
-                },
-            });
+            this.renderController.updateEditor();
         }
+        this.source.contentEl.show();
     }
 
-    setupEventListeners(): void {
-        SourceUtils.setupEventListeners(this);
-    }
-
+    /**
+     * Initializes the actions for the source component.
+     *
+     * This method is a proxy for {@link SourceUtilController.initializeActions}.
+     *
+     * @returns {void} No return value.
+     */
     initializeActions(): void {
-        SourceUtils.initializeActions(this);
+        this.utilController.initializeActions();
     }
 
+    /**
+     * Initializes the theme of the source code editor.
+     *
+     * This method is a proxy for {@link ThemeController.initializeTheme}.
+     *
+     * @returns {void} No return value.
+     */
     initializeTheme(): void {
-        this.themeManager.initializeTheme();
+        this.themeController.initializeTheme();
     }
 }
