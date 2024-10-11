@@ -15,6 +15,7 @@ export class OpenAPIView extends TextFileView {
     activeComponent!: OpenAPIViewComponent | undefined;
     sourceContainer!: HTMLDivElement;
     previewContainer!: HTMLDivElement;
+    previousFile: TFile | undefined = undefined;
 
     constructor(
         leaf: WorkspaceLeaf,
@@ -115,9 +116,32 @@ export class OpenAPIView extends TextFileView {
         return 'No file open';
     }
 
+    /**
+     * Loads a file into the view.
+     * This method is called when a file is opened and is loading into the view.
+     * It:
+     * - Calls the superclass's `onLoadFile` method.
+     * - Renders the active component.
+     * @param file The file to load.
+     * @returns {Promise<void>} A promise that resolves when the file is loaded.
+     */
     async onLoadFile(file: TFile): Promise<void> {
         await super.onLoadFile(file);
         this.activeComponent?.render();
+    }
+
+    /**
+     * Cleans up the view after a file is unloaded.
+     * This method is called after a file is unloaded from the view.
+     * It:
+     * - Calls the superclass's `onUnloadFile` method.
+     * - Stores the unloaded file in the `previousFile` field.
+     * @param file The unloaded file.
+     * @returns {Promise<void>} A promise that resolves when the cleanup is done.
+     */
+    async onUnloadFile(file: TFile): Promise<void> {
+        await super.onUnloadFile(file);
+        this.previousFile = file;
     }
 
     getViewData(): string {
