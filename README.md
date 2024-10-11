@@ -10,8 +10,9 @@ visualization, editing, and easy navigation of API specs.
 - Access all tracked OpenAPI specifications in your vault
 
 ## Roadmap
-- Enhancing views with new features and improvements
-- Adding support for $ref links
+- Enhance Version and Entry views
+~~- Enhancing views with new features and improvements~~
+~~- Adding support for $ref links~~
 
 ## Installation
 
