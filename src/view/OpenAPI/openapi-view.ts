@@ -1,7 +1,7 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import OpenAPIPreview from 'view/OpenAPI/components/preview/openapi-preview';
-import { OpenAPISource } from 'view/OpenAPI/components/source/OpenAPI-source';
+import { OpenAPISource } from 'view/OpenAPI/components/source/openapi-source';
 import { OpenAPIController } from 'view/OpenAPI/controllers/view-controller';
 import { RenderingMode } from '../typing/constants';
 import { OpenAPIViewComponent } from '../typing/interfaces';
