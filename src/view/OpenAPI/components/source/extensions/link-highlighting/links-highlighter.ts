@@ -32,22 +32,16 @@ function updateLinks(view: EditorView): DecorationSet {
     return builder.finish();
 }
 
-function ctrlHandler(target: HTMLElement) {
-    return function inner(e: KeyboardEvent): void {
-        if (e.key === 'Control') {
-            target.style.cursor = '';
-            target.title = '';
-            window.removeEventListener('keyup', inner);
-        }
-    };
-}
-
 const linkHighlighter = ViewPlugin.fromClass(
     class {
         decorations: DecorationSet;
 
-        constructor(view: EditorView) {
+        constructor(public view: EditorView) {
             this.decorations = updateLinks(view);
+            view.dom.addEventListener(
+                'mouseover',
+                this.handleMouseMove.bind(this)
+            );
         }
 
         update(update: ViewUpdate): void {
@@ -59,11 +53,36 @@ const linkHighlighter = ViewPlugin.fromClass(
                 this.decorations = updateLinks(update.view);
             }
         }
+
+        handleMouseMove(event: MouseEvent): void {
+            const target = event.target as HTMLElement;
+            const linkElement = target.closest('.cm-link');
+
+            if (linkElement) {
+                if (event.ctrlKey) {
+                    target.style.cursor = 'pointer';
+                    target.ariaLabel = 'Open link';
+                } else {
+                    target.style.cursor = 'default';
+                    target.ariaLabel = 'Ctrl + click to open link';
+                }
+            } else {
+                target.style.cursor = 'default';
+            }
+        }
+
+        destroy(): void {
+            this.view.dom.removeEventListener(
+                'mousemove',
+                this.handleMouseMove
+            );
+        }
     },
+
     {
         decorations: (v) => v.decorations,
         eventHandlers: {
-            mousedown: (e: MouseEvent, view: EditorView) => {
+            mousedown: (e: MouseEvent) => {
                 const target = e.target as HTMLElement;
                 if (target.style.cursor !== 'pointer') {
                     return;
@@ -80,19 +99,22 @@ const linkHighlighter = ViewPlugin.fromClass(
                     }
                 }
             },
-            mouseover: (e: MouseEvent, view: EditorView) => {
-                const target = e.target as HTMLElement;
-                if (target.hasClass('cm-link')) {
-                    target.title = 'Ctrl + click to open link';
-                    if (e.ctrlKey) {
-                        target.style.cursor = 'pointer';
-                        target.title = 'Open link';
-                        window.addEventListener('keyup', ctrlHandler(target));
-                    }
-                }
-            },
         },
     }
 );
 
-export const linkHighlightExtension: Extension = [linkHighlighter];
+export const linkHighlightExtension: Extension = [
+    linkHighlighter,
+    EditorView.baseTheme({
+        '&light [data-link="true"], &light [data-link="true"] > span': {
+            color: '#0056b3',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+        },
+        '&dark [data-link="true"], &dark [data-link="true"] > span': {
+            color: '#79b7ff',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+        },
+    }),
+];
