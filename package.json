@@ -3,7 +3,7 @@
     "packageManager": "yarn@4.4.0",
     "author": "Sentiago",
     "license": "Apache-2.0",
-    "version": "4.1.0",
+    "version": "4.2.0",
     "type": "module",
     "description": "Integrate OpenAPI specification management with features for version control, visualization, editing, and easy navigation of API specs.",
     "main": "src/main.ts",
