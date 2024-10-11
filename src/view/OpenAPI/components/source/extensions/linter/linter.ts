@@ -1,9 +1,9 @@
-import { Extension } from '@codemirror/state';
+import { json } from '@codemirror/lang-json';
+import { yaml } from '@codemirror/lang-yaml';
 import { Diagnostic, linter } from '@codemirror/lint';
+import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import jsyaml from 'js-yaml';
-import { yaml } from '@codemirror/lang-yaml';
-import { json } from '@codemirror/lang-json';
 
 export function Linter(): { extension: Extension } | readonly Extension[] {
     return linter((view: EditorView) => {
@@ -33,7 +33,7 @@ export function Linter(): { extension: Extension } | readonly Extension[] {
                     from: cursorPos.from,
                     to: cursorPos.to,
                     severity: 'error',
-                    message: `Possible error at line ${cursorPos.number}. Please check the syntax near this location.`,
+                    message: `Possible error at line ${cursorPos.number}. Please check near this location.`,
                 });
             }
         }
