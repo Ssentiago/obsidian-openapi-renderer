@@ -1,3 +1,16 @@
+# 4.2.0
+### Features
+- Add resolving of external file $ref links
+- Add new option to the plugin settings tab for enabling or disabling editor extensions (this applies globally for all the new OpenAPI views)
+- Add new extension action button in the source mode for enabling or disabling extensions locally (applies only to the current OpenAPI view and its source mode)
+
+### Bugfixes
+- Fix some visual bugs related to the settings tab and so on...
+
+# 4.1.0
+### Features
+- Add indentWithTab command
+
 # 4.0.0
 
 ### Breaking Changes
