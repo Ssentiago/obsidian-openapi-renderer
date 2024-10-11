@@ -1,7 +1,7 @@
 import { completionKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, indentWithTab, redo, undo } from '@codemirror/commands';
 import { KeyBinding } from '@codemirror/view';
-import { OpenAPISource } from '../OpenAPI-source';
+import { OpenAPISource } from 'view/OpenAPI/components/source/openapi-source';
 
 function createBoundKeymap(editor: OpenAPISource): KeyBinding[] {
     return [
@@ -12,7 +12,10 @@ function createBoundKeymap(editor: OpenAPISource): KeyBinding[] {
             key: 'Mod-z',
             run: (target): boolean => undo(target),
         },
-        { key: 'Mod-Shift-z', run: (target): boolean => redo(target) },
+        {
+            key: 'Mod-Shift-z',
+            run: (target): boolean => redo(target),
+        },
     ] as KeyBinding[];
 }
 
