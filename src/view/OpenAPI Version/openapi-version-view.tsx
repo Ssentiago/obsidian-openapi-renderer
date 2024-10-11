@@ -1,9 +1,9 @@
 import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import OpenAPIRendererPlugin from '../../core/OpenAPIRendererPlugin';
+import OpenAPIRendererPlugin from '../../core/openapi-renderer-plugin';
 import { Specification } from '../../indexedDB/database/specification';
-import { OPENAPI_VERSION_VIEW_TYPE } from '../typing/types';
+import { OPENAPI_VERSION_VIEW } from '../typing/types';
 import { VersionViewEntry } from './components/entry-component';
 import { VersionController } from './controllers/version-controller';
 
@@ -21,7 +21,7 @@ export class OpenAPIVersionView extends TextFileView {
     }
 
     getViewType(): string {
-        return OPENAPI_VERSION_VIEW_TYPE;
+        return OPENAPI_VERSION_VIEW;
     }
 
     getDisplayText(): string {
@@ -77,6 +77,6 @@ export class OpenAPIVersionView extends TextFileView {
     }
 
     getIcon(): IconName {
-        return 'file-clock';
+        return 'git-compare-arrows';
     }
 }

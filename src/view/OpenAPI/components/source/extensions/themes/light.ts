@@ -13,7 +13,7 @@ const defaultLightTheme = createTheme({
         lineHighlight: '#f0f0f0 !important',
         gutterBackground: '#fafafa !important',
         gutterForeground: '#888888 !important',
-        fontFamily: 'Courier New, monospace !important',
+        fontFamily: 'JetBrains Mono,monospace !important',
         fontSize: '16px',
     },
     styles: [

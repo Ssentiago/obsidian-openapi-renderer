@@ -1,25 +1,38 @@
-import { OpenAPISource } from '../../OpenAPI-source';
+import { OpenAPISource } from 'view/OpenAPI/components/source/openapi-source';
 import yaml from 'js-yaml';
 
-export function openAPIFormatter(editor: OpenAPISource): () => void {
+export function openAPIFormatter(source: OpenAPISource): () => void {
     return () => {
-        const isJson = editor.view.file?.extension === 'json';
-        const content = editor.editor.state.doc.toString();
-        let formatterContent: string;
-        if (isJson) {
-            formatterContent = JSON.stringify(JSON.parse(content), null, 2);
-        } else {
-            formatterContent = yaml.dump(yaml.load(content), {
-                indent: 2,
-            });
+        const isJson = source.view.file?.extension === 'json';
+        const content = source.editor?.state.doc.toString() ?? '';
+        if (!content) {
+            return;
         }
-        editor.editor.dispatch({
+
+        let formatterContent: string;
+        try {
+            if (isJson) {
+                formatterContent = JSON.stringify(JSON.parse(content), null, 2);
+            } else {
+                formatterContent = yaml.dump(yaml.load(content), {
+                    indent: 2,
+                });
+            }
+        } catch (err: any) {
+            source.plugin.showNotice(
+                'Cannot format this file! Please check the logs for more info'
+            );
+            source.plugin.logger.error(err.message);
+            return;
+        }
+
+        source.editor?.dispatch({
             changes: {
                 from: 0,
-                to: editor.editor.state.doc.length,
+                to: source.editor.state.doc.length,
                 insert: formatterContent,
             },
         });
-        editor.plugin.showNotice('Formatted');
+        source.plugin.showNotice('Formatted');
     };
 }
