@@ -14,10 +14,7 @@ import {
     ReloadOpenAPIEntryStateEvent,
     UpdateOpenAPIViewStateEvent,
 } from '../../../../events-management/typing/interfaces';
-import {
-    OPENAPI_VERSION_VIEW_TYPE,
-    OPENAPI_VIEW_TYPE,
-} from '../../../typing/types';
+import { OPENAPI_VERSION_VIEW, OPENAPI_VIEW } from '../../../typing/types';
 import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 import {
@@ -63,9 +60,8 @@ export const GridItemComponent: React.FC<{
     };
 
     const handleOpenVersionView = async (filePath: string): Promise<void> => {
-        const versionLeaves = view.app.workspace.getLeavesOfType(
-            OPENAPI_VERSION_VIEW_TYPE
-        );
+        const versionLeaves =
+            view.app.workspace.getLeavesOfType(OPENAPI_VERSION_VIEW);
 
         const existingView = versionLeaves.find(
             (leaf) => leaf.getViewState().state.file === filePath
@@ -79,7 +75,7 @@ export const GridItemComponent: React.FC<{
         } else {
             const leaf = view.app.workspace.getLeaf(true);
             await leaf.setViewState({
-                type: OPENAPI_VERSION_VIEW_TYPE,
+                type: OPENAPI_VERSION_VIEW,
                 active: true,
                 state: {
                     file: filePath,
@@ -94,8 +90,7 @@ export const GridItemComponent: React.FC<{
     };
 
     const handleOpenOpenAPIView = async (filePath: string): Promise<void> => {
-        const openAPILeaves =
-            view.app.workspace.getLeavesOfType(OPENAPI_VIEW_TYPE);
+        const openAPILeaves = view.app.workspace.getLeavesOfType(OPENAPI_VIEW);
 
         const existingView = openAPILeaves.find(
             (leaf) => leaf.getViewState().state.file === filePath
@@ -109,7 +104,7 @@ export const GridItemComponent: React.FC<{
         } else {
             const leaf = view.app.workspace.getLeaf(true);
             await leaf.setViewState({
-                type: OPENAPI_VIEW_TYPE,
+                type: OPENAPI_VIEW,
                 active: true,
                 state: {
                     file: filePath,

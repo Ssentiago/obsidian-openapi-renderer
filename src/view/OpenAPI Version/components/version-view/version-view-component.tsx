@@ -3,7 +3,7 @@ import jsyaml from 'js-yaml';
 import React, { useEffect } from 'react';
 import { eventID } from '../../../../events-management/typing/constants';
 import { ReloadOpenAPIEntryStateEvent } from '../../../../events-management/typing/interfaces';
-import { OPENAPI_VIEW_TYPE } from '../../../typing/types';
+import { OPENAPI_VIEW } from '../../../typing/types';
 import { OpenAPIVersionView } from '../../openapi-version-view';
 import { useSpecificationContext } from '../core/context';
 import NoVersionsMessage from '../core/no-versions-available';
@@ -117,8 +117,7 @@ const VersionViewComponent: React.FC<{
             return;
         }
 
-        const openAPILeaves =
-            view.app.workspace.getLeavesOfType(OPENAPI_VIEW_TYPE);
+        const openAPILeaves = view.app.workspace.getLeavesOfType(OPENAPI_VIEW);
 
         const existingView = openAPILeaves.find(
             (leaf) => leaf.getViewState().state.file === filePath
@@ -133,7 +132,7 @@ const VersionViewComponent: React.FC<{
         } else {
             const leaf = view.app.workspace.getLeaf(true);
             await leaf.setViewState({
-                type: OPENAPI_VIEW_TYPE,
+                type: OPENAPI_VIEW,
                 active: true,
                 state: {
                     file: filePath,
