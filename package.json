@@ -11,7 +11,8 @@
         "dev": "yarn concurrently \"yarn rollup -c rollup.config.mjs -w --environment PRODUCTION:0\" \"yarn start-obsidian\"",
         "build": "NODE_ENV=production yarn rollup -c rollup.config.mjs --environment PRODUCTION:1",
         "lint": "yarn eslint src --ext .ts",
-        "start-obsidian": "node scripts/start-obsidian.mjs",
+        "start-obsidian": "tsx scripts/start-obsidian.ts",
+        "set-release": "tsx scripts/set-release.ts",
         "changelog": "npx conventional-changelog -p conventionalcommits -i check.md -s -r 1 --append\n"
     },
     "keywords": [],
