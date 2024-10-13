@@ -16,6 +16,7 @@
         "lib": ["DOM", "ES5", "ES6", "ES7"]
     },
     "include": [
+        "**/*.ts",
         "src/**/*.ts",
         "src/**/*.tsx",
         "obsidian-extensions.d.ts",
