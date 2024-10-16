@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import * as process from 'node:process';
 import readline from 'node:readline';
+import { async } from 'rxjs';
 import semver from 'semver';
 
 const MANIFEST_PATH = 'manifest.json';
@@ -32,24 +33,23 @@ function changeReleaseInJson(jsonPath: string, release: string) {
     }
 }
 
-/**
- * Asks the user a yes/no question and returns a promise that resolves to true
- * if the user answers with "y" or "yes", and false otherwise.
- *
- * @param question The question to ask the user.
- * @returns A promise that resolves to true if the user answers "y" or "yes", and
- *          false otherwise.
- */
-function askForConfirmation(question: string) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-
+async function waitForKeyPress(rl: readline.Interface): Promise<void> {
     return new Promise((resolve) => {
-        rl.question(question + ' (y/n): ', (answer) => {
+        rl.on('line', () => {
+            resolve();
+        });
+    });
+}
+
+async function askQuestion(question: string): Promise<string> {
+    return new Promise((resolve) => {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+        rl.question(question, (answer) => {
             rl.close();
-            resolve(['y', 'yes'].includes(answer.toLowerCase()));
+            resolve(answer);
         });
     });
 }
@@ -106,81 +106,134 @@ function performGitCommands(RELEASE_VERSION: string) {
  * @returns A promise that resolves to the new version number entered by the
  *          user.
  */
-function askForVersion(previousVersions: string[]): Promise<string> {
-    return new Promise((resolve) => {
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
+async function askForVersion(
+    previousVersions: string[],
+    currentVersion: string
+) {
+    while (true) {
+        const answer = await askQuestion(
+            'Enter new version number or type exit to quit: '
+        ).then((answer) => answer.toLowerCase());
 
-        const promtUser = () => {
-            rl.question(
-                'Enter new version number or type exit to quit: ',
-                (answer) => {
-                    if (answer.toLowerCase() === 'exit') {
-                        console.log('See you later!');
-                        rl.close();
-                        process.exit(0);
-                    }
-                    if (!semver.valid(answer)) {
-                        console.log(
-                            'Invalid version format. Please try again. It should be semantic versioning (e.g., 1.2.3)\n'
-                        );
-                        return promtUser();
-                    }
+        if (answer === 'exit') {
+            console.log('See you later!');
+            process.exit(0);
+        }
 
-                    if (previousVersions.includes(answer)) {
-                        console.log(
-                            'Version already exists. Please try again.\n'
-                        );
-                        return promtUser();
-                    }
-                    for (const version of previousVersions) {
-                        if (semver.lt(answer, version)) {
-                            console.log(
-                                `New version should be greater than previous version. Previous version is: ${previousVersions[previousVersions.length - 1]}. Please try again.\n`
-                            );
-                            return promtUser();
-                        }
-                    }
-
-                    rl.close();
-                    resolve(answer);
-                }
+        if (!semver.valid(answer)) {
+            console.log(
+                'Invalid version format. Please try again. It should be semantic versioning (e.g., 1.2.3)\n'
             );
-        };
-        promtUser();
-    });
+            continue;
+        }
+
+        if (previousVersions.includes(answer)) {
+            console.log('Version already exists. Please try again.\n');
+            continue;
+        }
+
+        if (semver.lt(answer, currentVersion)) {
+            console.log(
+                `Version must be greater than current version. Current version is: ${currentVersion}. Please try again.\n`
+            );
+            continue;
+        }
+        return answer;
+    }
+}
+
+async function versionMenu(previousVersions: string[], currentVersion: string) {
+    const [major, minor, patch] = currentVersion.split('.').map(Number);
+
+    console.log(
+        `Update current version ${currentVersion} or perform other actions:`
+    );
+    console.log('1. Patch (bug fixes)');
+    console.log('   Example: x.x.x → x.x.y (increment last number)');
+    console.log('2. Minor (new functionality)');
+    console.log('   Example: x.x.x → x.y.0 (increment middle number)');
+    console.log('3. Major (significant changes)');
+    console.log('   Example: x.x.x → y.0.0 (increment first number)');
+    console.log('4. Manual update (enter version)');
+    console.log('5. View previous versions');
+    console.log('6. Exit');
+
+    const choice = await askQuestion('Your choice (1-6): ');
+
+    switch (choice) {
+        case '1':
+            return `${major}.${minor}.${patch + 1}`;
+        case '2':
+            return `${major}.${minor + 1}.0`;
+        case '3':
+            return `${major + 1}.0.0`;
+        case '4':
+            return askForVersion(previousVersions, currentVersion);
+        case '5':
+            console.log('Previous versions:');
+            for (const version of previousVersions) {
+                console.log(`- ${version}`);
+            }
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout,
+            });
+
+            console.log('Press Enter to go back to the menu...');
+            await waitForKeyPress(rl);
+            rl.close();
+
+            return versionMenu(previousVersions, currentVersion);
+        case '6':
+            console.log('See you later!');
+            process.exit(0);
+        default:
+            console.log('Invalid choice. Please try again.');
+            return versionMenu(previousVersions, currentVersion);
+    }
 }
 
 /**
  * Shows the list of existing tags and asks the user to enter a new version number.
  * @returns A promise that resolves with the new version number.
  */
-async function tagStats(): Promise<string> {
+async function getVersion(): Promise<string> {
     const tags = execSync('git tag', { stdio: 'pipe' })
         .toString()
         .trim()
         .split('\n');
 
-    console.log('Your versions list:', tags);
-    console.log(`Last version is: ${tags[tags.length - 1]}\n`);
-    return askForVersion(tags);
+    const currentVersion = tags[tags.length - 1];
+
+    if (tags.length === 0) {
+        return askForVersion(tags, currentVersion);
+    }
+
+    return versionMenu(tags, currentVersion);
 }
 
-/**
- * Updates the version number in package.json and manifest.json and asks the user
- * whether to continue with git operations (commit, tag, push).
- *
- * The function asks the user to enter a new version number and performs checks on it
- *
- * If the user confirms to continue, the function commits the changes, tags the
- * new version, and pushes the changes to the repository.
- *
- * @returns {Promise<void>} - A promise that resolves when all operations are completed.
- */
 async function setRelease() {
-    const RELEASE_VERSION = await tagStats();
+    const RELEASE_VERSION = await getVersion();
+
+    const confirmedContinue = await askQuestion(
+        `You entered version ${RELEASE_VERSION}. Continue? Yes/No/Retry (y/n/r): `
+    ).then((answer) => answer.toLowerCase());
+
+    switch (confirmedContinue) {
+        case 'yes':
+        case 'y':
+            break;
+        case 'no':
+        case 'n':
+            console.log('See you later!');
+            process.exit(0);
+        case 'retry':
+        case 'r':
+            return setRelease();
+        default:
+            console.log('Invalid choice. Please try again.');
+            return setRelease();
+    }
 
     changeReleaseInJson(PACKAGE_PATH, RELEASE_VERSION);
     changeReleaseInJson(MANIFEST_PATH, RELEASE_VERSION);
@@ -189,11 +242,11 @@ async function setRelease() {
         `Version updated to ${RELEASE_VERSION} in package.json and manifest.json`
     );
 
-    const confirmedContinue = await askForConfirmation(
+    const confirmContinue = await askQuestion(
         'Do you want to continue with git operations?'
     );
 
-    if (!confirmedContinue) {
+    if (!(confirmContinue === 'yes' || confirmContinue === 'y')) {
         console.log('See you later!');
         process.exit(1);
     }
