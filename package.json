@@ -82,7 +82,7 @@
         "concurrently": "^8.2.2",
         "eslint": "^8.57.0",
         "nodemon": "^3.1.4",
-        "obsidian": "latest",
+        "obsidian": "^1.7.2",
         "prettier": "^3.3.3",
         "ps-list": "^8.1.1",
         "rollup": "^4.20.0",
