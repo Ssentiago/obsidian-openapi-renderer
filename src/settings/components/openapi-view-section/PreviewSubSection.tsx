@@ -1,4 +1,4 @@
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import { App, DropdownComponent, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
@@ -36,7 +36,7 @@ const PreviewSubSection: React.FC<{
                             plugin.settings.OpenAPIPreviewTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.OpenAPIThemeChangeState,
+                                eventID: EventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                                 data: {
@@ -58,7 +58,7 @@ const PreviewSubSection: React.FC<{
                             plugin.settings.syncOpenAPIPreviewTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.OpenAPIThemeChangeState,
+                                eventID: EventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                                 data: {

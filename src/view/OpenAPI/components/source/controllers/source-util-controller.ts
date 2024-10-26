@@ -1,4 +1,4 @@
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { SwitchModeStateEvent } from 'events-management/typing/interfaces';
 import { ExtensionsModal } from 'view/OpenAPI/components/source/modals/extensions-modal';
 import openAPIFormatter from '../extensions/formatter';
@@ -47,7 +47,7 @@ export class SourceUtilController {
 
         plugin.observer.subscribe(
             app.workspace,
-            eventID.SwitchModeState,
+            EventID.SwitchModeState,
             async (event: SwitchModeStateEvent) => {
                 const leaf = event.data.leaf;
                 if (leaf === this.controller.source.view.leaf) {

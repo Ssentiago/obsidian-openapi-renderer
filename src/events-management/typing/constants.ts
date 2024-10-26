@@ -1,4 +1,4 @@
-export enum eventID {
+export enum EventID {
     ServerChangedState = 'openapi-renderer-server-started',
     SettingsTabState = 'settings-tab-state',
     PowerOff = 'openapi-renderer-power-off',

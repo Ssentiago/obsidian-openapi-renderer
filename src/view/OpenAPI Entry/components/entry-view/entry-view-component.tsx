@@ -1,7 +1,7 @@
 import { EntryViewData } from 'indexedDB/typing/interfaces';
 import React, { useEffect } from 'react';
 
-import { eventID } from '../../../../events-management/typing/constants';
+import { EventID } from '../../../../events-management/typing/constants';
 import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
 import { useEntryContext } from '../core/context';
 import NoTrackedFilesFound from '../core/no-tracked-files-found';
@@ -26,7 +26,7 @@ const EntryViewComponent: React.FC<{
     useEffect(() => {
         view.plugin.observer.subscribe(
             view.app.workspace,
-            eventID.ReloadOpenAPIEntryState,
+            EventID.ReloadOpenAPIEntryState,
             async () => {
                 const newSpecsData = await view.controller.getEntryViewData();
                 setSpecData(newSpecsData);

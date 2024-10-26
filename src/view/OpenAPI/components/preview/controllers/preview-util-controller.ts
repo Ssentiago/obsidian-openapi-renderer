@@ -1,6 +1,6 @@
 import { ApiRefOptions, ApiRefResolution } from '@apiture/api-ref-resolver';
 import { ApiRefResolver } from '@apiture/api-ref-resolver/lib/src/ApiRefResolver';
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import {
     SourceChangedEvent,
     PreviewStateEvent,
@@ -91,7 +91,7 @@ export class PreviewUtilController {
         const { plugin } = this.controller.preview.openAPIView;
         plugin.observer.subscribe(
             plugin.app.workspace,
-            eventID.EditorChanged,
+            EventID.EditorChanged,
             async (event: SourceChangedEvent) => {
                 const file = event.data.file;
                 const isMatchingView =
@@ -165,7 +165,7 @@ will not be processed automatically. To capture and resolve these references, pl
 
         this.controller.preview.plugin.observer.subscribe(
             this.controller.preview.plugin.app.workspace,
-            eventID.PreviewState,
+            EventID.PreviewState,
             async () => {
                 const leaves =
                     this.controller.preview.plugin.app.workspace.getGroupLeaves(
@@ -196,7 +196,7 @@ will not be processed automatically. To capture and resolve these references, pl
 
         this.controller.preview.plugin.observer.subscribe(
             this.controller.preview.plugin.app.workspace,
-            eventID.SwitchModeState,
+            EventID.SwitchModeState,
             async (event: SwitchModeStateEvent) => {
                 if (
                     event.data.leaf === this.controller.preview.openAPIView.leaf
@@ -217,7 +217,7 @@ will not be processed automatically. To capture and resolve these references, pl
      */
     publishStateEvent(state: 'full' | 'fast'): void {
         this.controller.preview.plugin.publisher.publish({
-            eventID: eventID.PreviewState,
+            eventID: EventID.PreviewState,
             timestamp: new Date(),
             emitter: this.controller.preview.plugin.app.workspace,
             data: {

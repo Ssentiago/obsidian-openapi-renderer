@@ -1,8 +1,8 @@
 import { EventRef, Events, WorkspaceLeaf } from 'obsidian';
-import { eventID } from './constants';
+import { EventID } from './constants';
 
 export interface OpenAPIRendererEvent {
-    eventID: eventID;
+    eventID: EventID;
     timestamp: Date;
     emitter: Events;
 }

@@ -1,6 +1,6 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { ChangeGridColumnsStateEvent } from 'events-management/typing/interfaces';
 import { useSettingsContext } from 'settings/components/core/context';
 import { SettingsContainer } from '../styled/container-styled';
@@ -37,7 +37,7 @@ const OpenAPIEntrySection: React.FC = () => {
                             parseInt(value, 10);
                         await plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
-                            eventID: eventID.ChangeGridColumnsState,
+                            eventID: EventID.ChangeGridColumnsState,
                             emitter: app.workspace,
                             timestamp: new Date(),
                             data: { value: parseInt(value, 10) },

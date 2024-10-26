@@ -2,7 +2,7 @@ import { App, DropdownComponent, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
 import { useSettingsContext } from 'settings/components/core/context';
 import { UserExtensions } from 'view/OpenAPI/components/source/typing/interfaces';
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 
 /**
@@ -39,7 +39,7 @@ const SourceSubSection: React.FC<{
                             plugin.settings.OpenAPISourceThemeMode = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.OpenAPIThemeChangeState,
+                                eventID: EventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                                 data: {
@@ -61,7 +61,7 @@ const SourceSubSection: React.FC<{
                             plugin.settings.syncOpenAPISourceTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.OpenAPIThemeChangeState,
+                                eventID: EventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                                 data: {
@@ -85,7 +85,7 @@ const SourceSubSection: React.FC<{
                             plugin.settings.OpenAPISourceLightTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.OpenAPIThemeChangeState,
+                                eventID: EventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                                 data: {
@@ -109,7 +109,7 @@ const SourceSubSection: React.FC<{
                             plugin.settings.OpenAPISourceDarkTheme = value;
                             await plugin.settingsManager.saveSettings();
                             plugin.publisher.publish({
-                                eventID: eventID.OpenAPIThemeChangeState,
+                                eventID: EventID.OpenAPIThemeChangeState,
                                 timestamp: new Date(),
                                 emitter: app.workspace,
                                 data: {

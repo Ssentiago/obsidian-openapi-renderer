@@ -1,4 +1,4 @@
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { SwitchModeStateEvent } from 'events-management/typing/interfaces';
 import { OpenAPIController } from './view-controller';
 
@@ -33,7 +33,7 @@ export class UtilController {
      */
     publishSwitchEvent(): void {
         this.controller.view.plugin.publisher.publish({
-            eventID: eventID.SwitchModeState,
+            eventID: EventID.SwitchModeState,
             timestamp: new Date(),
             emitter: this.controller.view.app.workspace,
             data: {

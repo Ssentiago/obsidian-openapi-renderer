@@ -7,7 +7,7 @@ import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
 import { ExtensionManager } from 'view/OpenAPI/components/source/managers/extension-manager';
 import { OpenAPIView } from 'view/OpenAPI/openapi-view';
-import { eventID } from '../events-management/typing/constants';
+import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
 import GithubClient from '../github/github-client';
@@ -61,7 +61,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
      */
     async onunload(): Promise<void> {
         const event = {
-            eventID: eventID.PowerOff,
+            eventID: EventID.PowerOff,
             timestamp: new Date(),
             emitter: this.app.workspace,
         } as PowerOffEvent;

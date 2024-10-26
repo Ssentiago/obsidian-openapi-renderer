@@ -1,4 +1,4 @@
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import {
     OpenAPIThemeChangeState,
     UpdateOpenAPIViewStateEvent,
@@ -140,7 +140,7 @@ export class OpenAPIController {
 
         this.view.plugin.observer.subscribe(
             this.view.plugin.app.workspace,
-            eventID.SwitchModeState,
+            EventID.SwitchModeState,
             async () => {
                 updateButton(
                     changeModeButton,
@@ -152,7 +152,7 @@ export class OpenAPIController {
 
         this.view.plugin.observer.subscribe(
             this.view.plugin.app.workspace,
-            eventID.SwitchModeState,
+            EventID.SwitchModeState,
             async () => {
                 updateButton(
                     themeButton,
@@ -165,7 +165,7 @@ export class OpenAPIController {
 
         this.view.plugin.observer.subscribe(
             this.view.plugin.app.workspace,
-            eventID.OpenAPIThemeChangeState,
+            EventID.OpenAPIThemeChangeState,
             async (event: OpenAPIThemeChangeState) => {
                 const mode = event.data.mode as RenderingMode;
                 if (mode !== this.view.mode) {
@@ -212,7 +212,7 @@ export class OpenAPIController {
         );
         this.view.plugin.observer.subscribe(
             this.view.app.workspace,
-            eventID.UpdateOpenAPIViewState,
+            EventID.UpdateOpenAPIViewState,
             async (event: UpdateOpenAPIViewStateEvent) => {
                 const file = event.data.file;
                 if (this.view.file?.path === file) {
@@ -232,7 +232,7 @@ export class OpenAPIController {
 
         this.view.plugin.observer.subscribe(
             this.view.plugin.app.workspace,
-            eventID.OpenAPIThemeChangeState,
+            EventID.OpenAPIThemeChangeState,
             async (event: OpenAPIThemeChangeState) => {
                 const viewMode = event.data.mode as RenderingMode;
                 if (viewMode !== this.view.mode) {

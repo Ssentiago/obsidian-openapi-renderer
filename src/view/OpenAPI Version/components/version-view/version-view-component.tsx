@@ -1,7 +1,7 @@
 import { Specification } from 'indexedDB/database/specification';
 import jsyaml from 'js-yaml';
 import React, { useEffect } from 'react';
-import { eventID } from '../../../../events-management/typing/constants';
+import { EventID } from '../../../../events-management/typing/constants';
 import { ReloadOpenAPIEntryStateEvent } from '../../../../events-management/typing/interfaces';
 import { OPENAPI_VIEW } from '../../../typing/types';
 import { OpenAPIVersionView } from '../../openapi-version-view';
@@ -32,7 +32,7 @@ const VersionViewComponent: React.FC<{
 
     useEffect(() => {
         view.plugin.publisher.publish({
-            eventID: eventID.ReloadOpenAPIEntryState,
+            eventID: EventID.ReloadOpenAPIEntryState,
             emitter: view.app.workspace,
             timestamp: new Date(),
         } as ReloadOpenAPIEntryStateEvent);

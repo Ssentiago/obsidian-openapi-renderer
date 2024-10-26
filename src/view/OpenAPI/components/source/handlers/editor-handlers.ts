@@ -1,6 +1,6 @@
 import { Annotation } from '@codemirror/state';
 import { ViewUpdate } from '@codemirror/view';
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { SourceChangedEvent } from 'events-management/typing/interfaces';
 import { OpenAPISource } from 'view/OpenAPI/components/source/openapi-source';
 import { OpenAPIView } from 'view/OpenAPI/openapi-view';
@@ -46,7 +46,7 @@ export function onChange(source: OpenAPISource, update: ViewUpdate): void {
             view.setViewData(editor?.state.doc.toString() ?? '', false);
         }
         source.plugin.publisher.publish({
-            eventID: eventID.EditorChanged,
+            eventID: EventID.EditorChanged,
             timestamp: new Date(),
             emitter: source.plugin.app.workspace,
             data: {

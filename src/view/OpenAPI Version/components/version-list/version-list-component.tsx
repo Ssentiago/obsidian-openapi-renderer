@@ -10,7 +10,7 @@ import {
     FaTrashAlt,
     FaUndo,
 } from 'react-icons/fa';
-import { eventID } from '../../../../events-management/typing/constants';
+import { EventID } from '../../../../events-management/typing/constants';
 import { UpdateOpenAPIViewStateEvent } from '../../../../events-management/typing/interfaces';
 import { Specification } from '../../../../indexedDB/database/specification';
 import { OpenAPIVersionView } from '../../openapi-version-view';
@@ -128,7 +128,7 @@ const VersionListComponent: React.FC<VersionListProps> = ({
                     : jsyaml.dump(JSON.parse(diff));
             await view.app.vault.adapter.write(view.file.path, content);
             view.plugin.publisher.publish({
-                eventID: eventID.UpdateOpenAPIViewState,
+                eventID: EventID.UpdateOpenAPIViewState,
                 timestamp: new Date(),
                 emitter: view.app.workspace,
                 data: {

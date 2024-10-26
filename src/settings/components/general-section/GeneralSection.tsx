@@ -1,6 +1,6 @@
 import { App, Setting } from 'obsidian';
 import React, { useEffect } from 'react';
-import { eventID } from 'events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import { SettingsTabStateEvent } from 'events-management/typing/interfaces';
 import { useSettingsContext } from '../core/context';
 import { SettingsContainer } from '../styled/container-styled';
@@ -36,7 +36,7 @@ const GeneralSection: React.FC = () => {
                             );
                             setTimeout(() => {
                                 plugin.publisher.publish({
-                                    eventID: eventID.SettingsTabState,
+                                    eventID: EventID.SettingsTabState,
                                     timestamp: new Date(),
                                     emitter: app.workspace,
                                 } as SettingsTabStateEvent);

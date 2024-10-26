@@ -9,7 +9,7 @@ import {
     FaTrash,
 } from 'react-icons/fa';
 import { SiOpenapiinitiative } from 'react-icons/si';
-import { eventID } from '../../../../events-management/typing/constants';
+import { EventID } from '../../../../events-management/typing/constants';
 import {
     ReloadOpenAPIEntryStateEvent,
     UpdateOpenAPIViewStateEvent,
@@ -143,7 +143,7 @@ export const GridItemComponent: React.FC<{
         );
         view.plugin.showNotice('Restored successfully');
         view.plugin.publisher.publish({
-            eventID: eventID.UpdateOpenAPIViewState,
+            eventID: EventID.UpdateOpenAPIViewState,
             timestamp: new Date(),
             emitter: view.app.workspace,
             data: {
@@ -156,7 +156,7 @@ export const GridItemComponent: React.FC<{
         const deleted = await view.controller.deleteFile(path);
         if (deleted) {
             view.plugin.publisher.publish({
-                eventID: eventID.ReloadOpenAPIEntryState,
+                eventID: EventID.ReloadOpenAPIEntryState,
                 emitter: view.plugin.app.workspace,
                 timestamp: new Date(),
             } as ReloadOpenAPIEntryStateEvent);

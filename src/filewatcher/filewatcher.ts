@@ -1,6 +1,6 @@
 import { TAbstractFile } from 'obsidian';
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
-import { eventID } from '../events-management/typing/constants';
+import { EventID } from '../events-management/typing/constants';
 import { ReloadOpenAPIEntryStateEvent } from '../events-management/typing/interfaces';
 import { WorkerHelper } from '../indexedDB/worker/helper';
 import { MessageType } from '../indexedDB/typing/interfaces';
@@ -49,7 +49,7 @@ export class FileWatcher {
                         return;
                     }
                     this.plugin.publisher.publish({
-                        eventID: eventID.ReloadOpenAPIEntryState,
+                        eventID: EventID.ReloadOpenAPIEntryState,
                         emitter: this.plugin.app.workspace,
                         timestamp: new Date(),
                     } as ReloadOpenAPIEntryStateEvent);
