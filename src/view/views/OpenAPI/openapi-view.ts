@@ -7,8 +7,6 @@ import { RenderingMode } from 'view/typing/constants';
 import { OpenAPIViewComponent } from 'view/typing/interfaces';
 import { OPENAPI_VIEW } from 'view/typing/types';
 
-// FIXME баг с preview и source: панель прокрутки скачет при переключении между режимами
-
 export class OpenAPIView extends TextFileView {
     controller: OpenAPIController;
     source: OpenAPISource;
