@@ -3,6 +3,7 @@ import { App } from 'obsidian';
 import React, {
     createContext,
     ReactNode,
+    useCallback,
     useContext,
     useMemo,
     useRef,
@@ -12,9 +13,10 @@ import React, {
 interface SettingsContextProps {
     plugin: OpenAPIRendererPlugin;
     app: App;
-    ref: React.RefObject<HTMLDivElement>;
-    currentTab: string;
-    setCurrentTab: React.Dispatch<React.SetStateAction<string>>;
+    forceReload: () => void;
+    reloadCount: number;
+    currentPath: string;
+    setCurrentPath: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -35,18 +37,23 @@ export const SettingProvider: React.FC<{
     plugin: OpenAPIRendererPlugin;
     children: ReactNode;
 }> = ({ app, plugin, children }) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const [currentTab, setCurrentTab] = useState<string>('general');
+    const [reloadCount, setReloadCount] = useState(0);
+    const [currentPath, setCurrentPath] = useState<string>('/diagram-section');
+
+    const forceReload = useCallback(() => {
+        setReloadCount((prev) => prev + 1);
+    }, []);
 
     const contextValue = useMemo(
         () => ({
             app,
             plugin,
-            ref,
-            currentTab,
-            setCurrentTab,
+            forceReload,
+            reloadCount,
+            currentPath,
+            setCurrentPath,
         }),
-        [app, plugin, ref, currentTab]
+        [app, plugin, forceReload, reloadCount, currentPath, setCurrentPath]
     );
 
     return (
