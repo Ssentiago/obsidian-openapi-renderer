@@ -1,9 +1,10 @@
 import React from 'react';
-import { useSettingsContext } from '../core/context';
-import GeneralSection from '../general-section/GeneralSection';
-import Navbar from '../navbar/Navbar';
-import OpenAPIEntrySection from '../openapi-entry-section/OpenAPIEntrySection';
-import OpenAPIViewSection from '../openapi-view-section/OpenAPIViewSection';
+import { MemoryRouter, Route, Routes } from 'react-router';
+import { useSettingsContext } from 'settings/components/core/context';
+import General from 'settings/components/pages/general/General';
+import OpenAPIEntry from 'settings/components/pages/openapi-entry/OpenAPIEntry';
+import Toolbar from 'settings/components/settings-tab/toolbar/Toolbar';
+import OpenAPIView from 'settings/components/pages/openapi-view/OpenAPIView';
 
 /**
  * The main settings tab component for OpenAPI Renderer.
@@ -14,24 +15,18 @@ import OpenAPIViewSection from '../openapi-view-section/OpenAPIViewSection';
  * @returns A React element representing the main settings page.
  */
 const SettingsTab: React.FC = (): React.ReactElement => {
-    const { currentTab } = useSettingsContext();
-
-    const renderContent = () => {
-        switch (currentTab) {
-            case 'general':
-                return <GeneralSection />;
-            case 'openapi-view':
-                return <OpenAPIViewSection />;
-            case 'openapi-entry-view':
-                return <OpenAPIEntrySection />;
-        }
-    };
+    const { reloadCount } = useSettingsContext();
 
     return (
-        <>
-            <Navbar />
-            {renderContent()}
-        </>
+        <MemoryRouter initialEntries={['/general']} key={reloadCount}>
+            <Toolbar />
+            <Routes>
+                <Route path="/general" element={<General />} />
+                <Route path="/openapi-view" element={<OpenAPIView />} />
+                <Route path="/openapi-entry-view" element={<OpenAPIEntry />} />
+            </Routes>
+        </MemoryRouter>
     );
 };
+
 export default SettingsTab;
