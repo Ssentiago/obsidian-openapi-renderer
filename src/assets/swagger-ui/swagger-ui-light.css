@@ -1,5 +1,5 @@
 .swagger-ui {
-    --background-primary: #fafafa;
+    --background-primary: #791717;
     --background-secondary: #fafafa;
     background-color: var(--background-secondary);
 }
@@ -9,6 +9,3 @@ html {
     box-sizing: border-box;
     filter: contrast(100%) brightness(100%) saturate(100%);
 }
-
-
-
