@@ -1,12 +1,11 @@
-import * as jsondiffpatch from 'jsondiffpatch';
-import { DiffPatcher } from 'jsondiffpatch';
+import { DiffPatcher, create, Delta } from 'jsondiffpatch';
 import DiffMatchPatch from 'diff-match-patch';
 
 export class DiffController {
-    private diffPatch: DiffPatcher;
+    private readonly diffPatch: DiffPatcher;
 
     constructor() {
-        this.diffPatch = jsondiffpatch.create({
+        this.diffPatch = create({
             objectHash: function (obj) {
                 return JSON.stringify(obj);
             },
@@ -21,7 +20,7 @@ export class DiffController {
         });
     }
 
-    diff(old: string, _new: string): jsondiffpatch.Delta {
+    diff(old: string, _new: string): Delta {
         return this.diffPatch.diff(old, _new);
     }
 
