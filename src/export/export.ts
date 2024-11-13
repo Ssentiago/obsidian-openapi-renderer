@@ -124,15 +124,25 @@ export default class Export {
     private async handleSaveOneVersion(
         specData: OneFileVersionData
     ): Promise<void> {
-        let diff = specData.spec.getPatchedVersion(specData.specs)
-            .diff as string;
-        diff = this.renderSwaggerUIHtml(diff);
-        const path = specData.spec.path.match(/\/?(.+)\./)?.[1];
-        const time = moment().format('YYYYMMDDHHmmss');
-        await this.plugin.app.vault.adapter.write(
-            `export-${(path && `${path}-`) ?? ''}${specData.spec.name}-${time}.html`,
-            diff
-        );
+        try {
+            let diff = specData.spec.getPatchedVersion(specData.specs)
+                .diff as string;
+            diff = this.renderSwaggerUIHtml(diff);
+            const pathMatch = specData.spec.path.match(/\/?(.+)\./)?.[1];
+            const time = moment().format('YYYYMMDDHHmmss');
+            const pathPart = pathMatch ? `${pathMatch[1]}-` : '';
+            const sanitizedName = specData.spec.name.replace(
+                /[^a-zA-Z0-9-_]/g,
+                '_'
+            );
+
+            const exportPath = `export-${pathPart}${sanitizedName}-${time}.html`;
+
+            await this.plugin.app.vault.adapter.write(exportPath, diff);
+        } catch (error: any) {
+            this.plugin.showNotice('Failed to export file');
+            this.plugin.logger.error(`Failed to export file: ${error.message}`);
+        }
     }
 
     /**
