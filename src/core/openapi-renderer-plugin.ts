@@ -5,17 +5,17 @@ import {
 import Export from 'export/export';
 import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
-import { ExtensionManager } from 'view/OpenAPI/components/source/managers/extension-manager';
-import { OpenAPIView } from 'view/OpenAPI/openapi-view';
+import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
+import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
+import { VersionView } from 'view/views/OpenAPI Version/version-view';
+import { ExtensionManager } from 'view/views/OpenAPI/components/source/managers/extension-manager';
+import { OpenAPIView } from 'view/views/OpenAPI/openapi-view';
 import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
 import GithubClient from '../github/github-client';
 import { WorkerHelper } from '../indexedDB/worker/helper';
 import LoggingManager from '../logging/logging-manager';
-import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
-import { OpenAPIEntryView } from '../view/OpenAPI Entry/OpenAPI-entry-view';
-import { OpenAPIVersionView } from '../view/OpenAPI Version/openapi-version-view';
 import {
     OPENAPI_ENTRY_VIEW,
     OPENAPI_VERSION_VIEW,
@@ -139,12 +139,12 @@ export default class OpenAPIRendererPlugin extends Plugin {
     /**
      * Initializes the UI components of the plugin.
      *
-     * This method registers three views: `OpenAPIView`, `OpenAPIVersionView`, and `OpenAPIEntryView`.
+     * This method registers three views: `OpenAPIView`, `VersionView`, and `EntryView`.
      * It also registers extensions for YAML, YML, and JSON files so that they can be opened with the
      * `OpenAPIView` by default.
      *
-     * Additionally, this method adds a ribbon icon for opening the `OpenAPIEntryView` and a command
-     * for opening the `OpenAPIEntryView` from the command palette.
+     * Additionally, this method adds a ribbon icon for opening the `EntryView` and a command
+     * for opening the `EntryView` from the command palette.
      *
      * @returns A promise that resolves when the UI components have been initialized.
      */
@@ -155,27 +155,23 @@ export default class OpenAPIRendererPlugin extends Plugin {
 
         this.registerView(
             OPENAPI_VERSION_VIEW,
-            (leaf: WorkspaceLeaf) => new OpenAPIVersionView(leaf, this)
+            (leaf: WorkspaceLeaf) => new VersionView(leaf, this)
         );
 
         this.registerView(
             OPENAPI_ENTRY_VIEW,
-            (leaf: WorkspaceLeaf) => new OpenAPIEntryView(leaf, this)
+            (leaf: WorkspaceLeaf) => new EntryView(leaf, this)
         );
 
-        this.addRibbonIcon(
-            'file-search-2',
-            'Open OpenAPI Entry View',
-            async () => {
-                const leaf = this.app.workspace.getLeaf(true);
-                await leaf.setViewState({
-                    type: OPENAPI_ENTRY_VIEW,
-                    active: true,
-                    state: {},
-                });
-                this.app.workspace.revealLeaf(leaf);
-            }
-        );
+        this.addRibbonIcon('view', 'Open OpenAPI Entry View', async () => {
+            const leaf = this.app.workspace.getLeaf(true);
+            await leaf.setViewState({
+                type: OPENAPI_ENTRY_VIEW,
+                active: true,
+                state: {},
+            });
+            await this.app.workspace.revealLeaf(leaf);
+        });
 
         this.addCommand({
             id: 'openapi-renderer-open-openapi-entry',
@@ -188,7 +184,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
                     active: true,
                     state: {},
                 });
-                this.app.workspace.revealLeaf(leaf);
+                await this.app.workspace.revealLeaf(leaf);
             },
         });
         addIcon('green-dot', `<circle cx="50" cy="50" r="30" fill="green" />`);
