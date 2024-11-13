@@ -1,70 +1,51 @@
-import jsyaml from 'js-yaml';
-import React, { useState } from 'react';
-import { BiExport } from 'react-icons/bi';
-import {
-    FaChevronDown,
-    FaCodeBranch,
-    FaHistory,
-    FaPlus,
-    FaTrash,
-} from 'react-icons/fa';
-import { SiOpenapiinitiative } from 'react-icons/si';
-import { EventID } from '../../../../events-management/typing/constants';
+import { EventID } from 'events-management/typing/constants';
 import {
     ReloadOpenAPIEntryStateEvent,
     UpdateOpenAPIViewStateEvent,
-} from '../../../../events-management/typing/interfaces';
-import { OPENAPI_VERSION_VIEW, OPENAPI_VIEW } from '../../../typing/types';
-import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
-import { useEntryContext } from '../core/context';
+} from 'events-management/typing/interfaces';
+import jsyaml from 'js-yaml';
+import { Download, GitBranch, History, Trash } from 'lucide-react';
+import React, { useState } from 'react';
+import { FaChevronDown, FaPlus } from 'react-icons/fa';
+import { SiOpenapiinitiative } from 'react-icons/si';
+import { createNewLeaf } from 'view/common/helpers';
+import { OPENAPI_VERSION_VIEW, OPENAPI_VIEW } from 'view/typing/types';
 import {
+    Action,
     ActionsContainer,
-    DeleteAction,
-    ExportAction,
-    MainActionButton,
-    MenuContainer,
-    OpenOpenAPIAction,
-    OpenVersionViewAction,
-    RestoreAction,
-} from './actions-styled-component';
-import {
     DetailContainer,
     DetailContainerHeader,
     DetailContent,
-} from './detail-container';
-import {
-    GridItem,
+    Item,
     ItemCount,
     ItemDate,
     ItemTitle,
-} from './grid-item-styled-component';
+    MainActionButton,
+    MenuContainer,
+} from 'view/views/OpenAPI Entry/components/pages/browse/components/grid-view/components/grid-item/styled/styled';
+import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
 
-export const GridItemComponent: React.FC<{
-    view: OpenAPIEntryView;
-    title: string;
+export const GridItem: React.FC<{
+    view: EntryView;
     count: number;
     lastUpdate: number;
     path: string;
-}> = ({ title, count, lastUpdate, view, path }) => {
-    const { detailsOpen, setDetailsOpen } = useEntryContext();
-
+}> = ({ count, lastUpdate, view, path }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [detailsOpen, setDetailsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen((prev) => !prev);
 
-    const handleToggleDetails = (title: string): void => {
-        setDetailsOpen((prev) => ({
-            ...prev,
-            [title]: !prev[title],
-        }));
+    const handleToggleDetails = (): void => {
+        setDetailsOpen((prev) => !prev);
     };
 
-    const handleOpenVersionView = async (filePath: string): Promise<void> => {
+    const handleOpenVersionView = async (): Promise<void> => {
         const versionLeaves =
             view.app.workspace.getLeavesOfType(OPENAPI_VERSION_VIEW);
 
         const existingView = versionLeaves.find(
-            (leaf) => leaf.getViewState().state.file === filePath
+            (leaf) => leaf.getViewState().state?.file === path
         );
         if (existingView) {
             const newViewState = {
@@ -78,39 +59,19 @@ export const GridItemComponent: React.FC<{
                 type: OPENAPI_VERSION_VIEW,
                 active: true,
                 state: {
-                    file: filePath,
+                    file: path,
                 },
             });
         }
     };
 
-    const handleClickOnTitle = async (title: string): Promise<void> => {
-        await navigator.clipboard.writeText(title);
+    const handleClickOnTitle = async (): Promise<void> => {
+        await navigator.clipboard.writeText(path);
         view.plugin.showNotice('Copied');
     };
 
-    const handleOpenOpenAPIView = async (filePath: string): Promise<void> => {
-        const openAPILeaves = view.app.workspace.getLeavesOfType(OPENAPI_VIEW);
-
-        const existingView = openAPILeaves.find(
-            (leaf) => leaf.getViewState().state.file === filePath
-        );
-        if (existingView) {
-            const newViewState = {
-                ...existingView.getViewState(),
-                active: true,
-            };
-            await existingView.setViewState(newViewState);
-        } else {
-            const leaf = view.app.workspace.getLeaf(true);
-            await leaf.setViewState({
-                type: OPENAPI_VIEW,
-                active: true,
-                state: {
-                    file: filePath,
-                },
-            });
-        }
+    const handleOpenOpenAPIView = async (): Promise<void> => {
+        await createNewLeaf(OPENAPI_VIEW, view, path);
     };
 
     const handleExportFile = async () => {
@@ -121,7 +82,7 @@ export const GridItemComponent: React.FC<{
         }
     };
 
-    const handleRestoreFile = async (path: string) => {
+    const handleRestoreFile = async () => {
         const versions = await view.controller.getAllVersionsForFile(path);
         if (!versions) {
             return;
@@ -137,9 +98,9 @@ export const GridItemComponent: React.FC<{
             lastVersion.path,
             extension === 'json'
                 ? JSON.stringify(JSON.parse(data), null, 2)
-                : (jsyaml.dump(JSON.parse(data), {
+                : jsyaml.dump(JSON.parse(data), {
                       indent: 2,
-                  }) as string)
+                  })
         );
         view.plugin.showNotice('Restored successfully');
         view.plugin.publisher.publish({
@@ -152,7 +113,7 @@ export const GridItemComponent: React.FC<{
         } as UpdateOpenAPIViewStateEvent);
     };
 
-    const handleDelete = async (path: string) => {
+    const handleDelete = async () => {
         const deleted = await view.controller.deleteFile(path);
         if (deleted) {
             view.plugin.publisher.publish({
@@ -165,18 +126,16 @@ export const GridItemComponent: React.FC<{
     };
 
     return (
-        <GridItem>
-            <ItemTitle onClick={() => handleClickOnTitle(title)}>
-                {title}
-            </ItemTitle>
+        <Item>
+            <ItemTitle onClick={handleClickOnTitle}>{path}</ItemTitle>
             <DetailContainer>
                 <DetailContainerHeader
-                    $isOpen={detailsOpen[title]}
-                    onClick={() => handleToggleDetails(title)}
+                    $isOpen={detailsOpen}
+                    onClick={handleToggleDetails}
                 >
                     Details
                 </DetailContainerHeader>
-                {detailsOpen[title] && (
+                {detailsOpen && (
                     <DetailContent>
                         <ItemCount>Version count: {count}</ItemCount>
                         <ItemDate>
@@ -193,35 +152,35 @@ export const GridItemComponent: React.FC<{
                     {!isOpen ? <FaPlus /> : <FaChevronDown />}
                 </MainActionButton>
                 <ActionsContainer $isOpen={isOpen}>
-                    <OpenOpenAPIAction
+                    <Action
                         title="Open in OpenAPI View"
-                        onClick={() => handleOpenOpenAPIView(title)}
+                        onClick={handleOpenOpenAPIView}
                     >
                         <SiOpenapiinitiative />
-                    </OpenOpenAPIAction>
-                    <OpenVersionViewAction
+                    </Action>
+                    <Action
                         title="Open in Version View"
-                        onClick={() => handleOpenVersionView(title)}
+                        onClick={handleOpenVersionView}
                     >
-                        <FaCodeBranch />
-                    </OpenVersionViewAction>
-                    <ExportAction title="Export" onClick={handleExportFile}>
-                        <BiExport />
-                    </ExportAction>
-                    <RestoreAction
+                        <GitBranch />
+                    </Action>
+                    <Action title="Export" onClick={handleExportFile}>
+                        <Download />
+                    </Action>
+                    <Action
                         title="Restore last file version (if it was deleted from the vault)"
-                        onClick={() => handleRestoreFile(title)}
+                        onClick={handleRestoreFile}
                     >
-                        <FaHistory />
-                    </RestoreAction>
-                    <DeleteAction
+                        <History />
+                    </Action>
+                    <Action
                         title="Remove file from tracking (file remains in vault)"
-                        onClick={() => handleDelete(title)}
+                        onClick={handleDelete}
                     >
-                        <FaTrash />
-                    </DeleteAction>
+                        <Trash />
+                    </Action>
                 </ActionsContainer>
             </MenuContainer>
-        </GridItem>
+        </Item>
     );
 };
