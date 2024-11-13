@@ -1,49 +1,31 @@
-.openapi-renderer-settings-page {
+.openapi-renderer-settings {
+    padding: 16px;
     overflow-y: scroll;
 }
 
-/* General styles for the settings tab */
-.openapi-renderer-settings {
-    padding: 16px;
-}
-
-/* Section headers */
-.openapi-renderer-settings .setting-item-heading {
-    font-size: 1.4em;
-    color: var(--text-normal);
-    border-bottom: 2px solid var(--background-modifier-border);
-    padding-bottom: 8px;
-    margin-bottom: 16px;
-}
-
-/* Individual setting items */
-.openapi-renderer-settings .setting-item {
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
+.openapi-renderer-settings .react-obsidian-settings-item {
     padding: 12px;
     margin-bottom: 12px;
-    background-color: var(--background-primary);
     transition: box-shadow 0.3s ease;
+    border-bottom: 1px solid var(--color-base-30);
 }
 
-.openapi-renderer-settings .setting-item:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.openapi-renderer-settings
+    .react-obsidian-settings-item
+    .setting-item
+    .button-active {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
 }
 
-/* Setting item name */
-.openapi-renderer-settings .setting-item-name {
-    font-weight: bold;
-    color: var(--text-normal);
+.openapi-renderer-settings .react-obsidian-settings-item:last-child {
+    border-bottom: none;
 }
 
-/* Setting item description */
-.openapi-renderer-settings .setting-item-description {
-    color: var(--text-muted);
-    font-size: 0.9em;
-    margin-top: 4px;
+.openapi-renderer-settings .react-obsidian-settings-item.no-border {
+    border-bottom: none !important;
 }
 
-/* Input fields */
 .openapi-renderer-settings input[type='text'],
 .openapi-renderer-settings input[type='number'] {
     background-color: var(--background-secondary);
@@ -53,94 +35,6 @@
     width: 100%;
 }
 
-/* Dropdown */
-.openapi-renderer-settings select {
-    background-color: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    padding: 6px 8px;
-    width: 100%;
-}
-
-/* Toggle switch */
-.openapi-renderer-settings .checkbox-container {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-/* Buttons */
-.openapi-renderer-settings button {
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.openapi-renderer-settings button:hover {
-    background-color: var(--interactive-accent-hover);
-}
-
-/* Details-summary for grouped settings */
-.openapi-renderer-settings .openapi-renderer-details {
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
-    margin-top: 12px;
-    overflow: hidden;
-}
-
-.openapi-renderer-settings .openapi-renderer-summary {
-    cursor: pointer;
-    padding: 12px;
-    background-color: var(--background-secondary);
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    transition: background-color 0.2s ease;
-}
-
-.openapi-renderer-settings .openapi-renderer-summary:hover {
-    background-color: var(--background-secondary-alt);
-}
-
-.openapi-renderer-settings .openapi-renderer-summary::before {
-    content: '▶';
-    display: inline-block;
-    margin-right: 8px;
-    transition: transform 0.3s ease;
-}
-
-.openapi-renderer-settings
-    .openapi-renderer-details[open]
-    .openapi-renderer-summary::before {
-    transform: rotate(90deg);
-}
-
-.openapi-renderer-settings .openapi-renderer-details .setting-item {
-    border: none;
-    border-top: 1px solid var(--background-modifier-border);
-    border-radius: 0;
-    margin: 0;
-}
-
-/* Specific styles for server status button */
-.openapi-renderer-settings .server-status-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: var(--interactive-normal);
-}
-
-.openapi-renderer-settings .server-status-button:hover {
-    background-color: var(--interactive-hover);
-}
-
-/* Info button styles */
 .openapi-renderer-settings .clickable-icon {
     color: var(--text-muted);
     transition: color 0.2s ease;
@@ -148,57 +42,6 @@
 
 .openapi-renderer-settings .clickable-icon:hover {
     color: var(--text-normal);
-}
-
-.openapi-renderer-settings .settings-navbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--background-modifier-border);
-}
-
-.openapi-renderer-settings .settings-navbar-tab {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    margin: 0 4px;
-    gap: var(--size-4-2);
-    padding: 5px 5px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 15px;
-    font-size: 14px;
-    color: var(--text-color);
-    height: 40px;
-    line-height: 24px;
-    transition:
-        background-color 0.3s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
-}
-
-.openapi-renderer-settings .settings-navbar-tab:hover {
-    background-color: var(--background-modifier-hover-active);
-    border-color: var(--background-modifier-border-hover);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.openapi-renderer-settings .settings-navbar-tab-name {
-    font-weight: bold;
-}
-
-.openapi-renderer-settings .settings-navbar-tab-active {
-    background-color: var(--color-accent);
-    color: var(--text-on-accent);
-    font-weight: bold;
-}
-
-.openapi-renderer-settings .settings-navbar-tab-active:hover {
-    background-color: var(--color-accent);
-    color: var(--text-on-accent);
-    font-weight: bold;
-    border-color: var(--background-modifier-border-hover);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .openapi-renderer-settings details {
@@ -284,4 +127,8 @@
 
 .indicator {
     animation: pulse 2s infinite;
+}
+
+.openapi-renderer-settings .invalid {
+    border: 2px solid red !important;
 }
