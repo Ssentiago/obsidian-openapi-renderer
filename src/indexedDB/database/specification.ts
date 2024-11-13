@@ -1,5 +1,5 @@
 import pako from 'pako';
-import { DiffController } from '../../view/OpenAPI Version/controllers/diff-controller';
+import { DiffController } from 'view/views/OpenAPI Version/controller/controllers/diff-controller';
 import { SpecParams } from '../typing/interfaces';
 
 export class BaseSpecification {
