@@ -1,5 +1,5 @@
 import path from 'path';
-import { BaseExtensionsStorage } from 'view/OpenAPI/components/source/typing/interfaces';
+import { BaseExtensionsStorage } from 'view/views/OpenAPI/components/source/typing/interfaces';
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export interface DefaultSettings {
