@@ -1,7 +1,7 @@
 import { App, PluginSettingTab } from 'obsidian';
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 import { createRoot, Root } from 'react-dom/client';
-import Application from 'settings/components/application';
+import Application from 'settings/components/Application';
 
 export class OpenAPISettingTab extends PluginSettingTab {
     root!: Root;
@@ -11,6 +11,7 @@ export class OpenAPISettingTab extends PluginSettingTab {
         public plugin: OpenAPIRendererPlugin
     ) {
         super(app, plugin);
+        this.containerEl.addClass('openapi-renderer-settings');
     }
 
     /**
