@@ -1,3 +1,4 @@
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
@@ -15,6 +16,22 @@ const baseConfig = {
     external: ['obsidian', 'electron'],
     plugins: [
         json(),
+        replace({
+            preventAssignment: true,
+            'process.env.NODE_ENV': JSON.stringify('production'),
+        }),
+        alias({
+            entries: [
+                {
+                    find: 'react',
+                    replacement: 'preact/compat',
+                },
+                {
+                    find: 'react-dom',
+                    replacement: 'preact/compat',
+                },
+            ],
+        }),
         nodeResolve({
             preferBuiltins: true,
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
