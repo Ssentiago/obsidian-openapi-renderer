@@ -1,3 +1,4 @@
+import { updateButton } from 'view/common/helpers';
 import OpenAPIRendererPlugin from './openapi-renderer-plugin';
 
 export const enum State {
@@ -28,33 +29,36 @@ export default class StateChecker {
      */
     async checkState(): Promise<void> {
         const state = await this.getState();
+        let statusBarItem: HTMLElement | undefined = undefined;
 
         switch (state) {
             case State.FIRST:
-                this.plugin.showNotice(
-                    'This seems to be the first launch of the OpenAPI Renderer plugin. Please download the resources in the plugin settings, otherwise it may not work correctly.',
-                    7000
+                statusBarItem = this.plugin.addStatusBarItem();
+                updateButton(
+                    statusBarItem,
+                    'circle-alert',
+                    'OpenAPI Renderer: this seems to be the first launch of this plugin. Please download the resources in the plugin settings, otherwise it may not work correctly.'
                 );
                 break;
             case State.UPDATE:
-                if (this.plugin.settings.resourcesAutoUpdate) {
-                    this.plugin.showNotice(
-                        'An update for the OpenAPI Renderer plugin has been identified. Downloading the latest resources. This may take a moment.',
-                        4000
-                    );
-                    setTimeout(async () => {
-                        await this.plugin.githubClient.downloadAssetsFromLatestRelease();
-                    }, 4000);
-                } else {
-                    this.plugin.showNotice(
-                        'OpenAPI Renderer plugin update detected. It is recommended to update resources in settings to ensure stable operation.'
-                    );
-                }
+                statusBarItem = this.plugin.addStatusBarItem();
+                updateButton(
+                    statusBarItem,
+                    'circle-alert',
+                    'OpenAPI Renderer: this plugin has been updated. Please download the resources in the plugin settings, otherwise it may not work correctly.'
+                );
                 break;
             case State.NONE:
                 break;
             default:
                 throw new Error();
+        }
+
+        if (statusBarItem) {
+            statusBarItem.addEventListener('click', async () => {
+                await this.plugin.githubClient.downloadAssetsFromLatestRelease();
+                statusBarItem.remove();
+            });
         }
     }
 
