@@ -1,23 +1,29 @@
 import yaml from 'js-yaml';
 import { setIcon } from 'obsidian';
-import { OpenAPIVersionView } from '../OpenAPI Version/openapi-version-view';
-import { OpenAPIView } from '../OpenAPI/openapi-view';
+import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
+import { VersionView } from 'view/views/OpenAPI Version/version-view';
+import { OpenAPIView } from '../views/OpenAPI/openapi-view';
 
-/**
- * Creates a new leaf of the specified type if none exists,
- * otherwise activates an existing one.
- * @param viewType The type of the view to create.
- * @param view The view that is creating a new leaf.
- * @returns A promise indicating the success of the operation.
- */
 export async function createNewLeaf(
     viewType: string,
-    view: OpenAPIView | OpenAPIVersionView
+    view: OpenAPIView | VersionView | EntryView,
+    filePath?: string
 ): Promise<void> {
     const viewLeaves = view.app.workspace.getLeavesOfType(viewType);
 
+    let path: string;
+    if (view instanceof EntryView) {
+        path = filePath!;
+    } else {
+        path = view.file?.path!;
+    }
+
+    if (!path) {
+        return;
+    }
+
     const existingView = viewLeaves.find(
-        (leaf) => leaf.getViewState().state.file === view.file?.path
+        (leaf) => leaf.getViewState().state?.file === path
     );
     if (existingView) {
         const newViewState = {
@@ -31,29 +37,26 @@ export async function createNewLeaf(
             type: viewType,
             active: true,
             state: {
-                file: view.file?.path,
+                file: path,
             },
         });
     }
 }
 
 /**
- * Converts given data from a string to a JavaScript object
+ * Converts given data from a JSON / YAML string to JSON string
  * @param data data as a string
  * @param extension the file extension of the data
- * @returns a JavaScript object
+ * @returns a JSON string
  * @throws {Error} if the file extension is not supported
  */
-export function convertData(
-    data: string,
-    extension: string
-): Record<string, any> {
+export function convertData(data: string, extension: string): string {
     switch (extension) {
         case 'yaml':
         case 'yml':
-            return yaml.load(data) as Record<string, any>;
+            return JSON.stringify(yaml.load(data));
         case 'json':
-            return JSON.parse(data) as Record<string, any>;
+            return data;
         default:
             throw new Error(`Unsupported file extension: ${extension}`);
     }
