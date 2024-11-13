@@ -1,7 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
 
-const NoFilesContainer = styled.div`
+export const NoFilesContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,16 +14,8 @@ const NoFilesContainer = styled.div`
     text-align: center;
 `;
 
-const NoFilesMessage = styled.p`
+export const NoFilesMessage = styled.p`
     color: var(--text-normal); /* Цвет текста */
     font-size: 1.125rem;
     margin: 0;
 `;
-
-const NoFiles: React.FC = () => (
-    <NoFilesContainer>
-        <NoFilesMessage>No tracked files found</NoFilesMessage>
-    </NoFilesContainer>
-);
-
-export default NoFiles;

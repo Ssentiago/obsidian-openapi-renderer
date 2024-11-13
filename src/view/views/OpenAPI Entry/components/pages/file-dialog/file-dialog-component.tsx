@@ -1,5 +1,7 @@
+import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { OpenAPIEntryView } from '../../OpenAPI-entry-view';
+import { useEntryContext } from 'view/views/OpenAPI Entry/components/core/context';
+import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
 import {
     CreateFileButton,
     ExpandButton,
@@ -9,14 +11,14 @@ import {
     FileList,
     FileListItem,
     FileName,
-} from './file-dialog-styled-components';
+} from 'view/views/OpenAPI Entry/components/pages/file-dialog/file-dialog-styled-components';
 import { TAbstractFile, TFile, TFolder } from 'obsidian';
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
-import { CreateFileModal } from '../../modals/create-file-modal';
+import { CreateFileModal } from 'view/views/OpenAPI Entry/components/pages/file-dialog/modals/create-file-modal';
 
-export const FileDialogComponent: React.FC<{ view: OpenAPIEntryView }> = ({
-    view,
-}) => {
+export const FileDialogComponent: React.FC = () => {
+    const { view } = useEntryContext();
+
     const [folderMap, setFolderMap] = useState<
         Map<TFolder | null, (TFile | TFolder)[]>
     >(new Map());
@@ -77,23 +79,23 @@ export const FileDialogComponent: React.FC<{ view: OpenAPIEntryView }> = ({
                     <FileName>
                         <ExpandButton>
                             {expandedFolders.has(folder as TFolder) ? (
-                                <FaChevronDown />
+                                <ChevronDown />
                             ) : (
-                                <FaChevronRight />
+                                <ChevronRight />
                             )}
                         </ExpandButton>
                         {folder.path}
                         {folder instanceof TFolder && (
                             <CreateFileButton
                                 onClick={(e) => {
-                                    e.stopPropagation(); // Prevent the click from propagating to the folder item
+                                    e.stopPropagation();
                                     new CreateFileModal(
                                         view.app,
                                         folder.path
                                     ).open();
                                 }}
                             >
-                                <FaPlus />
+                                <Plus />
                             </CreateFileButton>
                         )}
                     </FileName>

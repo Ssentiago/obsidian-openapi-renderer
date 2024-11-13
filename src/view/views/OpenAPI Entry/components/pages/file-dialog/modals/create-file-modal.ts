@@ -2,7 +2,6 @@ import { App, Modal, Notice, Setting } from 'obsidian';
 
 export class CreateFileModal extends Modal {
     fileName!: string;
-    type = 'yaml';
     private submitted = false;
 
     constructor(
@@ -24,18 +23,10 @@ export class CreateFileModal extends Modal {
             });
         });
 
-        new Setting(contentEl).setName('File type').addDropdown((dropdown) => {
-            dropdown.addOption('yaml', 'YAML');
-            dropdown.addOption('json', 'JSON');
-
-            dropdown.onChange((value) => {
-                this.type = value;
-            });
-        });
         new Setting(contentEl).addButton((button) => {
             button.setButtonText('Submit');
             button.onClick((cb) => {
-                if (this.fileName && this.type) {
+                if (this.fileName) {
                     this.submitted = true;
                     this.close();
                 } else {
@@ -51,12 +42,10 @@ export class CreateFileModal extends Modal {
             return;
         }
 
-        if (this.fileName && this.type) {
-            const filePath = `${this.dest}/${this.fileName}.${this.type}`;
+        if (this.fileName) {
+            const filePath = `${this.dest}/${this.fileName}`;
             await this.app.vault.create(filePath, '');
-            new Notice(
-                `Created file ${this.dest}/${this.fileName}.${this.type}`
-            );
+            new Notice(`Created file ${this.dest}/${this.fileName}`);
         }
     }
 }
