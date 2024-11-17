@@ -10,7 +10,7 @@ import {
 import { Compartment, EditorState, Extension } from '@codemirror/state';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
 import { SourceController } from 'view/views/OpenAPI/components/source/controllers/source-controller';
-import anchorGutter from 'view/views/OpenAPI/components/source/extensions/anchor/anchor';
+import anchorGutter from 'view/views/OpenAPI/components/source/extensions/anchor';
 import createBoundKeymap from 'view/views/OpenAPI/components/source/extensions/keymap';
 import { onChange } from 'view/views/OpenAPI/components/source/handlers/editor-handlers';
 import {
