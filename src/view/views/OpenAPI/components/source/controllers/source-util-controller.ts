@@ -1,5 +1,6 @@
 import { EventID } from 'events-management/typing/constants';
 import { SwitchModeStateEvent } from 'events-management/typing/interfaces';
+import { AnchorModal } from 'view/views/OpenAPI/components/source/modals/anchors-modal/anchor-modal';
 import { ExtensionsModal } from 'view/views/OpenAPI/components/source/modals/extensions-modal';
 import openAPIFormatter from 'view/views/OpenAPI/components/source/extensions/formatter';
 import convertFile from 'view/views/OpenAPI/components/source/extensions/yamlAndJsonConverter';
@@ -44,6 +45,16 @@ export class SourceUtilController {
                 new ExtensionsModal(app, this.controller.source).open();
             }
         );
+        const anchorButton = this.controller.source.view.addAction(
+            'anchor',
+            'Anchors',
+            async () => {
+                new AnchorModal(
+                    this.controller.source.view.app,
+                    this.controller.source
+                ).open();
+            }
+        );
 
         plugin.observer.subscribe(
             app.workspace,
@@ -54,6 +65,7 @@ export class SourceUtilController {
                     convertButton.remove();
                     formatButton.remove();
                     extensionsButton.remove();
+                    anchorButton.remove();
                 }
             }
         );
