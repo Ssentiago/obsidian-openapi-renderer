@@ -60,6 +60,12 @@ const anchorGutter = function (view: OpenAPIView): Extension {
         return hasAnchor;
     };
 
+    const copyLink = async (editorView: EditorView, line: number) => {
+        const link = `obsidian://openapi-open?openapiPath=${view.file?.path}&line=${line}`;
+        await navigator.clipboard.writeText(link);
+        view.plugin.showNotice('Link copied to clipboard');
+    };
+
     async function toggleAnchor(
         editorView: EditorView,
         pos: number,
@@ -167,36 +173,41 @@ const anchorGutter = function (view: OpenAPIView): Extension {
                     const e = event as MouseEvent;
 
                     e.preventDefault();
+                    const menu = new Menu();
+
+                    const lineData = editorView.state.doc.lineAt(line.from);
 
                     const hasAnchor = hasAnchorAt(editorView, line.from);
 
                     if (hasAnchor) {
-                        return false;
-                    }
-
-                    const menu = new Menu();
-                    const lineData = editorView.state.doc.lineAt(line.from);
-
-                    menu.addItem((item) => {
-                        item.setTitle('Add anchor with additional data');
-                        item.onClick(() => {
-                            new AdditionalDataModal(
-                                view.app,
-                                {
-                                    line: lineData.number,
-                                    string: lineData.text,
-                                },
-                                (data) => {
-                                    toggleAnchor(
-                                        editorView,
-                                        lineData.from,
-                                        view,
-                                        data
-                                    );
-                                }
-                            ).open();
+                        menu.addItem((item) => {
+                            item.setTitle('Copy anchor link');
+                            item.onClick(async () => {
+                                await copyLink(editorView, lineData.number);
+                            });
                         });
-                    });
+                    } else {
+                        menu.addItem((item) => {
+                            item.setTitle('Add anchor with additional data');
+                            item.onClick(async () => {
+                                new AdditionalDataModal(
+                                    view.app,
+                                    {
+                                        line: lineData.number,
+                                        string: lineData.text,
+                                    },
+                                    async (data) => {
+                                        await toggleAnchor(
+                                            editorView,
+                                            lineData.from,
+                                            view,
+                                            data
+                                        );
+                                    }
+                                ).open();
+                            });
+                        });
+                    }
 
                     menu.showAtMouseEvent(e);
 
