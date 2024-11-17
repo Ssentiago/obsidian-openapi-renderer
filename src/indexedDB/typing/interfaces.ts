@@ -29,6 +29,9 @@ export enum MessageType {
     RenameFile = 'rename-file',
     IsFileTracked = 'is-file-tracked',
     DeleteFile = 'delete-file',
+    AddAnchor = 'add-anchor',
+    GetAnchors = 'get-anchors',
+    DeleteAnchor = 'delete-anchor',
 }
 
 export const enum ResponseType {

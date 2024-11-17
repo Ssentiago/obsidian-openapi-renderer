@@ -1,3 +1,4 @@
+import { AnchorData } from 'indexedDB/database/anchor';
 import { IndexedDB } from '../database/indexedDB';
 import { BaseSpecification } from '../database/specification';
 import { MessageType, ResponseType, WorkerMessage } from '../typing/interfaces';
@@ -7,6 +8,7 @@ const db = new IndexedDB();
 self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
     const { type, payload } = event.data;
     const messageID = event.data.id as number;
+    let path: string, anchorData: AnchorData;
     try {
         let id: number;
         switch (type) {
@@ -20,7 +22,7 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
 
                 break;
             case MessageType.GetVersions:
-                const path = payload.data.path;
+                path = payload.data.path;
                 if (!path) {
                     return;
                 }
@@ -113,6 +115,38 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
             case MessageType.DeleteFile:
                 const { path: deletePath } = payload.data;
                 await db.deleteFile(deletePath);
+                self.postMessage({
+                    id: messageID,
+                    type: ResponseType.Success,
+                    payload: null,
+                });
+                break;
+            case MessageType.AddAnchor:
+                path = payload.data.path;
+                anchorData = payload.data.anchorData;
+                await db.addAnchor(path, anchorData);
+                self.postMessage({
+                    id: messageID,
+                    type: ResponseType.Success,
+                    payload: null,
+                });
+                break;
+            case MessageType.GetAnchors:
+                const anchors = await db.getAnchors(payload.data.path);
+                self.postMessage({
+                    id: messageID,
+                    type: ResponseType.Success,
+                    payload: {
+                        data: {
+                            anchors: anchors,
+                        },
+                    },
+                });
+                break;
+            case MessageType.DeleteAnchor:
+                path = payload.data.path;
+                anchorData = payload.data.anchorData;
+                await db.deleteAnchor(path, anchorData);
                 self.postMessage({
                     id: messageID,
                     type: ResponseType.Success,
