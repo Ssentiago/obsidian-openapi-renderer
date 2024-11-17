@@ -1,9 +1,11 @@
 import Dexie from 'dexie';
+import { Anchor, AnchorData } from 'indexedDB/database/anchor';
 import { Database, EntryViewData } from '../typing/interfaces';
 import { BaseSpecification } from './specification';
 
 export class IndexedDB extends Dexie implements Database {
     spec: Dexie.Table<BaseSpecification, number>;
+    anchors: Dexie.Table<Anchor, number>;
 
     constructor() {
         super('OpenAPI Renderer');
@@ -14,6 +16,12 @@ export class IndexedDB extends Dexie implements Database {
         this.spec = this.table('spec');
 
         this.spec.mapToClass(BaseSpecification);
+
+        this.version(1).stores({
+            anchors: '++id, &path',
+        });
+        this.anchors = this.table('anchors');
+        this.anchors.mapToClass(Anchor);
     }
 
     async add(spec: BaseSpecification): Promise<void> {
@@ -126,5 +134,36 @@ export class IndexedDB extends Dexie implements Database {
         await this.spec
             .filter((record) => Boolean(record.softDeleted))
             .delete();
+    }
+
+    async addAnchor(path: string, anchorData: AnchorData): Promise<void> {
+        const anchor = await this.anchors.where('path').equals(path).first();
+        if (!anchor) {
+            await this.anchors.add({
+                path,
+                anchors: [anchorData],
+            });
+        } else {
+            anchor.anchors.push(anchorData);
+            await this.anchors.put(anchor);
+        }
+    }
+
+    async getAnchors(path: string) {
+        return (
+            (await this.anchors.where('path').equals(path).first())?.anchors ??
+            ([] as AnchorData[])
+        );
+    }
+
+    async deleteAnchor(path: string, anchorData: AnchorData): Promise<void> {
+        const anchor = await this.anchors.where('path').equals(path).first();
+        if (anchor) {
+            anchor.anchors = anchor.anchors.filter(
+                (anch) =>
+                    anch.line !== anchorData.line && anch.pos !== anchorData.pos
+            );
+            await this.anchors.put(anchor);
+        }
     }
 }
