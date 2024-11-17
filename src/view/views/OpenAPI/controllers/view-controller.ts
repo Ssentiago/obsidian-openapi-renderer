@@ -3,12 +3,15 @@ import {
     OpenAPIThemeChangeState,
     UpdateOpenAPIViewStateEvent,
 } from 'events-management/typing/interfaces';
+import { AnchorData } from 'indexedDB/database/anchor';
+import { MessageType, ResponseType } from 'indexedDB/typing/interfaces';
 import { createNewLeaf, updateButton } from 'view/common/helpers';
-import { OpenAPIView } from 'view/views/OpenAPI/openapi-view';
 import { RenderingMode } from 'view/typing/constants';
 
 import { OPENAPI_VERSION_VIEW } from 'view/typing/types';
+import { AnchorModal } from 'view/views/OpenAPI/components/source/modals/anchors-modal/anchor-modal';
 import { UtilController } from 'view/views/OpenAPI/controllers/util-controller';
+import { OpenAPIView } from 'view/views/OpenAPI/openapi-view';
 
 export class OpenAPIController {
     utils: UtilController;
@@ -241,5 +244,45 @@ export class OpenAPIController {
                 await this.view.activeComponent?.controller.themeController.themeUpdate();
             }
         );
+    }
+
+    async addAnchor(anchorData: AnchorData) {
+        const result = await this.view.plugin.workerHelper.sendMessage({
+            type: MessageType.AddAnchor,
+            payload: {
+                data: {
+                    path: this.view.file?.path,
+                    anchorData: anchorData,
+                },
+            },
+        });
+        return result.type === ResponseType.Success;
+    }
+
+    async getAnchors() {
+        const result = await this.view.plugin.workerHelper.sendMessage({
+            type: MessageType.GetAnchors,
+            payload: {
+                data: {
+                    path: this.view.file?.path,
+                },
+            },
+        });
+        return result.type === ResponseType.Success
+            ? (result.payload.data.anchors as AnchorData[])
+            : [];
+    }
+
+    async deleteAnchor(anchorData: AnchorData) {
+        const result = await this.view.plugin.workerHelper.sendMessage({
+            type: MessageType.DeleteAnchor,
+            payload: {
+                data: {
+                    path: this.view.file?.path,
+                    anchorData: anchorData,
+                },
+            },
+        });
+        return result.type === ResponseType.Success;
     }
 }
