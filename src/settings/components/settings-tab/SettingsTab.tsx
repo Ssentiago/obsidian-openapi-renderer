@@ -15,10 +15,10 @@ import OpenAPIView from 'settings/components/pages/openapi-view/OpenAPIView';
  * @returns A React element representing the main settings page.
  */
 const SettingsTab: React.FC = (): React.ReactElement => {
-    const { reloadCount } = useSettingsContext();
+    const { reloadCount, currentPath } = useSettingsContext();
 
     return (
-        <MemoryRouter initialEntries={['/general']} key={reloadCount}>
+        <MemoryRouter initialEntries={[currentPath]} key={reloadCount}>
             <Toolbar />
             <Routes>
                 <Route path="/general" element={<General />} />
