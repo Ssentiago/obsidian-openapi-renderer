@@ -4391,7 +4391,7 @@ __metadata:
     react-diff-viewer: "npm:^3.1.1"
     react-dom: "npm:^18.3.1"
     react-icons: "npm:^5.2.1"
-    react-obsidian-setting: "npm:^1.0.17"
+    react-obsidian-setting: "npm:^1.0.19"
     react-router-dom: "npm:^6.28.0"
     rollup: "npm:^4.20.0"
     rollup-plugin-bundle-stats: "npm:^4.13.4"
@@ -4823,12 +4823,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-obsidian-setting@npm:^1.0.17":
-  version: 1.0.17
-  resolution: "react-obsidian-setting@npm:1.0.17"
+"react-obsidian-setting@npm:^1.0.19":
+  version: 1.0.19
+  resolution: "react-obsidian-setting@npm:1.0.19"
   dependencies:
     styled-components: "npm:^6.1.13"
-  checksum: 10c0/bbf04f6d77c2e078bbbbc14015a9d9dc47678259fa7c36c92199a6720ee77d4c39d5ff4e725b86014e9191755b098915487284dea70f2254279834e256dfd5ab
+  checksum: 10c0/422bf317037aa21fb3f7d208e5d915770f9c2ccb03d29b58bb167af91b14711d3f55d56667d6887e780a7a568a3220fe327e22ed08fdd52737daeb0f11e08dc0
   languageName: node
   linkType: hard
 
