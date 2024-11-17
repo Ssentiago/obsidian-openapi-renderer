@@ -1,11 +1,12 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
+import { AnchorData } from 'indexedDB/database/anchor';
 import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
-import OpenAPIPreview from 'view/views/OpenAPI/components/preview/openapi-preview';
-import { OpenAPISource } from 'view/views/OpenAPI/components/source/openapi-source';
-import { OpenAPIController } from 'view/views/OpenAPI/controllers/view-controller';
 import { RenderingMode } from 'view/typing/constants';
 import { OpenAPIViewComponent } from 'view/typing/interfaces';
 import { OPENAPI_VIEW } from 'view/typing/types';
+import OpenAPIPreview from 'view/views/OpenAPI/components/preview/openapi-preview';
+import { OpenAPISource } from 'view/views/OpenAPI/components/source/openapi-source';
+import { OpenAPIController } from 'view/views/OpenAPI/controllers/view-controller';
 
 export class OpenAPIView extends TextFileView {
     controller: OpenAPIController;
@@ -16,6 +17,8 @@ export class OpenAPIView extends TextFileView {
     sourceContainer!: HTMLDivElement;
     previewContainer!: HTMLDivElement;
     previousFile: TFile | undefined = undefined;
+
+    anchors = new Set<AnchorData>();
 
     constructor(
         leaf: WorkspaceLeaf,
@@ -117,16 +120,19 @@ export class OpenAPIView extends TextFileView {
     }
 
     /**
-     * Loads a file into the view.
-     * This method is called when a file is opened and is loading into the view.
+     * Called when a file is loaded into the view.
+     * This method is called when a file is loaded into the view.
      * It:
      * - Calls the superclass's `onLoadFile` method.
-     * - Renders the active component.
-     * @param file The file to load.
+     * - Fetches the anchors from the IndexedDB database.
+     * - Calls the `render` method on the active component.
+     *
+     * @param {TFile} file The file that was loaded.
      * @returns {Promise<void>} A promise that resolves when the file is loaded.
      */
     async onLoadFile(file: TFile): Promise<void> {
         await super.onLoadFile(file);
+        this.anchors = new Set<AnchorData>(await this.controller.getAnchors());
         this.activeComponent?.render();
     }
 
