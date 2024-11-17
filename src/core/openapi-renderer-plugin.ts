@@ -66,6 +66,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
             emitter: this.app.workspace,
         } as PowerOffEvent;
         this.publisher.publish(event);
+        this.observer.unsubscribeAll();
     }
 
     /**
