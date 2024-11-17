@@ -98,6 +98,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.logger = new LoggingManager(this);
         this.resourceManager = new ResourceManager(this.app, this);
         await this.resourceManager.initializeResourceManager();
+        this.workerHelper = new WorkerHelper();
     }
 
     /**
@@ -187,6 +188,61 @@ export default class OpenAPIRendererPlugin extends Plugin {
                 await this.app.workspace.revealLeaf(leaf);
             },
         });
+
+        this.registerObsidianProtocolHandler(
+            'openapi-open',
+            async ({ openapiPath, line }) => {
+                if (!openapiPath || !line) {
+                    return;
+                }
+
+                const existsPath =
+                    await this.app.vault.adapter.exists(openapiPath);
+
+                if (!existsPath) {
+                    this.showNotice(
+                        'Invalid URI provided: file does not exist.'
+                    );
+                    return;
+                }
+
+                const isValidOpenApi = Boolean(
+                    openapiPath.match(/\.(json|yaml|yml)$/i)
+                );
+
+                if (!isValidOpenApi) {
+                    this.showNotice(
+                        'Invalid URI provided: unsupported file format.'
+                    );
+                    return;
+                }
+
+                const leaf = this.app.workspace.getLeaf(true);
+                await leaf.setViewState({
+                    type: OPENAPI_VIEW,
+                    active: true,
+                    state: { file: openapiPath },
+                });
+
+                await this.app.workspace.revealLeaf(leaf);
+                const view = leaf.view as OpenAPIView;
+                const editor = view.source.editor;
+                if (!editor) {
+                    return;
+                }
+                const pos = editor.state.doc.line(Number(line)).from;
+                if (pos) {
+                    editor.dispatch({
+                        selection: {
+                            anchor: pos,
+                            head: pos,
+                        },
+                        scrollIntoView: true,
+                    });
+                }
+            }
+        );
+
         addIcon('green-dot', `<circle cx="50" cy="50" r="30" fill="green" />`);
         addIcon(
             'yellow-dot',
@@ -211,7 +267,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
         await this.stateChecker.checkState();
         this.fileWatcher = new FileWatcher(this);
         this.export = new Export(this);
-        this.workerHelper = new WorkerHelper();
     }
 
     /**
