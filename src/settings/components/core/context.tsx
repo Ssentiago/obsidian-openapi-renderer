@@ -38,7 +38,7 @@ export const SettingProvider: React.FC<{
     children: ReactNode;
 }> = ({ app, plugin, children }) => {
     const [reloadCount, setReloadCount] = useState(0);
-    const [currentPath, setCurrentPath] = useState<string>('/diagram-section');
+    const [currentPath, setCurrentPath] = useState<string>('/general');
 
     const forceReload = useCallback(() => {
         setReloadCount((prev) => prev + 1);
