@@ -27,6 +27,7 @@ export interface OpenAPIViewComponent {
 
 export interface SourceComponent extends OpenAPIViewComponent {
     clear(): void;
+    onSwitch(): void;
 }
 
 export interface PreviewComponent extends OpenAPIViewComponent {}

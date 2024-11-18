@@ -93,4 +93,11 @@ export class OpenAPISource implements SourceComponent {
     getComponentData(): string {
         return this.editor?.state.doc.toString() ?? '';
     }
+
+    onSwitch(): void {
+        this.controller.renderController.stateStorage.set(
+            this.view.file!,
+            this.editor!.state
+        );
+    }
 }

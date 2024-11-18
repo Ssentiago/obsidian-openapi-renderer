@@ -86,6 +86,9 @@ export class OpenAPIView extends TextFileView {
             this.controller.utils.publishSwitchEvent();
             this.activeComponent.render();
             this.contentEl.focus();
+            if (this.mode === RenderingMode.Preview) {
+                this.source.onSwitch();
+            }
         }
     }
 
