@@ -1,10 +1,10 @@
 {
-    "id": "openapi-renderer",
-    "name": "OpenAPI Renderer",
-    "version": "4.2.0",
-    "minAppVersion": "1.6.5",
-    "author": "Sentiago",
-    "authorUrl": "https://github.com/Ssentiago",
-    "description": "Integrate OpenAPI specification management with features for version control, visualization, editing, and easy navigation of API specs.",
-    "isDesktopOnly": true
+  "id": "openapi-renderer",
+  "name": "OpenAPI Renderer",
+  "version": "4.3.0",
+  "minAppVersion": "1.6.5",
+  "author": "Sentiago",
+  "authorUrl": "https://github.com/Ssentiago",
+  "description": "Integrate OpenAPI specification management with features for version control, visualization, editing, and easy navigation of API specs.",
+  "isDesktopOnly": true
 }
