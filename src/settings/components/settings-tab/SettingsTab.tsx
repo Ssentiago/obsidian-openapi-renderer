@@ -23,7 +23,7 @@ const SettingsTab: React.FC = (): React.ReactElement => {
             <Routes>
                 <Route path="/general" element={<General />} />
                 <Route path="/openapi-view" element={<OpenAPIView />} />
-                <Route path="/openapi-entry-view" element={<OpenAPIEntry />} />
+                {/*<Route path="/openapi-entry-view" element={<OpenAPIEntry />} />*/}
             </Routes>
         </MemoryRouter>
     );

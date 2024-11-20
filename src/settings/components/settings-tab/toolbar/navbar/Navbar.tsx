@@ -15,9 +15,9 @@ const Navbar: React.FC = () => (
             <NavbarTab as={NavLink} to="/openapi-view">
                 OpenAPI View
             </NavbarTab>
-            <NavbarTab as={NavLink} to="/openapi-entry-view">
-                OpenAPI Entry View
-            </NavbarTab>
+            {/*<NavbarTab as={NavLink} to="/openapi-entry-view">*/}
+            {/*    OpenAPI Entry View*/}
+            {/*</NavbarTab>*/}
         </NavbarTabs>
     </NavbarContainer>
 );
