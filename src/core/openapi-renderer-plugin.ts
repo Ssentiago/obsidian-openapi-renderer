@@ -13,7 +13,6 @@ import { OpenAPIView } from 'view/views/OpenAPI/openapi-view';
 import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
-import GithubClient from '../github/github-client';
 import { WorkerHelper } from '../indexedDB/worker/helper';
 import LoggingManager from '../logging/logging-manager';
 import {
@@ -21,8 +20,6 @@ import {
     OPENAPI_VERSION_VIEW,
     OPENAPI_VIEW,
 } from '../view/typing/types';
-import ResourceManager from './resource-manager';
-import StateChecker from './state-checker';
 
 export default class OpenAPIRendererPlugin extends Plugin {
     settings!: DefaultSettings;
@@ -30,11 +27,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
     logger!: LoggingManager;
     publisher!: EventPublisher;
     observer!: EventObserver;
-    githubClient!: GithubClient;
     settingsManager!: SettingsManager;
-    pluginUtils!: StateChecker;
-    stateChecker!: StateChecker;
-    resourceManager!: ResourceManager;
     export!: Export;
     fileWatcher!: FileWatcher;
     workerHelper!: WorkerHelper;
@@ -81,7 +74,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.initializeManagers();
         await this.initializeCore();
         this.initializeEventSystem();
-        await this.initializeNetworking();
         await this.initializeUI();
         await this.initializeUtilities();
         this.addSettingTab(new OpenAPISettingTab(this.app, this));
@@ -97,8 +89,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializeCore(): Promise<void> {
         await this.settingsManager.loadSettings();
         this.logger = new LoggingManager(this);
-        this.resourceManager = new ResourceManager(this.app, this);
-        await this.resourceManager.initializeResourceManager();
         this.workerHelper = new WorkerHelper();
     }
 
@@ -125,17 +115,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private initializeEventSystem(): void {
         this.publisher = new EventPublisher(this);
         this.observer = new EventObserver(this);
-    }
-
-    /**
-     * Initializes the networking components of the plugin.
-     *
-     * This method creates a new instance of `GithubClient` and assigns it to the `githubClient` property.
-     *
-     * @returns A promise that resolves when the networking components have been initialized.
-     */
-    private async initializeNetworking(): Promise<void> {
-        this.githubClient = new GithubClient(this);
     }
 
     /**
@@ -264,8 +243,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * @returns A promise that resolves when all utility components have been initialized.
      */
     private async initializeUtilities(): Promise<void> {
-        this.stateChecker = new StateChecker(this);
-        await this.stateChecker.checkState();
         this.fileWatcher = new FileWatcher(this);
         this.export = new Export(this);
     }
