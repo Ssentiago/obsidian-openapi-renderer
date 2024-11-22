@@ -2,10 +2,8 @@ import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { useSettingsContext } from 'settings/components/core/context';
 import About from 'settings/components/pages/about/About';
-import General from 'settings/components/pages/general/General';
-import OpenAPIEntry from 'settings/components/pages/openapi-entry/OpenAPIEntry';
-import Toolbar from 'settings/components/settings-tab/toolbar/Toolbar';
 import OpenAPIView from 'settings/components/pages/openapi-view/OpenAPIView';
+import Toolbar from 'settings/components/settings-tab/toolbar/Toolbar';
 
 /**
  * The main settings tab component for OpenAPI Renderer.
