@@ -3,6 +3,7 @@ import { BaseExtensionsStorage } from 'view/views/OpenAPI/components/source/typi
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export interface DefaultSettings {
+    registerYamlJson: boolean;
     resourcesAutoUpdate: boolean;
     OpenAPIPreviewTheme: string;
     syncOpenAPIPreviewTheme: boolean;
@@ -29,6 +30,7 @@ export default class SettingsManager {
      */
     get defaultSettings(): DefaultSettings {
         return {
+            registerYamlJson: true,
             resourcesAutoUpdate: false,
             OpenAPIPreviewTheme: 'dark',
             OpenAPISourceThemeMode: 'dark',

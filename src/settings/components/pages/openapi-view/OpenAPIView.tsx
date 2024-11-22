@@ -16,6 +16,27 @@ const OpenAPIView: React.FC = () => {
     return (
         <>
             <ReactObsidianSetting
+                name="Register YAML and JSON files for processing by default?"
+                addMultiDesc={(multiDesc) => {
+                    multiDesc.addDescriptions([
+                        'Enable this option to open YAML and JSON files in OpenAPI View by default.',
+                        'You can still open these files via the context menu.',
+                        'Changes require restarting the plugin to take effect.',
+                    ]);
+                    return multiDesc;
+                }}
+                addToggles={[
+                    (toggle) =>
+                        toggle
+                            .setValue(plugin.settings.registerYamlJson)
+                            .onChange(async (value) => {
+                                plugin.settings.registerYamlJson = value;
+                                await plugin.settingsManager.saveSettings();
+                            }),
+                ]}
+            />
+
+            <ReactObsidianSetting
                 name={'OpenAPI View default mode'}
                 desc={'Select default mode for viewing OpenAPI View'}
                 addDropdowns={[
