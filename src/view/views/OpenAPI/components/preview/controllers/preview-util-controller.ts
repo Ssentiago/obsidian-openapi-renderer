@@ -33,7 +33,11 @@ export class PreviewUtilController {
         const basePath =
             this.controller.preview.plugin.app.vault.adapter.basePath;
 
-        const resolver = new ApiRefResolver(path.join(basePath, relativePath));
+        const fullPath = path.posix.normalize(
+            `file://${basePath.replace(/\\/g, '/')}/${relativePath.replace(/\\/g, '/')}`
+        );
+
+        const resolver = new ApiRefResolver(fullPath);
         const options: ApiRefOptions = {
             verbose: false,
             conflictStrategy: 'rename',
