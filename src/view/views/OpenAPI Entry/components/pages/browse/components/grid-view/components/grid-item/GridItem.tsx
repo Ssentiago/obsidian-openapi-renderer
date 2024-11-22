@@ -4,10 +4,16 @@ import {
     UpdateOpenAPIViewStateEvent,
 } from 'events-management/typing/interfaces';
 import jsyaml from 'js-yaml';
-import { Download, GitBranch, History, Trash } from 'lucide-react';
+import {
+    ChevronDown,
+    CircleDot,
+    Download,
+    GitBranch,
+    History,
+    Plus,
+    Trash,
+} from 'lucide-react';
 import React, { useState } from 'react';
-import { FaChevronDown, FaPlus } from 'react-icons/fa';
-import { SiOpenapiinitiative } from 'react-icons/si';
 import { createNewLeaf } from 'view/common/helpers';
 import { OPENAPI_VERSION_VIEW, OPENAPI_VIEW } from 'view/typing/types';
 import {
@@ -149,14 +155,14 @@ export const GridItem: React.FC<{
                     title={`${!isOpen ? 'Show' : 'Hide'} actions`}
                     onClick={toggleMenu}
                 >
-                    {!isOpen ? <FaPlus /> : <FaChevronDown />}
+                    {!isOpen ? <Plus /> : <ChevronDown />}
                 </MainActionButton>
                 <ActionsContainer $isOpen={isOpen}>
                     <Action
                         title="Open in OpenAPI View"
                         onClick={handleOpenOpenAPIView}
                     >
-                        <SiOpenapiinitiative />
+                        <CircleDot />
                     </Action>
                     <Action
                         title="Open in Version View"

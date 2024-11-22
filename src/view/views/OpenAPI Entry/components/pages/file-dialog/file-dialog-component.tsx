@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
+import { TAbstractFile, TFile, TFolder } from 'obsidian';
 import React, { useEffect, useState } from 'react';
 import { useEntryContext } from 'view/views/OpenAPI Entry/components/core/context';
-import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
 import {
     CreateFileButton,
     ExpandButton,
@@ -12,8 +12,6 @@ import {
     FileListItem,
     FileName,
 } from 'view/views/OpenAPI Entry/components/pages/file-dialog/file-dialog-styled-components';
-import { TAbstractFile, TFile, TFolder } from 'obsidian';
-import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 import { CreateFileModal } from 'view/views/OpenAPI Entry/components/pages/file-dialog/modals/create-file-modal';
 
 export const FileDialogComponent: React.FC = () => {

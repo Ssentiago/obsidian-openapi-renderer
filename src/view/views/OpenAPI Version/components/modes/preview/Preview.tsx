@@ -1,7 +1,7 @@
 import { Specification } from 'indexedDB/database/specification';
+import { ArrowLeft } from 'lucide-react';
 import { moment } from 'obsidian';
 import React, { useEffect, useRef, useState } from 'react';
-import { RiArrowGoBackLine } from 'react-icons/ri';
 import { SwaggerUIBundle } from 'swagger-ui-dist';
 import { useSpecificationContext } from 'view/views/OpenAPI Version/components/core/context';
 import { SpecDetails } from 'view/views/OpenAPI Version/components/modes/preview/styled/previewStyled';
@@ -53,7 +53,7 @@ export const Preview: React.FC<{
                 }}
             >
                 <Button aria-label={'Back to main'} onClick={handleBackToList}>
-                    <RiArrowGoBackLine />
+                    <ArrowLeft />
                 </Button>
             </div>
             {currentSpec instanceof Specification && (
