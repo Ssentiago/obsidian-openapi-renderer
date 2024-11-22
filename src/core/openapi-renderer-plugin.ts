@@ -3,9 +3,10 @@ import {
     EventPublisher,
 } from 'events-management/events-management';
 import Export from 'export/export';
-import { addIcon, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
+import { addIcon, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
 import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
+import { createNewLeaf } from 'view/common/helpers';
 import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
 import { VersionView } from 'view/views/OpenAPI Version/version-view';
 import { ExtensionManager } from 'view/views/OpenAPI/components/source/managers/extension-manager';
@@ -132,7 +133,36 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private async initializeUI(): Promise<void> {
         this.registerView(OPENAPI_VIEW, (leaf) => new OpenAPIView(leaf, this));
 
-        this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW);
+        if (this.settings.registerYamlJson) {
+            this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW);
+        }
+
+        this.app.workspace.on('file-menu', (menu, file) => {
+            if (!(file instanceof TFile)) {
+                return;
+            }
+
+            if (
+                !['yaml', 'yml', 'json'].includes(file.extension.toLowerCase())
+            ) {
+                return;
+            }
+            menu.addItem((item) => {
+                item.setIcon('circle-dot');
+                item.setTitle('Open in OpenAPI View');
+                item.onClick(async () => {
+                    const leaf = this.app.workspace.getLeaf(true);
+                    await leaf.setViewState({
+                        type: OPENAPI_VIEW,
+                        active: true,
+                        state: {
+                            file: file.path,
+                        },
+                    });
+                    await this.app.workspace.revealLeaf(leaf);
+                });
+            });
+        });
 
         this.registerView(
             OPENAPI_VERSION_VIEW,
@@ -149,7 +179,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
             await leaf.setViewState({
                 type: OPENAPI_ENTRY_VIEW,
                 active: true,
-                state: {},
             });
             await this.app.workspace.revealLeaf(leaf);
         });
@@ -163,7 +192,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
                 await leaf.setViewState({
                     type: OPENAPI_ENTRY_VIEW,
                     active: true,
-                    state: {},
                 });
                 await this.app.workspace.revealLeaf(leaf);
             },
