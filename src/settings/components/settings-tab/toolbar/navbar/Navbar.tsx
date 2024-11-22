@@ -9,11 +9,11 @@ import {
 const Navbar: React.FC = () => (
     <NavbarContainer>
         <NavbarTabs>
-            <NavbarTab as={NavLink} to="/general">
-                General
-            </NavbarTab>
             <NavbarTab as={NavLink} to="/openapi-view">
                 OpenAPI View
+            </NavbarTab>
+            <NavbarTab as={NavLink} to={'/about'}>
+                About
             </NavbarTab>
             {/*<NavbarTab as={NavLink} to="/openapi-entry-view">*/}
             {/*    OpenAPI Entry View*/}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { useSettingsContext } from 'settings/components/core/context';
+import About from 'settings/components/pages/about/About';
 import General from 'settings/components/pages/general/General';
 import OpenAPIEntry from 'settings/components/pages/openapi-entry/OpenAPIEntry';
 import Toolbar from 'settings/components/settings-tab/toolbar/Toolbar';
@@ -21,8 +22,8 @@ const SettingsTab: React.FC = (): React.ReactElement => {
         <MemoryRouter initialEntries={[currentPath]} key={reloadCount}>
             <Toolbar />
             <Routes>
-                <Route path="/general" element={<General />} />
                 <Route path="/openapi-view" element={<OpenAPIView />} />
+                <Route path={'/about'} element={<About />} />
                 {/*<Route path="/openapi-entry-view" element={<OpenAPIEntry />} />*/}
             </Routes>
         </MemoryRouter>
