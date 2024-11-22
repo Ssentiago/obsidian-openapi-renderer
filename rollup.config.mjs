@@ -8,6 +8,13 @@ import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
 import { visualizer } from 'rollup-plugin-visualizer';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import css from "rollup-plugin-import-css";
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+import progress from 'rollup-plugin-progress';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const name = 'openapi-renderer';
 
@@ -23,6 +30,10 @@ const baseConfig = {
         alias({
             entries: [
                 {
+                    find: 'assets',
+                    replacement: path.resolve(__dirname, 'src/assets'),
+                },
+                {
                     find: 'react',
                     replacement: 'preact/compat',
                 },
@@ -32,6 +43,7 @@ const baseConfig = {
                 },
             ],
         }),
+        css({minify: true}),
         nodeResolve({
             preferBuiltins: true,
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -45,6 +57,9 @@ const baseConfig = {
             forceInline: true,
             targetPlatform: 'browser',
             format: 'cjs',
+        }),
+        progress({
+            clearLine: true,
         }),
     ],
 };
@@ -68,10 +83,6 @@ const developmentConfig = {
                 },
                 {
                     src: './manifest.json',
-                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
-                },
-                {
-                    src: './src/assets',
                     dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
                 },
                 {
