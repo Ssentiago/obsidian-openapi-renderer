@@ -3,131 +3,144 @@
 Integrate OpenAPI specification management into Obsidian with features for version control,
 visualization, editing, and easy navigation of API specs.
 
+## Why? 
+I once wrote documentation for my small project directly in Obsidian while working on the 
+database. Later, I needed to work with API documentation, so I started looking for suitable 
+solutions among Obsidian plugins. Not finding any good options, I decided to create a plugin 
+that allows writing Swagger UI documentation directly in Obsidian, without the need to switch 
+between different applications. I hope I’ve managed to create something useful. If you have any 
+suggestions for improvement, feel free to leave any issues here!
+
+
 ## Key features
 
 - Edit and view OpenAPI specifications using Swagger UI
 - Manage specification versions: create, view, restore, and delete
-- Access all tracked OpenAPI specifications in your vault
-
-<details>
-  <summary><h2>Roadmap</h2></summary>
-
-  - Enhance Version and Entry views  
- <s> Enhancing views with new features and improvements</s>  
-  <s>Adding support for $ref links~</s>
-
-</details>
+- Access all tracked OpenAPI specifications in your vault through a single user-friendly view 
+  interface
 
 ## Installation
 
-1. Copy plugin files to `.obsidian/plugins/openapi-renderer/` in your Obsidian vault. Or just
-   download it from Obsidian -> Community plugins.
-2. Enable the plugin in Obsidian settings (Settings → Community plugins).
+1. Manual:
+    1. Download the last release assets and copy them into your `.
+    obsidian/plugins/openapi-renderer` 
+       directory
+       (create it if it doesn’t exist)
+    2. Enable the plugin in Obsidian settings (Settings → Community plugins).
+2. Via the Community plugins Browser:
+    1. Go to `Settings` -> `Community plugins`, click on `Browse` button and search for 
+       `OpenAPI Renderer`. Install it
+    2. Enable the plugin in Obsidian settings (Settings → Community plugins).
 
-## How-to
+## What this plugin can do?
 
-### OpenAPI view
+**Note: You need to enable the `Detect all file extension` option in Settings -> Files and Links.**
 
-This view supports the following file extensions: yaml, json.
-In this view, you can use two modes:
+By default, this plugin processes all files with `.yaml` or `.json` extensions as OpenAPI specifications. When you open any YAML or JSON file in Explorer, it will open in OpenAPI View and be treated as an OpenAPI specification. You can configure this behavior in plugin settings: OpenAPI View -> `Register YAML and JSON for processing by default?`.
 
-- **Source Mode**: An editor based on CodeMirror that allows you to edit the file.
-- **Preview Mode**: Renders your specification in Swagger UI for visualization.
+The plugin has 4 main functions:
+1. Edit specification files
+2. Render them in Swagger UI
+3. Version control
+4. Overview of all specifications "registered" for versioning
 
-How to use it? Just open yaml / json file in your vault. Note that you need to enable `Detect
-all file extension` option in Settings -> Files and Links.  
+Versioning and sharing are optional features - you don't have to use them if you don't need them. The core functionality is editing and rendering.
+
+### Edit and Preview
+
+There are two ways to open the view for editing or previewing specifications:
+1. Select a specification file in Explorer (works when `Register YAML and JSON for processing by default?` is enabled)
+2. Right-click the file and select `Open in OpenAPI View`
+3. Through other views (Version and Entry)
+
+Both methods will open the OpenAPI View, which has two modes:
+- Source mode: A CodeMirror-based editor for file editing
+- Preview mode: Renders specification in Swagger UI, with $ref resolution support (this functionality hasn't been widely tested)
+
 How it looks:
 
-- **Source mode**:  
+- Source mode:  
   ![source](https://github.com/user-attachments/assets/d6e74610-6df6-49f6-8f4c-e28df1f92329)
-- **Preview mode**:  
+- Preview mode:  
   ![preview](https://github.com/user-attachments/assets/526a9347-353c-4e6f-b004-eb9455f0da70)
 
-**Available actions**:
+Available actions in the top actions bar:
 
-- **View**:
+- View:
     - Change mode (source / preview)
-    - Open OpenAPI Version view in new tab
-- **Source mode**:
+    - Open OpenAPI Version view for this file in the new tab
+- Source mode:
+    - Anchors (opens a modal with available anchors for this file)
+    - Extensions (you can enable or disable some extensions for the source mode. This applies locally)
     - Format content
     - Convert between yaml / json
     - Change theme mode (dark / light)
-- **Preview mode**:
+- Preview mode:
+    - Mode indicator (shows current rendering mode: "fast" when view is linked with another 
+      OpenAPI View and \$ref resolving is disabled, or "full" in non-linked mode with \$ref 
+      resolving enabled)
+    - Rerender the preview
     - Change theme mode (dark / light)
 
-### OpenAPI Version view
+### Versioning
 
-This view allows you to manage different versions of your OpenAPI specifications. You can create new
-versions, view existing ones, restore previous versions, and delete unnecessary ones, ensuring that
-your API documentation remains up-to-date and version-controlled. Additionally, you can compare
-versions side-by-side to see the differences between them
-How to use it: Open the view from the sidebar or directly from the OpenAPI View to start managing
-your spec versions.
+You can access this mode in two ways:
+1. Via action button in OpenAPI View
+2. Via action button for the file in Entry View
+
+This mode allows you to save and roll back to any version of your specifications. You can export versions as HTML and view differences between any two versions of a file.
+
+The Version View interface is divided into two parts:
+1. Draft version
+2. Version list
+
 How it looks:
 ![version](https://github.com/user-attachments/assets/523016f1-243d-4119-9f84-b3960c467c66)
 
-**Available actions**:
+Draft version is your current "raw" version from the file, not yet saved. You can save it to the Version list, preview it, and open it in OpenAPI View.
 
-- Export all versions as a Zip: Quickly export all saved versions of your specification as a single
-  Zip file
+Version list shows your specification versions and groups your specification versions by time 
+periods like "today", "yesterday", etc. 
 
-### OpenAPI Entry view
+Available actions for each version:
+- Preview
+- Restore to... (restores the file to selected version)
+- Diff (compare two selected versions)
+- Delete (soft delete - version won't be used in restore operations)
+- Restore (recovers a soft-deleted version)
+- Delete permanently (removes all data about selected version)
+- Export (exports selected version as HTML file for sharing or browser viewing)
 
-This view provides an overview of all your tracked OpenAPI specifications from the vault in one
-interface. For each specification, you can see the total version count and the date of the last
-update, making it easy to keep track of your API documentation.
+Top bar actions:
+- View:
+    - Export (exports all versions in one zip file as HTML)
 
-**From this view, you can:**
+### Overview
 
-- **Open spec in OpenAPI View:** Directly view and edit your specification.
-- **Open spec in Version View:** Manage versions, compare changes, and restore previous versions.
-- **Export spec as a Zip file:** Save the current specification and all its versions as a Zip file
-  for backup or sharing.
-- **Restore last version:** Replace the current content in the vault with the latest saved version (
-  creates the file if it does not exist).
-- **Remove version from tracking:** Stop tracking the file versions, but the file itself remains in
-  the vault.
+Access this view by clicking the "Open OpenAPI Entry View" button on the ribbon panel.
 
-**How to use it:** Open the Entry View from the ribbon menu on the left by pressing
-the `Open OpenAPI Entry View` button, or press `Ctrl + P` to open the command palette and search
-for `OpenAPI Entry`.
+This view provides a convenient interface to manage all specifications registered for tracking.
 
-**How it looks:**
+How it looks:
 ![entry](https://github.com/user-attachments/assets/64db46f5-b631-422e-a53b-597de37fb1e0)
 
-**Available actions:**
 
-- **Export all versions of all files as a Zip file:** Easily export all tracked specifications and
-  their versions as a single Zip file.
+When you open the view, you'll see the "Home" page. Click the "Browse" button in the top navigation bar to see your files.
 
-## Configuration
 
-Customize the plugin in the settings:
+The browse page displays specification files as cards in a grid layout. Each card shows the last update time and number of registered versions for that file.
 
-**General Section:**
+Available actions for each card (click the 'Plus' button to open):
+- Open in OpenAPI View
+- Open in Version View
+- Export (all data as HTML files in a zip)
+- Restore last file version (restores file in vault to last version, works even if file was 
+  deleted from the vault)
+- Remove file from tracking (removes all saved versions but keeps file in vault)
 
-- **Reset settings to default:** Restore all plugin settings to their original defaults.
-- **Download plugin's assets from GitHub release:** Download the plugin assets directly from the
-  GitHub release.
-- **Resources autoupdate on plugin update:** Automatically update resources when the plugin is
-  updated.
-
-**OpenAPI View:**
-
-- **Default view mode:** Set the default mode for viewing OpenAPI specifications (Source or
-  Preview).
-- **OpenAPI preview theme mode:** Choose the theme for the OpenAPI preview (Light, Dark).
-- **Synchronize OpenAPI preview theme mode with Obsidian theme mode:** Sync the preview theme with
-  the current Obsidian theme.
-- **OpenAPI source theme mode:** Choose the theme for the OpenAPI source editor (Light, Dark).
-- **Synchronize OpenAPI source theme mode with Obsidian theme mode:** Sync the source editor theme
-  with the current Obsidian theme.
-- **OpenAPI source light theme:** Customize the light theme for the OpenAPI source editor.
-- **OpenAPI source dark theme:** Customize the dark theme for the OpenAPI source editor.
-
-**OpenAPI Entry View:**
-
-- **Grid columns:** Set the number of columns displayed in the OpenAPI Entry view grid
+Top bar actions:
+- View:
+    - Export all files and their versions as a zip file
 
 ## Credits
 
