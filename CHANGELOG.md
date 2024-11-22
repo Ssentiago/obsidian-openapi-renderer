@@ -1,3 +1,21 @@
+# 4.4.0
+## What's New
+
+### Features
+- Plugin settings:
+    - Added an About page to provide essential plugin information.
+    - Removed the General page as it's no longer necessary. All required resources are now bundled with the plugin, eliminating the need for manual downloads.
+
+### Fixes
+- Resolved an issue where Preview mode was not working on Windows OS. Preview mode should now function correctly.
+
+
+# 4.3.0
+## What's new
+
+### Features
+- Add anchor links support to edit / preview view. Users can create anchor links to any lines, view them in a convenient modal window (opens by clicking on the anchor button on the action bar), as well as copy these anchor links and paste them into notes so that at any time by clicking on the link to go to a specific line in the editor. To add or remove an anchor link, simply click on the gutter in the editor. You can also add an anchor link with additional information - to do this, right-click on the gutter and select the related context menu item.
+
 # 4.2.0
 ### Features
 - Add resolving of external file $ref links
