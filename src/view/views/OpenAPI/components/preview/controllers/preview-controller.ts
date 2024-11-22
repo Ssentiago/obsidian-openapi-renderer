@@ -28,7 +28,6 @@ export default class OpenAPIPreviewController {
      */
     async initializePreview(): Promise<void> {
         this.initializeActions();
-        await this.initializeSwaggerUIBundle();
         this.preview.show();
     }
 
@@ -66,14 +65,5 @@ export default class OpenAPIPreviewController {
      */
     private initializeActions(): void {
         this.previewUtilController.initializeActions();
-    }
-
-    /**
-     * Initializes the Swagger UI bundle.
-     *
-     * @returns {Promise<void>} A promise that resolves when the Swagger UI bundle is initialized.
-     */
-    private async initializeSwaggerUIBundle(): Promise<void> {
-        await this.preview.plugin.resourceManager.initSwaggerUIBundle();
     }
 }

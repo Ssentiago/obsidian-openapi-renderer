@@ -1,23 +1,19 @@
+import SwaggerUiCss from 'assets/swagger-ui/swagger-ui-base.css';
+import SwaggerUiDarkCss from 'assets/swagger-ui/swagger-ui-dark.css';
+import SwaggerUiLightCss from 'assets/swagger-ui/swagger-ui-light.css';
 import { isObsidianDarkTheme } from 'view/common/helpers';
-import { RESOURCE_NAME } from 'view/typing/constants';
 import { Controller } from 'view/views/OpenAPI Version/controller/controller';
 
 export class VersionUtils {
     constructor(private readonly controller: Controller) {}
 
-    async getCombinedCSS(): Promise<string> {
-        const { plugin } = this.controller.versionView;
-        const baseCSS = await plugin.resourceManager.getCSS(
-            RESOURCE_NAME.BaseCSS
-        );
-
-        const isDarkMode = isObsidianDarkTheme();
-        const additionalCSSName = isDarkMode
-            ? RESOURCE_NAME.DarkThemeCSS
-            : RESOURCE_NAME.LightThemeCSS;
-        const additionalCSS =
-            await plugin.resourceManager.getCSS(additionalCSSName);
-
-        return `${baseCSS}\n${additionalCSS}`;
+    getCombinedCSS(): string {
+        let additionalCSS = '';
+        if (isObsidianDarkTheme()) {
+            additionalCSS = SwaggerUiDarkCss;
+        } else {
+            additionalCSS = SwaggerUiLightCss;
+        }
+        return `${SwaggerUiCss}\n${additionalCSS}`;
     }
 }

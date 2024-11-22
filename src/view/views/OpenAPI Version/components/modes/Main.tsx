@@ -55,13 +55,7 @@ const Main: React.FC<{
     };
 
     if (mode === 'Preview' && currentSpec) {
-        return (
-            <Preview
-                view={view}
-                data={handlePreviewData(currentSpec)}
-                resourceManager={view.plugin.resourceManager}
-            />
-        );
+        return <Preview view={view} data={handlePreviewData(currentSpec)} />;
     }
 
     if (mode === 'Diff' && selectedSpecs.length === 2) {
