@@ -1,3 +1,12 @@
+# 4.5.0
+# What's New
+
+## Features
+- Added a file menu item in the file manager to open files in OpenAPI View.
+- Introduced a new option to the plugin settings to enable or disable the default registration of YAML and JSON files for processing.
+    - When disabled, clicking on a spec file in the file manager won't open it in OpenAPI View.
+    - However, you can still open it via the right-click context menu by selecting `Open in OpenAPI View`.
+
 # 4.4.0
 ## What's New
 
