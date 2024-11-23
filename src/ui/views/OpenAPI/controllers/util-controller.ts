@@ -1,5 +1,6 @@
 import { EventID } from 'events-management/typing/constants';
 import { SwitchModeStateEvent } from 'events-management/typing/interfaces';
+import { OPENAPI_VIEW } from 'ui/typing/types';
 import { OpenAPIController } from 'ui/views/OpenAPI/controllers/view-controller';
 
 export class UtilController {
@@ -17,8 +18,13 @@ export class UtilController {
         this.controller.view.leaf.setGroup('openapi-renderer-view-group');
         const leaf = this.controller.view.app.workspace.getLeaf(mode);
         await leaf.setViewState({
-            ...oldState,
+            type: OPENAPI_VIEW,
+            active: true,
+            state: {
+                file: oldState.state.file,
+            },
         });
+        await this.controller.view.app.workspace.revealLeaf(leaf);
         leaf.setGroup('openapi-renderer-view-group');
         this.controller.view.leaf.setGroupMember(leaf);
     }
