@@ -3,7 +3,7 @@ import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import React, { Fragment } from 'react';
 import { ReactObsidianSetting } from 'react-obsidian-setting';
 import { useSettingsContext } from 'settings/components/core/context';
-import { UserExtensions } from 'view/views/OpenAPI/components/source/typing/interfaces';
+import { UserExtensions } from 'ui/views/OpenAPI/components/source/typing/interfaces';
 
 /**
  * The component that renders the OpenAPI View settings section

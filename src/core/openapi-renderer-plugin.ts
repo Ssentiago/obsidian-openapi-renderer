@@ -6,11 +6,11 @@ import Export from 'export/export';
 import { addIcon, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
 import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
-import { createNewLeaf } from 'view/common/helpers';
-import { EntryView } from 'view/views/OpenAPI Entry/entry-view';
-import { VersionView } from 'view/views/OpenAPI Version/version-view';
-import { ExtensionManager } from 'view/views/OpenAPI/components/source/managers/extension-manager';
-import { OpenAPIView } from 'view/views/OpenAPI/openapi-view';
+import { createNewLeaf } from 'ui/common/helpers';
+import { EntryView } from 'ui/views/OpenAPI Entry/entry-view';
+import { VersionView } from 'ui/views/OpenAPI Version/version-view';
+import { ExtensionManager } from 'ui/views/OpenAPI/components/source/managers/extension-manager';
+import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
@@ -20,7 +20,7 @@ import {
     OPENAPI_ENTRY_VIEW,
     OPENAPI_VERSION_VIEW,
     OPENAPI_VIEW,
-} from '../view/typing/types';
+} from '../ui/typing/types';
 
 export default class OpenAPIRendererPlugin extends Plugin {
     settings!: DefaultSettings;
