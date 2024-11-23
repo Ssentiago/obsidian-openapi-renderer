@@ -44,7 +44,7 @@ The plugin has 4 main functions:
 3. Version control
 4. Overview of all specifications "registered" for versioning
 
-Versioning and sharing are optional features - you don't have to use them if you don't need them. The core functionality is editing and rendering.
+Versioning and overview are optional features - you don't have to use them if you don't need them. The core functionality is editing and rendering.
 
 ### Edit and Preview
 
