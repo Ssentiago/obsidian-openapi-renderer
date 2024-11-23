@@ -1,3 +1,10 @@
+# 4.5.1
+# What's new
+
+# Fixes
+- Resolve the bug where files were also opened in the default application when creating a new linked view, occurring when the 'Register YAML and JSON extensions' setting is disabled.
+  There is a known issue where, if you have multiple linked OpenAPI views open and then close and reopen the Obsidian application, Obsidian will open the files from these linked views in the default application.
+
 # 4.5.0
 # What's New
 
