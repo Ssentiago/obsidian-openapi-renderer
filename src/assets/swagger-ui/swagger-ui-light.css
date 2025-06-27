@@ -22,3 +22,11 @@ html {
     color: #24292f !important;
     border: 1px solid #d0d7de !important;
 }
+
+/* Fix syntax highlighting colors for light mode */
+.swagger-ui .opblock-body pre.microlight span {
+    text-shadow: none !important;
+    opacity: 1 !important;
+    color: #24292f !important;
+    font-style: normal !important;
+}
