@@ -11,7 +11,14 @@ html {
 }
 
 .swagger-ui .opblock-body pre.microlight, .swagger-ui textarea.curl {
-    background: #f6f8fa;
+    background: #f6f8fa !important;
     border-radius: 4px;
-    color: #24292f;
+    color: #24292f !important;
+}
+
+/* Additional specific selectors for curl section */
+.swagger-ui textarea.curl {
+    background: #f6f8fa !important;
+    color: #24292f !important;
+    border: 1px solid #d0d7de !important;
 }
