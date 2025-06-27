@@ -9,3 +9,9 @@ html {
     box-sizing: border-box;
     filter: contrast(100%) brightness(100%) saturate(100%);
 }
+
+.swagger-ui .opblock-body pre.microlight, .swagger-ui textarea.curl {
+    background: #f6f8fa;
+    border-radius: 4px;
+    color: #24292f;
+}
