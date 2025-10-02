@@ -62,6 +62,27 @@ export function convertData(data: string, extension: string): string {
     }
 }
 
+// TODO не забыть. это ещё обновлять во всех функциях
+export function newConvertData(
+    data: string,
+    out: 'json' | 'yaml',
+    format?: boolean
+): string {
+    const object = yaml.load(data);
+    switch (out) {
+        case 'json':
+            return format
+                ? JSON.stringify(object, null, 2)
+                : JSON.stringify(object);
+        case 'yaml':
+            return format
+                ? yaml.dump(object, { indent: 2 })
+                : yaml.dump(object);
+        default:
+            throw new Error(`Unsupported file extension: ${out}`);
+    }
+}
+
 /**
  * Checks if the current Obsidian theme is dark
  * @returns true if the Obsidian theme is dark, false otherwise

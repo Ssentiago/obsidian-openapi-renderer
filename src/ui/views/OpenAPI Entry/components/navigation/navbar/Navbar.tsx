@@ -1,4 +1,4 @@
-import { File, Globe, Home } from 'lucide-react';
+import { ChartBar, File, Globe, Home } from 'lucide-react';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
@@ -15,11 +15,11 @@ const Navbar: React.FC = () => {
                     <Home /> Home
                 </NavbarTab>
                 <NavbarTab as={NavLink} to={'/browse'}>
-                    <Globe /> Browse
+                    <Globe /> Browse tracked files
                 </NavbarTab>
-                {/*<NavbarTab as={NavLink} to={'/file'}>*/}
-                {/*    <File /> FileManager*/}
-                {/*</NavbarTab>*/}
+                <NavbarTab as={NavLink} to={'/stat'}>
+                    <ChartBar /> Stats
+                </NavbarTab>
             </NavbarTabs>
         </NavbarContainer>
     );

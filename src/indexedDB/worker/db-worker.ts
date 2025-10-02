@@ -92,7 +92,6 @@ self.onmessage = async (event: MessageEvent<WorkerMessage>): Promise<void> => {
                     type: ResponseType.Success,
                     payload: { data: allData },
                 });
-
                 break;
             case MessageType.IsFileTracked:
                 const filePath = payload.data.path;

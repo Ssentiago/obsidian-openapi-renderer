@@ -1,18 +1,10 @@
-import {
-    Description,
-    EntryContainer,
-    WelcomeMessage,
-} from 'ui/views/OpenAPI Entry/components/pages/home/styled/styled';
-import Navbar from 'ui/views/OpenAPI Entry/components/navigation/navbar/navbar-component';
+import Overview from 'ui/views/OpenAPI Entry/components/pages/home/components/overview/Overview';
+import { EntryContainer } from 'ui/views/OpenAPI Entry/components/pages/home/styled/styled';
 
 const Home = () => {
     return (
         <EntryContainer>
-            <WelcomeMessage>OpenAPI Entry</WelcomeMessage>
-            <Description>
-                Start by browsing your existing files to continue working on
-                your API projects.
-            </Description>
+            <Overview />
         </EntryContainer>
     );
 };

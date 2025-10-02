@@ -1,7 +1,7 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { EventID } from 'events-management/typing/constants';
 import { OpenAPIRendererEvent } from 'events-management/typing/interfaces';
-import { Events, View } from 'obsidian';
+import { EventRef, Events, View } from 'obsidian';
 
 /**
  * Abstract class representing a Publisher.
@@ -78,7 +78,7 @@ export class EventObserver extends Observer {
         emitter: Events,
         eventID: EventID,
         handler: (event: T) => Promise<void>
-    ): void {
+    ) {
         const eventRef = emitter.on(eventID, async (...data: unknown[]) => {
             const event = data[0] as OpenAPIRendererEvent;
             await handler(event as T);
@@ -93,6 +93,8 @@ export class EventObserver extends Observer {
             emitterSubs.set(eventID, []);
         }
         emitterSubs.get(eventID)!.push(() => emitter.offref(eventRef));
+
+        return eventRef;
     }
 
     /**

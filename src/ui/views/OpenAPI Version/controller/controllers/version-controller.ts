@@ -6,7 +6,7 @@ import {
 } from 'indexedDB/typing/interfaces';
 import { moment } from 'obsidian';
 import pako from 'pako';
-import { convertData } from 'ui/common/helpers';
+import { newConvertData } from 'ui/common/helpers';
 import { ModalFormData } from 'ui/views/OpenAPI Version/components/modes/normal/modals/save-current-version-modal/save-current-version-modal';
 import { Controller } from 'ui/views/OpenAPI Version/controller/controller';
 
@@ -82,7 +82,7 @@ export default class VersionController {
         const name = formData.specName;
         const version = formData.specVersion;
 
-        const currentViewData = convertData(view.data, file.extension);
+        const currentViewData = newConvertData(view.data, 'json');
 
         if (view.versions.length === 0) {
             isFull = true;

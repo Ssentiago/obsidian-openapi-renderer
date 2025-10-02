@@ -14,7 +14,6 @@ export class EntryController {
 
     constructor(public view: EntryView) {
         this.helper = new WorkerHelper();
-        this.initializeActions();
     }
 
     async getEntryViewData(): Promise<EntryViewData> {
@@ -92,24 +91,23 @@ export class EntryController {
         return undefined;
     }
 
-    /**
-     * Initializes the actions for the view.
-     *
-     * Adds a 'download' action to the view, which exports all saved data when triggered.
-     *
-     * @return {void}
-     */
-    initializeActions(): void {
-        this.view.addAction(
-            'download',
-            'Export all versions of all tracked files as a ZIP archive',
-            async () => {
-                const allData = await this.getAllTheExportData();
-                if (allData) {
-                    await this.view.plugin.export.export(allData);
-                    this.view.plugin.showNotice('Exported successfully');
-                }
-            }
-        );
+    async exportAllData() {
+        const allData = await this.getAllTheExportData();
+        debugger;
+
+        if (!allData) {
+            this.view.plugin.showNotice('Cannot export data. Check the logs');
+            return;
+        }
+
+        if (Object.keys(allData).length === 0) {
+            this.view.plugin.showNotice(
+                'No data to export yet. Save something first!'
+            );
+            return;
+        }
+
+        await this.view.plugin.export.export(allData);
+        this.view.plugin.showNotice('Exported successfully');
     }
 }

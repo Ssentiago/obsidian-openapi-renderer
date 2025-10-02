@@ -1,6 +1,6 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { specData } from 'export/interfaces';
-import { App } from 'obsidian';
+import { App, TAbstractFile, TFile, TFolder } from 'obsidian';
 import React, {
     createContext,
     ReactNode,
@@ -17,6 +17,10 @@ interface EntryContextProps {
     plugin: OpenAPIRendererPlugin;
     specData: EntryViewData;
     setSpecData: React.Dispatch<React.SetStateAction<EntryViewData>>;
+    folderMap: Map<TFolder | null, TAbstractFile[]>;
+    setFolderMap: React.Dispatch<
+        React.SetStateAction<Map<TFolder | null, TAbstractFile[]>>
+    >;
     // columnValue: number;
     // setColumnValue: React.Dispatch<React.SetStateAction<number>>;
     // detailsOpen: Record<string, boolean>;
@@ -37,6 +41,12 @@ export const EntryProvider: React.FC<{
 }> = ({ view, app, plugin, children }) => {
     const [specData, setSpecData] = useState<EntryViewData>({});
 
+    const [folderMap, setFolderMap] = useState<
+        Map<TFolder | null, TAbstractFile[]>
+    >(new Map());
+
+    const [flattenMap, setFlattenMap] = useState<TFile[]>([]);
+
     const contextValue = useMemo(
         () => ({
             view,
@@ -44,8 +54,10 @@ export const EntryProvider: React.FC<{
             plugin,
             specData,
             setSpecData,
+            folderMap,
+            setFolderMap,
         }),
-        [view, app, plugin, specData, setSpecData]
+        [view, app, plugin, specData, setSpecData, folderMap, setFolderMap]
     );
 
     return (

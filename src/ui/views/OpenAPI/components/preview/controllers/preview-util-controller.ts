@@ -2,12 +2,12 @@ import { ApiRefOptions, ApiRefResolution } from '@apiture/api-ref-resolver';
 import { ApiRefResolver } from '@apiture/api-ref-resolver/lib/src/ApiRefResolver';
 import { EventID } from 'events-management/typing/constants';
 import {
-    SourceChangedEvent,
     PreviewStateEvent,
+    SourceChangedEvent,
     SwitchModeStateEvent,
 } from 'events-management/typing/interfaces';
 import path from 'path';
-import { convertData, updateButton } from 'ui/common/helpers';
+import { newConvertData, updateButton } from 'ui/common/helpers';
 import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
 
 export class PreviewUtilController {
@@ -72,8 +72,9 @@ export class PreviewUtilController {
     onChangeLoadSpec(): Record<string, any> | null {
         const data = this.controller.preview.openAPIView.data;
         const ext = this.controller.preview.openAPIView.file?.extension ?? '';
+        const newExt = ext === 'json' ? 'yaml' : 'json';
         try {
-            const converted = JSON.parse(convertData(data, ext));
+            const converted = JSON.parse(newConvertData(data, newExt));
             this.publishStateEvent('fast');
             return converted;
         } catch (err: any) {

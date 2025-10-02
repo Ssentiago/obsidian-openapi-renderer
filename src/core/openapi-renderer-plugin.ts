@@ -6,7 +6,6 @@ import Export from 'export/export';
 import { addIcon, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
 import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
-import { createNewLeaf } from 'ui/common/helpers';
 import { EntryView } from 'ui/views/OpenAPI Entry/entry-view';
 import { VersionView } from 'ui/views/OpenAPI Version/version-view';
 import { ExtensionManager } from 'ui/views/OpenAPI/components/source/managers/extension-manager';
@@ -137,32 +136,36 @@ export default class OpenAPIRendererPlugin extends Plugin {
             this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW);
         }
 
-        this.app.workspace.on('file-menu', (menu, file) => {
-            if (!(file instanceof TFile)) {
-                return;
-            }
+        this.registerEvent(
+            this.app.workspace.on('file-menu', (menu, file) => {
+                if (!(file instanceof TFile)) {
+                    return;
+                }
 
-            if (
-                !['yaml', 'yml', 'json'].includes(file.extension.toLowerCase())
-            ) {
-                return;
-            }
-            menu.addItem((item) => {
-                item.setIcon('circle-dot');
-                item.setTitle('Open in OpenAPI View');
-                item.onClick(async () => {
-                    const leaf = this.app.workspace.getLeaf(true);
-                    await leaf.setViewState({
-                        type: OPENAPI_VIEW,
-                        active: true,
-                        state: {
-                            file: file.path,
-                        },
+                if (
+                    !['yaml', 'yml', 'json'].includes(
+                        file.extension.toLowerCase()
+                    )
+                ) {
+                    return;
+                }
+                menu.addItem((item) => {
+                    item.setIcon('circle-dot');
+                    item.setTitle('Open in OpenAPI View');
+                    item.onClick(async () => {
+                        const leaf = this.app.workspace.getLeaf(true);
+                        await leaf.setViewState({
+                            type: OPENAPI_VIEW,
+                            active: true,
+                            state: {
+                                file: file.path,
+                            },
+                        });
+                        await this.app.workspace.revealLeaf(leaf);
                     });
-                    await this.app.workspace.revealLeaf(leaf);
                 });
-            });
-        });
+            })
+        );
 
         this.registerView(
             OPENAPI_VERSION_VIEW,
@@ -200,7 +203,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.registerObsidianProtocolHandler(
             'openapi-open',
             async ({ openapiPath, line }) => {
-                if (!openapiPath || !line) {
+                if (!openapiPath) {
                     return;
                 }
 
@@ -214,9 +217,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
                     return;
                 }
 
-                const isValidOpenApi = Boolean(
-                    openapiPath.match(/\.(json|yaml|yml)$/i)
-                );
+                const isValidOpenApi = /.(ya?ml|json)$/.test(openapiPath);
 
                 if (!isValidOpenApi) {
                     this.showNotice(
@@ -238,15 +239,17 @@ export default class OpenAPIRendererPlugin extends Plugin {
                 if (!editor) {
                     return;
                 }
-                const pos = editor.state.doc.line(Number(line)).from;
-                if (pos) {
-                    editor.dispatch({
-                        selection: {
-                            anchor: pos,
-                            head: pos,
-                        },
-                        scrollIntoView: true,
-                    });
+                if (line) {
+                    const pos = editor.state.doc.line(Number(line)).from;
+                    if (pos) {
+                        editor.dispatch({
+                            selection: {
+                                anchor: pos,
+                                head: pos,
+                            },
+                            scrollIntoView: true,
+                        });
+                    }
                 }
             }
         );

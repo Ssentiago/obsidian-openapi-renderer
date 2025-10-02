@@ -1,6 +1,6 @@
 import { ExternalLink, Eye, Save } from 'lucide-react';
 import React from 'react';
-import { convertData, createNewLeaf } from 'ui/common/helpers';
+import { createNewLeaf, newConvertData } from 'ui/common/helpers';
 import { OPENAPI_VIEW } from 'ui/typing/types';
 import { useSpecificationContext } from 'ui/views/OpenAPI Version/components/core/context';
 import { RestoredLabel } from 'ui/views/OpenAPI Version/components/modes/normal/components/draft-version/styled/draftVersionStyled';
@@ -26,9 +26,9 @@ const DraftVersion: React.FC<{
         if (!file) {
             return;
         }
-        const data = convertData(
+        const data = newConvertData(
             await view.app.vault.cachedRead(file),
-            file.extension
+            'json'
         );
 
         setCurrentSpec(data);
