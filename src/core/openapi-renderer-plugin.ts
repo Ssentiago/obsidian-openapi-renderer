@@ -1,7 +1,4 @@
-import {
-    EventObserver,
-    EventPublisher,
-} from 'events-management/events-management';
+import EventEmitter2 from 'eventemitter2';
 import Export from 'export/export';
 import { addIcon, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
@@ -10,6 +7,7 @@ import { EntryView } from 'ui/views/OpenAPI Entry/entry-view';
 import { VersionView } from 'ui/views/OpenAPI Version/version-view';
 import { ExtensionManager } from 'ui/views/OpenAPI/components/source/managers/extension-manager';
 import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
+
 import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import { FileWatcher } from '../filewatcher/filewatcher';
@@ -25,13 +23,12 @@ export default class OpenAPIRendererPlugin extends Plugin {
     settings!: DefaultSettings;
     settingsTab!: OpenAPISettingTab;
     logger!: LoggingManager;
-    publisher!: EventPublisher;
-    observer!: EventObserver;
     settingsManager!: SettingsManager;
     export!: Export;
     fileWatcher!: FileWatcher;
     workerHelper!: WorkerHelper;
     sourceExtensionsManager!: ExtensionManager;
+    emitter!: EventEmitter2;
 
     /**
      * Lifecycle method called when the plugin is loaded.
@@ -88,6 +85,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
      */
     private async initializeCore(): Promise<void> {
         await this.settingsManager.loadSettings();
+        this.emitter = new EventEmitter2({ delimiter: '.', wildcard: true });
         this.logger = new LoggingManager(this);
         this.workerHelper = new WorkerHelper();
     }
@@ -103,18 +101,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
     private initializeManagers(): void {
         this.settingsManager = new SettingsManager(this);
         this.sourceExtensionsManager = new ExtensionManager(this);
-    }
-
-    /**
-     * Initializes the event system components of the plugin.
-     *
-     * This method creates and initializes the event publisher and observer.
-     *
-     * @private
-     */
-    private initializeEventSystem(): void {
-        this.publisher = new EventPublisher(this);
-        this.observer = new EventObserver(this);
     }
 
     /**

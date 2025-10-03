@@ -30,6 +30,7 @@
     "@uiw/codemirror-theme-vscode": "^4.25.2",
     "cross-env": "^10.1.0",
     "dexie": "^4.0.8",
+    "eventemitter2": "^6.4.9",
     "js-yaml": "^4.1.0",
     "jsondiffpatch": "^0.6.2",
     "lucide-react": "^0.544.0",
