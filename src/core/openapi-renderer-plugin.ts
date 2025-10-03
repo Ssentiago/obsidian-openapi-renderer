@@ -20,6 +20,8 @@ import {
 } from '../ui/typing/types';
 
 export default class OpenAPIRendererPlugin extends Plugin {
+    noticeEl?: HTMLElement;
+
     settings!: DefaultSettings;
     settingsTab!: OpenAPISettingTab;
     logger!: LoggingManager;
@@ -265,13 +267,17 @@ export default class OpenAPIRendererPlugin extends Plugin {
     }
 
     /**
-     * Displays a notice to the user with the given message.
+     * An alias for `new Notice` element creating.
      *
-     * @param message The message to be displayed to the user.
-     * @param duration The duration, in milliseconds, that the notice should be displayed.
-     * @param messageType The message type of the notice.
+     * Saves the message object, deletes the old one on a call to avoid message spam
+     *
+     * @param message - The notice message to be displayed
+     * @param duration - The duration for which the notice should be displayed. If undefined, that message will be displayed until the user interacts with it explicitly
+     * @returns void
      */
     showNotice(message: string, duration?: number): void {
-        new Notice(message, duration);
+        this.noticeEl?.remove();
+        const notice = new Notice(message, duration);
+        this.noticeEl = notice.containerEl;
     }
 }
