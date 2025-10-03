@@ -7,6 +7,7 @@ import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
 import { visualizer } from 'rollup-plugin-visualizer';
+
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import css from "rollup-plugin-import-css";
 import { fileURLToPath } from 'url';
@@ -16,7 +17,6 @@ import progress from 'rollup-plugin-progress';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const name = 'openapi-renderer';
 
 const baseConfig = {
     input: 'src/main.ts',
@@ -58,9 +58,6 @@ const baseConfig = {
             targetPlatform: 'browser',
             format: 'cjs',
         }),
-        progress({
-            clearLine: true,
-        }),
     ],
 };
 
@@ -71,7 +68,6 @@ const developmentConfig = {
         sourcemap: false,
         format: 'cjs',
         exports: 'auto',
-        name,
     },
     plugins: [
         ...baseConfig.plugins,
@@ -97,7 +93,6 @@ const developmentConfig = {
 const productionConfig = {
     ...baseConfig,
     output: {
-        name,
         dir: 'dist',
         sourcemap: false,
         sourcemapExcludeSources: true,
