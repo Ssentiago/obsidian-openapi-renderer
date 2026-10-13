@@ -2,7 +2,7 @@ import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { Specification } from 'indexedDB/database/specification';
 import { App } from 'obsidian';
 import React, { useRef, useState } from 'react';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 import { useSpecificationContext } from 'ui/views/OpenAPI Version/components/core/context';
 import { isValidVersion } from 'ui/views/OpenAPI Version/components/modes/normal/modals/save-current-version-modal/components/utils/isValidVersion';
 import {
@@ -65,9 +65,9 @@ const Application: React.FC<{
 
     return (
         <>
-            <ReactObsidianSetting name={'Required Fields'} setHeading={true} />
+            <OSetting name={'Required Fields'} heading={true} />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Version Name'}
                 desc={
                     'Please provide a name for the new version of your specification.'
@@ -82,7 +82,7 @@ const Application: React.FC<{
                     },
                 ]}
             />
-            <ReactObsidianSetting
+            <OSetting
                 name={'Version Number'}
                 desc={'Enter a version number for this specification.'}
                 class={'required-field'}
@@ -97,7 +97,7 @@ const Application: React.FC<{
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 addButtons={[
                     (button) => {
                         button.setIcon('save');

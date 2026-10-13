@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 import {
     AdditionalDataModal,
     SubmitData,
@@ -24,7 +24,7 @@ const Application: React.FC<{
                 </h4>
             </div>
 
-            <ReactObsidianSetting
+            <OSetting
                 name="Label"
                 addTexts={[
                     (input) => {
@@ -36,7 +36,7 @@ const Application: React.FC<{
                     },
                 ]}
             />
-            <ReactObsidianSetting
+            <OSetting
                 name={'Comment'}
                 addTexts={[
                     (input) => {
@@ -49,7 +49,7 @@ const Application: React.FC<{
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 addButtons={[
                     (button) => {
                         button.setIcon('save');

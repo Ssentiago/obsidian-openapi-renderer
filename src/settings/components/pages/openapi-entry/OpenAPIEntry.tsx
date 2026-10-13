@@ -1,7 +1,7 @@
 import { EventID } from 'events-management/typing/constants';
 import { ChangeGridColumnsStateEvent } from 'events-management/typing/interfaces';
 import React from 'react';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 import { useSettingsContext } from 'settings/components/core/context';
 
 /**
@@ -18,7 +18,7 @@ const OpenAPIEntry: React.FC = () => {
 
     return (
         <>
-            <ReactObsidianSetting
+            <OSetting
                 name={'Grid Layout Columns'}
                 addDropdowns={[
                     (dropdown) => {

@@ -1,13 +1,13 @@
 import React from 'react';
 import { ButtonComponent, Notice } from 'obsidian';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 import { useSettingsContext } from '../../../core/context';
 import { useLocation } from 'react-router-dom';
 
 /**
  * A React component that renders a button to reset settings to their default values.
  *
- * This component uses `ReactObsidianSetting` to add a button with an icon and
+ * This component uses `OSetting` to add a button with an icon and
  * tooltip. When clicked, it resets the plugin settings, reloads the settings,
  * updates the CSS properties, and displays a notice to the user.
  *
@@ -22,7 +22,7 @@ const ResetSettings: React.FC = () => {
     const location = useLocation();
 
     return (
-        <ReactObsidianSetting
+        <OSetting
             addButtons={[
                 (button): ButtonComponent => {
                     button.setIcon('rotate-ccw');

@@ -1,7 +1,7 @@
 import { AnchorData } from 'indexedDB/database/anchor';
 import { moment } from 'obsidian';
 import React, { useRef, useState } from 'react';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 import { AnchorModal } from 'ui/views/OpenAPI/components/source/modals/anchors-modal/anchor-modal';
 import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 
@@ -38,7 +38,7 @@ const Application: React.FC<{ source: OpenAPISource; modal: AnchorModal }> = ({
             const line = source.editor!.state.doc.lineAt(anchor.pos);
 
             return (
-                <ReactObsidianSetting
+                <OSetting
                     key={anchor.pos.toString()}
                     name={`${anchor.label ?? anchor.line}`}
                     addMultiDesc={(multiDesc) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSettingsContext } from '../../core/context';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 
 /**
  * The About component renders settings options for visiting the GitHub page and
@@ -14,7 +14,7 @@ const About: React.FC = () => {
 
     return (
         <>
-            <ReactObsidianSetting
+            <OSetting
                 name={'Visit GitHub page of this plugin'}
                 addButtons={[
                     (button) => {
@@ -29,7 +29,7 @@ const About: React.FC = () => {
                     },
                 ]}
             />
-            <ReactObsidianSetting
+            <OSetting
                 name={'Do you have any feedback?'}
                 addButtons={[
                     (button) => {

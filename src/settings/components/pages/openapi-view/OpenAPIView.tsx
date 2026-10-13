@@ -1,7 +1,7 @@
 import { EventID } from 'events-management/typing/constants';
 import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import React, { Fragment } from 'react';
-import { ReactObsidianSetting } from 'react-obsidian-setting';
+import { OSetting } from '@obsidian-lib/native-react-components';
 import { useSettingsContext } from 'settings/components/core/context';
 import { UserExtensions } from 'ui/views/OpenAPI/components/source/typing/interfaces';
 
@@ -15,7 +15,7 @@ const OpenAPIView: React.FC = () => {
 
     return (
         <>
-            <ReactObsidianSetting
+            <OSetting
                 name="Register YAML and JSON files for processing by default?"
                 addMultiDesc={(multiDesc) => {
                     multiDesc.addDescriptions([
@@ -36,7 +36,7 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'OpenAPI View default mode'}
                 desc={'Select default mode for viewing OpenAPI View'}
                 addDropdowns={[
@@ -54,9 +54,9 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting name={'Preview'} setHeading />
+            <OSetting name={'Preview'} heading />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Preview theme mode'}
                 addDropdowns={[
                     (dropdown) => {
@@ -73,7 +73,7 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Synchronize preview theme'}
                 desc={'Synchronize preview theme mode with Obsidian theme mode'}
                 addToggles={[
@@ -95,9 +95,9 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting name={'Source'} setHeading />
+            <OSetting name={'Source'} heading />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Source theme mode'}
                 addDropdowns={[
                     (dropdown) =>
@@ -122,7 +122,7 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Synchronize source theme'}
                 desc={'Synchronize source theme mode with Obsidian theme mode'}
                 addToggles={[
@@ -144,7 +144,7 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Source light theme'}
                 addDropdowns={[
                     (dropdown) =>
@@ -169,7 +169,7 @@ const OpenAPIView: React.FC = () => {
                 ]}
             />
 
-            <ReactObsidianSetting
+            <OSetting
                 name={'Source dark theme'}
                 addDropdowns={[
                     (dropdown) =>
@@ -198,7 +198,7 @@ const OpenAPIView: React.FC = () => {
                 <summary>Extensions</summary>
                 {Object.entries(plugin.settings.extensions).map(
                     ([id, extension]) => (
-                        <ReactObsidianSetting
+                        <OSetting
                             name={extension.name}
                             key={id}
                             noBorder
