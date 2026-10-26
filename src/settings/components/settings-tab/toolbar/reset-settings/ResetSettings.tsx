@@ -1,15 +1,17 @@
 import React from 'react';
-import { ButtonComponent, Notice } from 'obsidian';
-import { OSetting } from '@obsidian-lib/native-react-components';
+import { Notice } from 'obsidian';
+import {
+    OButton,
+    OSetting,
+} from '@obsidian-lib/native-react-components';
 import { useSettingsContext } from '../../../core/context';
 import { useLocation } from 'react-router-dom';
 
 /**
  * A React component that renders a button to reset settings to their default values.
  *
- * This component uses `OSetting` to add a button with an icon and
- * tooltip. When clicked, it resets the plugin settings, reloads the settings,
- * updates the CSS properties, and displays a notice to the user.
+ * This component uses `OSetting` with an `OButton` to reset the plugin settings,
+ * reload the settings, and display a notice to the user.
  *
  * It also updates the current path in the settings context based on the current
  * location.
@@ -22,21 +24,18 @@ const ResetSettings: React.FC = () => {
     const location = useLocation();
 
     return (
-        <OSetting
-            addButtons={[
-                (button): ButtonComponent => {
-                    button.setIcon('rotate-ccw');
-                    button.setTooltip('Reset settings to default');
-                    button.onClick(async () => {
-                        setCurrentPath(location.pathname);
-                        await plugin.settingsManager.resetSettings();
-                        forceReload();
-                        new Notice('Settings have been reset to default.');
-                    });
-                    return button;
-                },
-            ]}
-        />
+        <OSetting>
+            <OButton
+                icon={'rotate-ccw'}
+                tooltip={'Reset settings to default'}
+                onClick={async () => {
+                    setCurrentPath(location.pathname);
+                    await plugin.settingsManager.resetSettings();
+                    forceReload();
+                    new Notice('Settings have been reset to default.');
+                }}
+            />
+        </OSetting>
     );
 };
 

@@ -27,7 +27,7 @@
         "@codemirror/state": "^6.5.2",
         "@codemirror/view": "^6.38.4",
         "@lezer/common": "^1.2.3",
-        "@obsidian-lib/native-react-components": "^0.0.21",
+        "@obsidian-lib/native-react-components": "https://github.com/Ssentiago/native-react-components/releases/download/0.1.0/native-react-components.tgz",
         "@uiw/codemirror-theme-vscode": "^4.25.2",
         "cross-env": "^10.1.0",
         "dexie": "^4.0.8",

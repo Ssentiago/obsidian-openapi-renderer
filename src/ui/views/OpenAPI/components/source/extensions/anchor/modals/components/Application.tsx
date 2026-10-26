@@ -1,5 +1,10 @@
-import React, { useRef } from 'react';
-import { OSetting } from '@obsidian-lib/native-react-components';
+import React, { useState } from 'react';
+import {
+    OButton,
+    OSetting,
+    OText,
+    SettingRoot,
+} from '@obsidian-lib/native-react-components';
 import {
     AdditionalDataModal,
     SubmitData,
@@ -13,59 +18,38 @@ const Application: React.FC<{
         line: number;
     };
 }> = ({ onSubmit, modal, contextData }) => {
-    const labelRef = useRef<string>('');
-    const commentRef = useRef<string>('');
+    const [label, setLabel] = useState('');
+    const [comment, setComment] = useState('');
 
     return (
-        <>
+        <SettingRoot>
             <div>
                 <h4>
                     {contextData.line}: {contextData.string}
                 </h4>
             </div>
 
-            <OSetting
-                name="Label"
-                addTexts={[
-                    (input) => {
-                        input.setValue(labelRef.current);
-                        input.onChange((value) => {
-                            labelRef.current = value;
-                        });
-                        return input;
-                    },
-                ]}
-            />
-            <OSetting
-                name={'Comment'}
-                addTexts={[
-                    (input) => {
-                        input.setValue(commentRef.current);
-                        input.onChange((value) => {
-                            commentRef.current = value;
-                        });
-                        return input;
-                    },
-                ]}
-            />
+            <OSetting name="Label">
+                <OText value={label} onChange={setLabel} />
+            </OSetting>
+            <OSetting name={'Comment'}>
+                <OText value={comment} onChange={setComment} />
+            </OSetting>
 
-            <OSetting
-                addButtons={[
-                    (button) => {
-                        button.setIcon('save');
-                        button.setTooltip('Save and exit');
-                        button.onClick(() => {
-                            onSubmit({
-                                label: labelRef.current,
-                                comment: commentRef.current,
-                            });
-                            modal.close();
+            <OSetting>
+                <OButton
+                    icon={'save'}
+                    tooltip={'Save and exit'}
+                    onClick={() => {
+                        onSubmit({
+                            label,
+                            comment,
                         });
-                        return button;
-                    },
-                ]}
-            />
-        </>
+                        modal.close();
+                    }}
+                />
+            </OSetting>
+        </SettingRoot>
     );
 };
 

@@ -6,7 +6,6 @@ import React, {
     useCallback,
     useContext,
     useMemo,
-    useRef,
     useState,
 } from 'react';
 
@@ -15,8 +14,6 @@ interface SettingsContextProps {
     app: App;
     forceReload: () => void;
     reloadCount: number;
-    currentPath: string;
-    setCurrentPath: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -24,7 +21,7 @@ const SettingsContext = createContext<SettingsContextProps | undefined>(
 );
 
 /**
- * Provides a context for the settings tabs.
+ * Provides a context for the settings pages.
  *
  * @param {{ children: ReactNode }} props
  * @param {ReactNode} props.children - The content to be rendered within the
@@ -38,7 +35,6 @@ export const SettingProvider: React.FC<{
     children: ReactNode;
 }> = ({ app, plugin, children }) => {
     const [reloadCount, setReloadCount] = useState(0);
-    const [currentPath, setCurrentPath] = useState<string>('/openapi-view');
 
     const forceReload = useCallback(() => {
         setReloadCount((prev) => prev + 1);
@@ -50,10 +46,8 @@ export const SettingProvider: React.FC<{
             plugin,
             forceReload,
             reloadCount,
-            currentPath,
-            setCurrentPath,
         }),
-        [app, plugin, forceReload, reloadCount, currentPath, setCurrentPath]
+        [app, plugin, forceReload, reloadCount]
     );
 
     return (

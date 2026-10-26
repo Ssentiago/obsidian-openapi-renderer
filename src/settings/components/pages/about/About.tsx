@@ -1,6 +1,9 @@
 import React from 'react';
 import { useSettingsContext } from '../../core/context';
-import { OSetting } from '@obsidian-lib/native-react-components';
+import {
+    OButton,
+    OSetting,
+} from '@obsidian-lib/native-react-components';
 
 /**
  * The About component renders settings options for visiting the GitHub page and
@@ -14,64 +17,49 @@ const About: React.FC = () => {
 
     return (
         <>
-            <OSetting
-                name={'Visit GitHub page of this plugin'}
-                addButtons={[
-                    (button) => {
-                        button.setIcon('github');
-                        button.setTooltip('Go to GitHub page of this plugin');
-                        button.onClick((cb) => {
-                            open(
-                                'https://github.com/Ssentiago/obsidian-openapi-renderer'
-                            );
-                        });
-                        return button;
-                    },
-                ]}
-            />
-            <OSetting
-                name={'Do you have any feedback?'}
-                addButtons={[
-                    (button) => {
-                        button.setIcon('message-circle-question');
-                        button.setTooltip('Leave feedback');
-                        button.onClick(() => {
-                            open(
-                                'https://github.com/Ssentiago/obsidian-openapi-renderer/issues'
-                            );
-                        });
-                        return button;
-                    },
-                ]}
-            />
+            <OSetting name={'Visit GitHub page of this plugin'}>
+                <OButton
+                    icon={'github'}
+                    tooltip={'Go to GitHub page of this plugin'}
+                    onClick={() => {
+                        open(
+                            'https://github.com/Ssentiago/obsidian-openapi-renderer'
+                        );
+                    }}
+                />
+            </OSetting>
+            <OSetting name={'Do you have any feedback?'}>
+                <OButton
+                    icon={'message-circle-question'}
+                    tooltip={'Leave feedback'}
+                    onClick={() => {
+                        open(
+                            'https://github.com/Ssentiago/obsidian-openapi-renderer/issues'
+                        );
+                    }}
+                />
+            </OSetting>
 
             <footer
                 style={{
-                    position: 'absolute',
-                    bottom: 10,
-                    left: '50%',
+                    marginTop: '48px',
+                    fontSize: 'small',
+                    color: 'gray',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                 }}
             >
-                <div
-                    style={{
-                        fontSize: 'small',
-                        color: 'gray',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <div>Current version: {plugin.manifest.version}</div>
-                    <div>
-                        •{' '}
-                        <a
-                            href="https://github.com/Ssentiago/obsidian-openapi-renderer/blob/main/LICENSE"
-                            target="_blank"
-                        >
-                            Apache 2.0
-                        </a>
-                    </div>
+                <div>Current version: {plugin.manifest.version}</div>
+                <div>
+                    •{' '}
+                    <a
+                        href="https://github.com/Ssentiago/obsidian-openapi-renderer/blob/main/LICENSE"
+                        target="_blank"
+                    >
+                        Apache 2.0
+                    </a>
                 </div>
             </footer>
         </>

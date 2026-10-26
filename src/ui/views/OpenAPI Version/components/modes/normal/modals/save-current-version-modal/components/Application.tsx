@@ -1,9 +1,13 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { Specification } from 'indexedDB/database/specification';
 import { App } from 'obsidian';
-import React, { useRef, useState } from 'react';
-import { OSetting } from '@obsidian-lib/native-react-components';
-import { useSpecificationContext } from 'ui/views/OpenAPI Version/components/core/context';
+import React, { useState } from 'react';
+import {
+    OButton,
+    OSetting,
+    OText,
+    SettingRoot,
+} from '@obsidian-lib/native-react-components';
 import { isValidVersion } from 'ui/views/OpenAPI Version/components/modes/normal/modals/save-current-version-modal/components/utils/isValidVersion';
 import {
     ModalFormData,
@@ -17,21 +21,21 @@ const Application: React.FC<{
     onSubmit: (data: ModalFormData) => void;
     versions: Specification[];
 }> = ({ app, plugin, modal, onSubmit, versions }) => {
-    const versionName = useRef<string>('');
-    const versionNumber = useRef<string>('');
+    const [versionName, setVersionName] = useState('');
+    const [versionNumber, setVersionNumber] = useState('');
 
     const handleSave = () => {
-        if (!versionName.current.trim() || !versionNumber.current.trim()) {
+        if (!versionName.trim() || !versionNumber.trim()) {
             plugin.showNotice('Please fill out all required fields');
             return;
         }
 
-        if (versionName.current.match(/\./) !== null) {
+        if (versionName.match(/\./) !== null) {
             plugin.showNotice('Version name cannot contain "."');
             return;
         }
 
-        if (!versionNumber.current.match(/\d+\.\d+\.\d+/g)) {
+        if (!versionNumber.match(/\d+\.\d+\.\d+/g)) {
             plugin.showNotice(
                 "'Version should follow the Semantic Versioning format (MAJOR.MINOR.PATCH). Example: 1.0.0"
             );
@@ -40,20 +44,20 @@ const Application: React.FC<{
         const lastVersion = versions.length > 0 ? versions.at(-1) : undefined;
         if (!lastVersion) {
             onSubmit({
-                specName: versionName.current,
-                specVersion: versionNumber.current,
+                specName: versionName,
+                specVersion: versionNumber,
             });
             modal.close();
             return;
         }
         const isLastVersionGreater = isValidVersion(
-            versionNumber.current,
+            versionNumber,
             lastVersion.version
         );
         if (isLastVersionGreater) {
             onSubmit({
-                specName: versionName.current,
-                specVersion: versionNumber.current,
+                specName: versionName,
+                specVersion: versionNumber,
             });
             modal.close();
             return;
@@ -64,7 +68,7 @@ const Application: React.FC<{
     };
 
     return (
-        <>
+        <SettingRoot>
             <OSetting name={'Required Fields'} heading={true} />
 
             <OSetting
@@ -72,42 +76,37 @@ const Application: React.FC<{
                 desc={
                     'Please provide a name for the new version of your specification.'
                 }
-                class={'required-field'}
-                addTexts={[
-                    (input) => {
-                        input.onChange((value) => {
-                            versionName.current = value;
-                        });
-                        return input;
-                    },
-                ]}
-            />
+                className={'required-field'}
+            >
+                <OText
+                    value={versionName}
+                    onChange={(value) => {
+                        setVersionName(value);
+                    }}
+                />
+            </OSetting>
             <OSetting
                 name={'Version Number'}
                 desc={'Enter a version number for this specification.'}
-                class={'required-field'}
+                className={'required-field'}
                 noBorder={true}
-                addTexts={[
-                    (input) => {
-                        input.onChange((value) => {
-                            versionNumber.current = value;
-                        });
-                        return input;
-                    },
-                ]}
-            />
+            >
+                <OText
+                    value={versionNumber}
+                    onChange={(value) => {
+                        setVersionNumber(value);
+                    }}
+                />
+            </OSetting>
 
-            <OSetting
-                addButtons={[
-                    (button) => {
-                        button.setIcon('save');
-                        button.setTooltip('Save and exit');
-                        button.onClick(handleSave);
-                        return button;
-                    },
-                ]}
-            />
-        </>
+            <OSetting>
+                <OButton
+                    icon={'save'}
+                    tooltip={'Save and exit'}
+                    onClick={handleSave}
+                />
+            </OSetting>
+        </SettingRoot>
     );
 };
 

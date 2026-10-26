@@ -1,7 +1,10 @@
 import { EventID } from 'events-management/typing/constants';
 import { ChangeGridColumnsStateEvent } from 'events-management/typing/interfaces';
 import React from 'react';
-import { OSetting } from '@obsidian-lib/native-react-components';
+import {
+    ODropdown,
+    OSetting,
+} from '@obsidian-lib/native-react-components';
 import { useSettingsContext } from 'settings/components/core/context';
 
 /**
@@ -18,33 +21,29 @@ const OpenAPIEntry: React.FC = () => {
 
     return (
         <>
-            <OSetting
-                name={'Grid Layout Columns'}
-                addDropdowns={[
-                    (dropdown) => {
-                        for (let i = 1; i < 6; i++) {
-                            const n = i.toString();
-                            dropdown.addOption(n, n);
-                        }
-                        dropdown.setValue(
-                            plugin.settings.OpenAPIEntryGridLayoutColumns.toString()
-                        );
-                        dropdown.onChange(async (value) => {
-                            dropdown.setValue(value);
-                            plugin.settings.OpenAPIEntryGridLayoutColumns =
-                                parseInt(value, 10);
-                            await plugin.settingsManager.saveSettings();
-                            plugin.publisher.publish({
-                                eventID: EventID.ChangeGridColumnsState,
-                                emitter: app.workspace,
-                                timestamp: new Date(),
-                                data: { value: parseInt(value, 10) },
-                            } as ChangeGridColumnsStateEvent);
-                        });
-                        return dropdown;
-                    },
-                ]}
-            />
+            <OSetting name={'Grid Layout Columns'}>
+                <ODropdown
+                    value={plugin.settings.OpenAPIEntryGridLayoutColumns.toString()}
+                    options={{
+                        1: '1',
+                        2: '2',
+                        3: '3',
+                        4: '4',
+                        5: '5',
+                    }}
+                    onChange={async (value) => {
+                        plugin.settings.OpenAPIEntryGridLayoutColumns =
+                            parseInt(value, 10);
+                        await plugin.settingsManager.saveSettings();
+                        plugin.publisher.publish({
+                            eventID: EventID.ChangeGridColumnsState,
+                            emitter: app.workspace,
+                            timestamp: new Date(),
+                            data: { value: parseInt(value, 10) },
+                        } as ChangeGridColumnsStateEvent);
+                    }}
+                />
+            </OSetting>
         </>
     );
 };
