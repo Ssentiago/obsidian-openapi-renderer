@@ -9,7 +9,7 @@
     "main": "src/main.ts",
     "scripts": {
         "dev": "NODE_ENV=development rollup -c rollup.config.ts -w",
-        "build": "cross-env NODE_ENV=production rollup -c rollup.config.ts",
+        "build": "cross-env PRODUCTION=1 NODE_ENV=production rollup -c rollup.config.ts",
         "start": "obsidian-dev-tools start",
         "release": "obsidian-dev-tools release",
         "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\""
