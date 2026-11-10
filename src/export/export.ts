@@ -135,7 +135,7 @@ ${SwaggerUiDarkCss}
         let current = '';
         // Folder segments are created top down one at a time so each parent
         // exists before its child, which makes sequential awaits necessary.
-        /* eslint-disable no-await-in-loop */
+
         for (const segment of folder.split('/').filter(Boolean)) {
             current = current ? `${current}/${segment}` : segment;
             const exists = await this.plugin.app.vault.adapter.exists(current);
@@ -143,7 +143,7 @@ ${SwaggerUiDarkCss}
                 await this.plugin.app.vault.createFolder(current);
             }
         }
-        /* eslint-enable no-await-in-loop */
+
         return folder;
     }
 
@@ -194,9 +194,11 @@ ${SwaggerUiDarkCss}
                 rendered.html
             );
             this.plugin.showNotice(`Exported to ${exportPath}`);
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.plugin.showNotice('Failed to export file');
-            this.plugin.logger.error(`Failed to export file: ${error.message}`);
+            this.plugin.logger.error(
+                `Failed to export file: ${error instanceof Error ? error.message : String(error)}`
+            );
         }
     }
 
@@ -218,10 +220,10 @@ ${SwaggerUiDarkCss}
                 apiFiles.map((file) => this.renderFile(file))
             );
             await this.handleZip(rendered);
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.plugin.showNotice('Failed to export files');
             this.plugin.logger.error(
-                `Failed to export files: ${error.message}`
+                `Failed to export files: ${error instanceof Error ? error.message : String(error)}`
             );
         }
     }
@@ -257,7 +259,7 @@ ${SwaggerUiDarkCss}
             const chunks: Buffer[] = [];
 
             zip.outputStream
-                .on('data', (chunk) => chunks.push(chunk))
+                .on('data', (chunk: Buffer) => chunks.push(chunk))
                 .on('end', () => resolve(Buffer.concat(chunks)))
                 .on('error', reject);
 
@@ -276,9 +278,9 @@ ${SwaggerUiDarkCss}
                 );
                 this.plugin.showNotice(`Exported to ${zipFilePath}`);
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
                 this.plugin.logger.error(
-                    `Error when handling ZIP file: ${err.message}`
+                    `Error when handling ZIP file: ${err instanceof Error ? err.message : String(err)}`
                 );
             });
     }

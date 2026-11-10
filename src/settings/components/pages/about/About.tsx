@@ -1,9 +1,8 @@
 import React from 'react';
+
+import { OButton, OSetting } from '@obsidian-lib/native-react-components';
+
 import { useSettingsContext } from '../../core/context';
-import {
-    OButton,
-    OSetting,
-} from '@obsidian-lib/native-react-components';
 
 /**
  * The About component renders settings options for visiting the GitHub page and
@@ -55,8 +54,8 @@ const About: React.FC = () => {
                 <div>
                     •{' '}
                     <a
-                        href="https://github.com/Ssentiago/obsidian-openapi-renderer/blob/main/LICENSE"
-                        target="_blank"
+                        href='https://github.com/Ssentiago/obsidian-openapi-renderer/blob/main/LICENSE'
+                        target='_blank'
                     >
                         Apache 2.0
                     </a>

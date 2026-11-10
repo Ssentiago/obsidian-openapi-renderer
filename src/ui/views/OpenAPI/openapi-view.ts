@@ -34,10 +34,10 @@ export class OpenAPIView extends TextFileView {
         this.containerEl.setAttr('tabindex', '0');
         this.contentEl.setAttr('tabindex', '0');
 
-        this.sourceContainer = this.contentEl.createEl('div');
+        this.sourceContainer = this.contentEl.createDiv();
         this.sourceContainer.addClass('openapi-renderer-source-container');
 
-        this.previewContainer = this.contentEl.createEl('div');
+        this.previewContainer = this.contentEl.createDiv();
         this.previewContainer.addClass('openapi-renderer-preview-container');
     }
 

@@ -3,7 +3,11 @@ import {
     CompletionContext,
     CompletionResult,
 } from '@codemirror/autocomplete';
+import { jsonLanguage } from '@codemirror/lang-json';
 import { yamlLanguage } from '@codemirror/lang-yaml';
+import { syntaxTree } from '@codemirror/language';
+import { SelectionRange } from '@codemirror/state';
+import { SyntaxNode } from '@lezer/common';
 import {
     Completion,
     completionMap,
@@ -13,10 +17,6 @@ import {
     responseCompletionLabels,
     rootCompletionLabels,
 } from 'ui/views/OpenAPI/components/source/extensions/openapi-completion/completion-labels';
-import { SelectionRange } from '@codemirror/state';
-import { syntaxTree } from '@codemirror/language';
-import { jsonLanguage } from '@codemirror/lang-json';
-import { SyntaxNode } from '@lezer/common';
 
 type ParentTreeGetter = (context: CompletionContext) => string[] | undefined;
 
@@ -31,7 +31,7 @@ function getCompletion(
     return {
         from: currentWord.from,
         to: currentWord.to,
-        options: options,
+        options,
     };
 }
 
@@ -61,7 +61,6 @@ function getJSONParentTree(context: CompletionContext): string[] {
     const tree = syntaxTree(context.state);
     let currentNode: SyntaxNode | null = tree.resolveInner(context.pos, -1);
     const parentTree: string[] = [];
-    currentNode.nextSibling;
     while (currentNode) {
         if (currentNode.name === 'Property') {
             const prop = context.state

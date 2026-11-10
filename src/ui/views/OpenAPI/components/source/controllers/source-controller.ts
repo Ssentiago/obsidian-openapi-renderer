@@ -1,8 +1,8 @@
 import { ExtensionController } from 'ui/views/OpenAPI/components/source/controllers/extension-controller';
 import { RenderController } from 'ui/views/OpenAPI/components/source/controllers/rendering/render-controller';
 import { SourceUtilController } from 'ui/views/OpenAPI/components/source/controllers/source-util-controller';
-import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 import { ThemeController } from 'ui/views/OpenAPI/components/source/controllers/theme-controller';
+import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 
 export class SourceController {
     themeController: ThemeController;

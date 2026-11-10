@@ -36,12 +36,12 @@ const linkHighlighter = ViewPlugin.fromClass(
     class {
         decorations: DecorationSet;
 
+        private readonly mouseOverHandler: (event: MouseEvent) => void;
+
         constructor(public view: EditorView) {
             this.decorations = updateLinks(view);
-            view.dom.addEventListener(
-                'mouseover',
-                this.handleMouseMove.bind(this)
-            );
+            this.mouseOverHandler = this.handleMouseMove.bind(this);
+            view.dom.addEventListener('mouseover', this.mouseOverHandler);
         }
 
         update(update: ViewUpdate): void {
@@ -58,23 +58,20 @@ const linkHighlighter = ViewPlugin.fromClass(
             const target = event.target as HTMLElement;
             const linkElement = target.closest('.cm-link');
 
+            const clickable = Boolean(linkElement) && event.ctrlKey;
+
+            target.setCssProps({ cursor: clickable ? 'pointer' : 'default' });
             if (linkElement) {
-                if (event.ctrlKey) {
-                    target.style.cursor = 'pointer';
-                    target.ariaLabel = 'Open link';
-                } else {
-                    target.style.cursor = 'default';
-                    target.ariaLabel = 'Ctrl + click to open link';
-                }
-            } else {
-                target.style.cursor = 'default';
+                target.ariaLabel = clickable
+                    ? 'Open link'
+                    : 'Ctrl + click to open link';
             }
         }
 
         destroy(): void {
             this.view.dom.removeEventListener(
-                'mousemove',
-                this.handleMouseMove
+                'mouseover',
+                this.mouseOverHandler
             );
         }
     },

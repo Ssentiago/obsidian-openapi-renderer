@@ -1,5 +1,3 @@
-import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
-import { App } from 'obsidian';
 import React, {
     createContext,
     ReactNode,
@@ -8,6 +6,9 @@ import React, {
     useMemo,
     useState,
 } from 'react';
+
+import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
+import { App } from 'obsidian';
 
 interface SettingsContextProps {
     plugin: OpenAPIRendererPlugin;

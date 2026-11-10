@@ -88,9 +88,15 @@ export default class SettingsManager {
      * @returns {Promise<void>} A promise that resolves when the settings have been loaded.
      */
     async loadSettings(): Promise<void> {
-        const userSettings = (await this.plugin.loadData()) ?? {};
+        const userSettings: Partial<DefaultSettings> =
+            ((await this.plugin.loadData()) as Partial<DefaultSettings> | null) ??
+            {};
         const defaultSettings = this.defaultSettings;
-        const settings = Object.assign({}, defaultSettings, userSettings);
+        const settings: DefaultSettings = Object.assign(
+            {},
+            defaultSettings,
+            userSettings
+        );
         settings.extensions = this.normalizeExtensions(userSettings.extensions);
         this.plugin.settings = {
             ...settings,

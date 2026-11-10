@@ -8,6 +8,7 @@ import {
 } from 'events-management/typing/interfaces';
 import path from 'path';
 import { convertData, updateButton } from 'ui/common/helpers';
+import { RenderingMode } from 'ui/typing/constants';
 import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
 
 export class PreviewUtilController {
@@ -46,14 +47,16 @@ export class PreviewUtilController {
         let out: ApiRefResolution;
         try {
             out = await resolver.resolve(options);
-        } catch (err: any) {
+        } catch (err: unknown) {
             this.controller.preview.plugin.showNotice(
                 'Oops... Something went wrong while resolving $refs. ' +
                     'Please ensure your spec file is valid and check ' +
                     'the logs for more details.',
                 1000
             );
-            this.controller.preview.plugin.logger.error(err.message);
+            this.controller.preview.plugin.logger.error(
+                err instanceof Error ? err.message : String(err)
+            );
             return null;
         }
         this.publishStateEvent('full');
@@ -69,14 +72,17 @@ export class PreviewUtilController {
      * @returns {Record<string, any> | null} The converted JSON object, or
      *          `null` if the file extension is not JSON or YAML.
      */
-    onChangeLoadSpec(): Record<string, any> | null {
+    onChangeLoadSpec(): Record<string, unknown> | null {
         const data = this.controller.preview.openAPIView.data;
         const ext = this.controller.preview.openAPIView.file?.extension ?? '';
         try {
-            const converted = JSON.parse(convertData(data, ext));
+            const converted = JSON.parse(convertData(data, ext)) as Record<
+                string,
+                unknown
+            >;
             this.publishStateEvent('fast');
             return converted;
-        } catch (err: any) {
+        } catch {
             return null;
         }
     }
@@ -102,7 +108,8 @@ export class PreviewUtilController {
                 const isMatchingView =
                     this.controller.preview.openAPIView.file?.path === file;
                 const isPreviewMode =
-                    this.controller.preview.openAPIView.mode === 'preview';
+                    this.controller.preview.openAPIView.mode ===
+                    RenderingMode.Preview;
                 if (isMatchingView && isPreviewMode) {
                     await this.controller.renderController.updatePreview(
                         this.onChangeLoadSpec()
@@ -166,7 +173,7 @@ will not be processed automatically. To capture and resolve these references, pl
             }
         );
 
-        let timeout: NodeJS.Timeout | undefined = undefined;
+        let timeout: number | undefined = undefined;
 
         this.controller.preview.plugin.observer.subscribeForView(
             this.controller.preview.openAPIView,
@@ -193,9 +200,9 @@ will not be processed automatically. To capture and resolve these references, pl
                     );
                 }
                 stateButton.addClass('indicator');
-                timeout = setTimeout(() => {
+                timeout = window.setTimeout(() => {
                     stateButton.removeClass('indicator');
-                    clearTimeout(timeout);
+                    window.clearTimeout(timeout);
                 }, 2000);
             }
         );
@@ -228,7 +235,7 @@ will not be processed automatically. To capture and resolve these references, pl
             timestamp: new Date(),
             emitter: this.controller.preview.plugin.app.workspace,
             data: {
-                state: state,
+                state,
             },
         } as PreviewStateEvent);
     }

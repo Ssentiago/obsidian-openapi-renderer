@@ -4,8 +4,8 @@ import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import jsyaml from 'js-yaml';
 import { TFile } from 'obsidian';
 import path from 'path';
-import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
+import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 
 /**
  * Converts given YAML text to JSON.
@@ -63,17 +63,19 @@ function getConvertedContent(
             default:
                 return undefined;
         }
-    } catch (error: any) {
+    } catch (error: unknown) {
         plugin.showNotice(
             'Cannot convert this file! Please check the logs for more info'
         );
-        plugin.logger.error(error.message);
+        plugin.logger.error(
+            error instanceof Error ? error.message : String(error)
+        );
         return undefined;
     }
 
     return {
-        newContent: newContent,
-        newFileExt: newFileExt,
+        newContent,
+        newFileExt,
     };
 }
 
@@ -143,8 +145,10 @@ export function convertFile(view: OpenAPIView, source: OpenAPISource) {
                 source.plugin.showNotice(`Converted`);
                 return true;
             }
-        } catch (e: any) {
-            source.plugin.showNotice(e.message);
+        } catch (e: unknown) {
+            source.plugin.showNotice(
+                e instanceof Error ? e.message : String(e)
+            );
         }
         return undefined;
     };

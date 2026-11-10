@@ -25,7 +25,7 @@ export function convertData(data: string, extension: string): string {
  * @returns true if the Obsidian theme is dark, false otherwise
  */
 export function isObsidianDarkTheme(): boolean {
-    const body = document.querySelector('body');
+    const body = activeDocument.querySelector('body');
     return !!body?.classList.contains('theme-dark');
 }
 

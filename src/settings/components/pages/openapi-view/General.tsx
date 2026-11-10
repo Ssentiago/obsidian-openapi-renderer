@@ -26,9 +26,9 @@ const General: React.FC = () => {
             >
                 <OToggle
                     value={plugin.settings.registerYamlJson}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.registerYamlJson = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                 />
             </OSetting>
@@ -42,9 +42,9 @@ const General: React.FC = () => {
             >
                 <OFolder
                     value={plugin.settings.exportFolder}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.exportFolder = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                     includeRoot
                     placeholder='exports'
@@ -61,9 +61,9 @@ const General: React.FC = () => {
                         source: 'Source',
                         preview: 'Preview',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPIViewDefaultMode = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                 />
             </OSetting>

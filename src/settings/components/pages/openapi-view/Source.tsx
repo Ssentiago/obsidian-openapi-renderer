@@ -35,9 +35,9 @@ const Source: React.FC = () => {
                         dark: 'Dark',
                         light: 'Light',
                     }}
-                    onChange={async (value: string) => {
+                    onChange={(value: string) => {
                         plugin.settings.OpenAPISourceThemeMode = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         publishSourceThemeChange();
                     }}
                 />
@@ -49,9 +49,9 @@ const Source: React.FC = () => {
             >
                 <OToggle
                     value={plugin.settings.syncOpenAPISourceTheme}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.syncOpenAPISourceTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         publishSourceThemeChange();
                     }}
                 />
@@ -64,9 +64,9 @@ const Source: React.FC = () => {
                         default: 'Default',
                         vscode: 'VS Code Light',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPISourceLightTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         publishSourceThemeChange();
                     }}
                 />
@@ -79,9 +79,9 @@ const Source: React.FC = () => {
                         default: 'Default',
                         vscode: 'VS Code Dark',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPISourceDarkTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         publishSourceThemeChange();
                     }}
                 />

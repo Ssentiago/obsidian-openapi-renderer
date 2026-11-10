@@ -1,7 +1,8 @@
 import { App, PluginSettingTab } from 'obsidian';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 import { createRoot, Root } from 'react-dom/client';
 import Application from 'settings/components/Application';
+
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export class OpenAPISettingTab extends PluginSettingTab {
     root!: Root;
@@ -25,7 +26,12 @@ export class OpenAPISettingTab extends PluginSettingTab {
         containerEl.addClass('openapi-renderer-settings-page');
         const reactRoot = containerEl.createDiv();
         this.root = createRoot(reactRoot);
-        this.root.render(<Application app={this.app} plugin={this.plugin} />);
+        this.root.render(
+            <Application
+                app={this.app}
+                plugin={this.plugin}
+            />
+        );
     }
 
     /**

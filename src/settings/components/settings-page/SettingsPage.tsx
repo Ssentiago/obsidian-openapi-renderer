@@ -1,10 +1,3 @@
-import About from 'settings/components/pages/about/About';
-import Extensions from 'settings/components/pages/openapi-view/Extensions';
-import General from 'settings/components/pages/openapi-view/General';
-import Preview from 'settings/components/pages/openapi-view/Preview';
-import Source from 'settings/components/pages/openapi-view/Source';
-import { useSettingsContext } from 'settings/components/core/context';
-
 import React from 'react';
 
 import {
@@ -13,6 +6,12 @@ import {
     OSettingGroup,
     SettingRoot,
 } from '@obsidian-lib/native-react-components';
+import { useSettingsContext } from 'settings/components/core/context';
+import About from 'settings/components/pages/about/About';
+import Extensions from 'settings/components/pages/openapi-view/Extensions';
+import General from 'settings/components/pages/openapi-view/General';
+import Preview from 'settings/components/pages/openapi-view/Preview';
+import Source from 'settings/components/pages/openapi-view/Source';
 
 import ResetSettings from './ResetSettings';
 
@@ -36,9 +35,7 @@ const SettingsPage: React.FC = () => {
             <OSettingGroup>
                 <OSettingDrillDown
                     name={'General'}
-                    desc={
-                        'File registration and the default OpenAPI View mode'
-                    }
+                    desc={'File registration and the default OpenAPI View mode'}
                 >
                     <General />
                 </OSettingDrillDown>

@@ -1,5 +1,5 @@
-import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 import yaml from 'js-yaml';
+import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 
 export function openAPIFormatter(source: OpenAPISource): () => void {
     return () => {
@@ -18,11 +18,13 @@ export function openAPIFormatter(source: OpenAPISource): () => void {
                     indent: 2,
                 });
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             source.plugin.showNotice(
                 'Cannot format this file! Please check the logs for more info'
             );
-            source.plugin.logger.error(err.message);
+            source.plugin.logger.error(
+                err instanceof Error ? err.message : String(err)
+            );
             return;
         }
 

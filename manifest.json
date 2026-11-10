@@ -2,7 +2,7 @@
   "id": "openapi-renderer",
   "name": "OpenAPI Renderer",
   "version": "4.5.1",
-  "minAppVersion": "1.6.5",
+  "minAppVersion": "1.8.7",
   "author": "Sentiago",
   "authorUrl": "https://github.com/Ssentiago",
   "description": "Edit and render OpenAPI specifications with Swagger UI, plus standalone offline HTML export.",

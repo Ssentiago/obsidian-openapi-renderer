@@ -20,7 +20,7 @@ export class RenderController {
 
         this.stateStorage.set(file, state);
         this.controller.source.editor = new EditorView({
-            state: state,
+            state,
             parent: this.controller.source.contentEl,
         });
     }
@@ -46,7 +46,7 @@ export class RenderController {
     private getNewState(): EditorState | undefined {
         const file = this.controller.source.view.file;
         if (!file) {
-            return;
+            return undefined;
         }
         const isJson = file.extension === 'json';
         this.controller.extensionController.languageExtension = isJson

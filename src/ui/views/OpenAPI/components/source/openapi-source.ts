@@ -1,9 +1,9 @@
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
-import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 import { SourceComponent } from 'ui/typing/interfaces';
 import { SourceController } from 'ui/views/OpenAPI/components/source/controllers/source-controller';
+import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 
 export class OpenAPISource implements SourceComponent {
     editor!: EditorView | undefined;
@@ -25,9 +25,9 @@ export class OpenAPISource implements SourceComponent {
      * This method is called when the view is rendered.
      * It initializes the source component by creating the editor or updating the existing one.
      *
-     * @returns {Promise<void>} No return value.
+     * @returns {void} No return value.
      */
-    async render(): Promise<void> {
+    render(): void {
         this.controller.initializeEditor();
     }
 
@@ -95,9 +95,10 @@ export class OpenAPISource implements SourceComponent {
     }
 
     onSwitch(): void {
-        this.controller.renderController.stateStorage.set(
-            this.view.file!,
-            this.editor!.state
-        );
+        const file = this.view.file;
+        const state = this.editor?.state;
+        if (file && state) {
+            this.controller.renderController.stateStorage.set(file, state);
+        }
     }
 }

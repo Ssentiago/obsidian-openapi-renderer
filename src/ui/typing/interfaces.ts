@@ -30,4 +30,4 @@ export interface SourceComponent extends OpenAPIViewComponent {
     onSwitch(): void;
 }
 
-export interface PreviewComponent extends OpenAPIViewComponent {}
+export type PreviewComponent = OpenAPIViewComponent;

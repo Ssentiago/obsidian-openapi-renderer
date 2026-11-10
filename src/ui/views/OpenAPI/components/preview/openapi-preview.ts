@@ -1,8 +1,8 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
-import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
-import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 import { RESOURCE_NAME } from 'ui/typing/constants';
 import { PreviewComponent } from 'ui/typing/interfaces';
+import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
+import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 
 export default class OpenAPIPreview implements PreviewComponent {
     renderTimeout: NodeJS.Timeout | null = null;
@@ -21,13 +21,23 @@ export default class OpenAPIPreview implements PreviewComponent {
     /**
      * Renders the preview.
      *
-     * This method:
+     * This method starts the asynchronous preview rendering and returns
+     * immediately:
      * - Initializes the preview controller.
      * - Renders the preview.
      *
-     * @returns {Promise<void>} No return value.
+     * @returns {void} No return value.
      */
-    async render(): Promise<void> {
+    render(): void {
+        void this.renderPreview();
+    }
+
+    /**
+     * Initializes the preview controller and renders the preview.
+     *
+     * @returns {Promise<void>} A promise that resolves when the preview is rendered.
+     */
+    private async renderPreview(): Promise<void> {
         await this.controller.initializePreview();
         await this.controller.render();
     }

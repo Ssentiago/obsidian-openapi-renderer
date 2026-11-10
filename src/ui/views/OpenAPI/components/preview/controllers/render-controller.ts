@@ -19,8 +19,18 @@ export const PREVIEW_LAYOUT_CSS = `
 }
 `;
 
+/**
+ * Minimal typed handle for the loosely typed SwaggerUI runtime instance.
+ * Only the members the preview actually uses are declared.
+ */
+interface SwaggerUIInstance {
+    specActions: {
+        updateJsonSpec: (spec: unknown) => void;
+    };
+}
+
 export class RenderController {
-    ui: any;
+    ui: SwaggerUIInstance | null = null;
     shadowRoot: ShadowRoot | null = null;
 
     constructor(public controller: OpenAPIPreviewController) {}
@@ -94,11 +104,11 @@ export class RenderController {
                 break;
         }
 
-        const style = document.createElement('style');
+        const style = createEl('style');
         style.textContent = `${PREVIEW_LAYOUT_CSS}\n${SwaggerUiCss}\n${additionalCSS}\n${SwaggerUiFixesCss}`;
         shadowRoot.appendChild(style);
 
-        const renderContainer = document.createElement('div');
+        const renderContainer = createDiv();
         renderContainer.className = 'fill-height-or-more';
         shadowRoot.appendChild(renderContainer);
 
@@ -106,15 +116,16 @@ export class RenderController {
             return;
         }
 
+        const presets = SwaggerUIBundle.presets as { apis: unknown };
         this.ui = SwaggerUIBundle({
             spec: parsedSpec,
             domNode: renderContainer,
             presets: [
-                SwaggerUIBundle.presets.apis,
-                SwaggerUIBundle.SwaggerUIStandalonePreset,
+                presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset as unknown,
             ],
             layout: 'BaseLayout',
-        });
+        }) as SwaggerUIInstance;
     }
 
     /**
@@ -126,7 +137,7 @@ export class RenderController {
      * @returns {void} No return value.
      */
     clear(): void {
-        this.ui = undefined;
+        this.ui = null;
         this.shadowRoot?.replaceChildren();
     }
 
@@ -153,7 +164,7 @@ export class RenderController {
      * @returns {Promise<boolean>} A promise that resolves to `true` if the
      *          specification was updated successfully, or `false` otherwise.
      */
-    async updatePreview(spec: any): Promise<boolean> {
+    async updatePreview(spec: unknown): Promise<boolean> {
         if (this.ui) {
             if (spec) {
                 this.ui.specActions.updateJsonSpec(spec);

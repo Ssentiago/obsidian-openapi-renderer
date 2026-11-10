@@ -28,11 +28,12 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * Lifecycle method called when the plugin is loaded.
      *
      * This method initializes the plugin and all its components.
+     * Initialization continues asynchronously after this method returns.
      *
-     * @returns A promise that resolves when the plugin has been initialized.
+     * @returns {void} No return value.
      */
-    async onload(): Promise<void> {
-        await this.initializePlugin();
+    onload(): void {
+        void this.initializePlugin();
     }
 
     /**
@@ -41,9 +42,9 @@ export default class OpenAPIRendererPlugin extends Plugin {
      * This method cleans up after the plugin by publishing a `PowerOffEvent` to notify other components that the plugin
      * is no longer active.
      *
-     * @returns A promise that resolves when the plugin has been unloaded.
+     * @returns {void} No return value.
      */
-    async onunload(): Promise<void> {
+    onunload(): void {
         const event = {
             eventID: EventID.PowerOff,
             timestamp: new Date(),
@@ -228,7 +229,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
         this.export = new Export(this);
 
         this.addCommand({
-            id: 'openapi-renderer-export-html',
+            id: 'export-html',
             name: 'Export current OpenAPI as standalone HTML',
             icon: 'file-code-2',
             callback: async () => {
@@ -247,7 +248,7 @@ export default class OpenAPIRendererPlugin extends Plugin {
         });
 
         this.addCommand({
-            id: 'openapi-renderer-export-zip',
+            id: 'export-zip',
             name: 'Export all OpenAPI files as ZIP',
             icon: 'file-archive',
             callback: async () => {

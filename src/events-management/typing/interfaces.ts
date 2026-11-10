@@ -1,4 +1,5 @@
 import { EventRef, Events, WorkspaceLeaf } from 'obsidian';
+
 import { EventID } from './constants';
 
 export interface OpenAPIRendererEvent {
@@ -7,9 +8,9 @@ export interface OpenAPIRendererEvent {
     emitter: Events;
 }
 
-export interface SettingsTabStateEvent extends OpenAPIRendererEvent {}
+export type SettingsTabStateEvent = OpenAPIRendererEvent;
 
-export interface PowerOffEvent extends OpenAPIRendererEvent {}
+export type PowerOffEvent = OpenAPIRendererEvent;
 
 export interface SourceChangedEvent extends OpenAPIRendererEvent {
     data: {
@@ -35,7 +36,7 @@ export interface PreviewStateEvent extends OpenAPIRendererEvent {
     };
 }
 
-export interface ReloadOpenAPIEntryStateEvent extends OpenAPIRendererEvent {}
+export type ReloadOpenAPIEntryStateEvent = OpenAPIRendererEvent;
 
 export interface ChangeGridColumnsStateEvent extends OpenAPIRendererEvent {
     data: {

@@ -1,12 +1,13 @@
-import { EventID } from 'events-management/typing/constants';
-import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import React from 'react';
+
 import {
     ODetails,
     ODropdown,
     OSetting,
     OToggle,
 } from '@obsidian-lib/native-react-components';
+import { EventID } from 'events-management/typing/constants';
+import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import { useSettingsContext } from 'settings/components/core/context';
 import { UserExtensions } from 'ui/views/OpenAPI/components/source/typing/interfaces';
 
@@ -21,7 +22,7 @@ const OpenAPIView: React.FC = () => {
     return (
         <>
             <OSetting
-                name="Register YAML and JSON files for processing by default?"
+                name='Register YAML and JSON files for processing by default?'
                 desc={[
                     'Enable this option to open YAML and JSON files in OpenAPI View by default.',
                     'You can still open these files via the context menu.',
@@ -30,9 +31,9 @@ const OpenAPIView: React.FC = () => {
             >
                 <OToggle
                     value={plugin.settings.registerYamlJson}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.registerYamlJson = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                 />
             </OSetting>
@@ -47,14 +48,17 @@ const OpenAPIView: React.FC = () => {
                         source: 'Source',
                         preview: 'Preview',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPIViewDefaultMode = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                 />
             </OSetting>
 
-            <OSetting name={'Preview'} heading />
+            <OSetting
+                name={'Preview'}
+                heading
+            />
 
             <OSetting name={'Preview theme mode'}>
                 <ODropdown
@@ -63,9 +67,9 @@ const OpenAPIView: React.FC = () => {
                         dark: 'Dark',
                         light: 'Light',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPIPreviewTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                 />
             </OSetting>
@@ -76,9 +80,9 @@ const OpenAPIView: React.FC = () => {
             >
                 <OToggle
                     value={plugin.settings.syncOpenAPIPreviewTheme}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.syncOpenAPIPreviewTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: EventID.OpenAPIThemeChangeState,
                             timestamp: new Date(),
@@ -91,7 +95,10 @@ const OpenAPIView: React.FC = () => {
                 />
             </OSetting>
 
-            <OSetting name={'Source'} heading />
+            <OSetting
+                name={'Source'}
+                heading
+            />
 
             <OSetting name={'Source theme mode'}>
                 <ODropdown
@@ -100,9 +107,9 @@ const OpenAPIView: React.FC = () => {
                         dark: 'Dark',
                         light: 'Light',
                     }}
-                    onChange={async (value: string) => {
+                    onChange={(value: string) => {
                         plugin.settings.OpenAPISourceThemeMode = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: EventID.OpenAPIThemeChangeState,
                             timestamp: new Date(),
@@ -121,9 +128,9 @@ const OpenAPIView: React.FC = () => {
             >
                 <OToggle
                     value={plugin.settings.syncOpenAPISourceTheme}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.syncOpenAPISourceTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: EventID.OpenAPIThemeChangeState,
                             timestamp: new Date(),
@@ -143,9 +150,9 @@ const OpenAPIView: React.FC = () => {
                         default: 'Default',
                         vscode: 'VS Code Light',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPISourceLightTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: EventID.OpenAPIThemeChangeState,
                             timestamp: new Date(),
@@ -165,9 +172,9 @@ const OpenAPIView: React.FC = () => {
                         default: 'Default',
                         vscode: 'VS Code Dark',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPISourceDarkTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: EventID.OpenAPIThemeChangeState,
                             timestamp: new Date(),
@@ -190,11 +197,11 @@ const OpenAPIView: React.FC = () => {
                         >
                             <OToggle
                                 value={extension.on}
-                                onChange={async (value) => {
+                                onChange={(value) => {
                                     plugin.settings.extensions[
                                         id as UserExtensions
                                     ].on = value;
-                                    await plugin.settingsManager.saveSettings();
+                                    void plugin.settingsManager.saveSettings();
                                 }}
                             />
                         </OSetting>

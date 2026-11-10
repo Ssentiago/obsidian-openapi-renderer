@@ -1,8 +1,8 @@
+import obsidianmd from 'eslint-plugin-obsidianmd';
+import reactX from 'eslint-plugin-react-x';
 import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
-import obsidianmd from 'eslint-plugin-obsidianmd';
 import tseslint from 'typescript-eslint';
-import reactX from 'eslint-plugin-react-x';
 
 export default tseslint.config(
     globalIgnores([
@@ -12,6 +12,7 @@ export default tseslint.config(
         'graphify-out',
         '.idea',
         'assets',
+        'src/assets/**',
         'eslint.config.js',
         'main.js',
         // TS-парсер не умеет JSON, все .json дают fatal parse error.
@@ -22,7 +23,10 @@ export default tseslint.config(
             globals: { ...globals.browser },
             parserOptions: {
                 projectService: {
-                    allowDefaultProject: ['eslint.config.js', 'rollup.config.ts'],
+                    allowDefaultProject: [
+                        'eslint.config.js',
+                        'rollup.config.ts',
+                    ],
                 },
                 tsconfigRootDir: import.meta.dirname,
                 extraFileExtensions: ['.json'],
@@ -43,6 +47,9 @@ export default tseslint.config(
         rules: {
             // Единственное правило, выключенное в recommended, включаем.
             'obsidianmd/prefer-active-doc': 'warn',
+            // Вкладка настроек рисуется кастомным React-UI, декларативный
+            // API настроек к ней не применяется.
+            'obsidianmd/settings-tab/prefer-setting-definitions': 'off',
         },
     },
     // TypeScript сам ловит необъявленные идентификаторы, no-undef здесь дубль.
@@ -132,5 +139,5 @@ export default tseslint.config(
             'react-x/rules-of-hooks': 'error',
             yoda: 'error',
         },
-    },
+    }
 );

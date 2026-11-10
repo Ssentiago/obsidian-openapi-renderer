@@ -16,8 +16,7 @@ import type { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
  * (`$ref: './pet.yaml#/Pet'`) and JSON (`"$ref": "#/components/schemas/Pet"`)
  * spellings are covered, quoted and bare scalars alike.
  */
-const refRegex =
-    /["']?\$ref["']?\s*:\s*(?:["']([^"'\n]+)["']|([^\s\[\]{},]+))/g;
+const refRegex = /["']?\$ref["']?\s*:\s*(?:["']([^"'\n]+)["']|([^\s[\]{},]+))/g;
 
 const refMark = (value: string): Decoration =>
     Decoration.mark({
@@ -160,7 +159,7 @@ export function findPointerTarget(
         if (!line.trim()) {
             continue;
         }
-        const indent = line.match(/^\s*/)![0].length;
+        const indent = line.match(/^\s*/)?.[0].length ?? 0;
         const key = extractMappingKey(line);
         if (key === null) {
             continue;
@@ -257,8 +256,8 @@ async function scrollWhenReady(
     if (attemptsLeft <= 0) {
         return;
     }
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    return scrollWhenReady(view, segments, attemptsLeft - 1);
+    await new Promise((resolve) => window.setTimeout(resolve, 50));
+    await scrollWhenReady(view, segments, attemptsLeft - 1);
 }
 
 /**
@@ -341,14 +340,14 @@ export function refNavigationExtension(source: OpenAPISource): Extension {
             eventHandlers: {
                 mousedown(event: MouseEvent) {
                     if (!event.ctrlKey && !event.metaKey) {
-                        return;
+                        return undefined;
                     }
                     const element = (event.target as HTMLElement).closest(
                         '.cm-ref'
                     );
                     const ref = element?.getAttribute('data-ref');
                     if (!ref) {
-                        return;
+                        return undefined;
                     }
                     event.preventDefault();
                     void jumpToRef(source, ref);
@@ -360,13 +359,13 @@ export function refNavigationExtension(source: OpenAPISource): Extension {
                     if (!element) {
                         return;
                     }
-                    if (event.ctrlKey || event.metaKey) {
-                        target.style.cursor = 'pointer';
-                        target.ariaLabel = 'Go to reference';
-                    } else {
-                        target.style.cursor = 'default';
-                        target.ariaLabel = 'Ctrl + click to go to reference';
-                    }
+                    const navigable = event.ctrlKey || event.metaKey;
+                    target.setCssProps({
+                        cursor: navigable ? 'pointer' : 'default',
+                    });
+                    target.ariaLabel = navigable
+                        ? 'Go to reference'
+                        : 'Ctrl + click to go to reference';
                 },
             },
         }

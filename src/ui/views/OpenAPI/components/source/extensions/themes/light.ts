@@ -1,6 +1,6 @@
-import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 import { vscodeLight } from '@uiw/codemirror-theme-vscode';
+import { createTheme } from '@uiw/codemirror-themes';
 
 const defaultLightTheme = createTheme({
     theme: 'light',

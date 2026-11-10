@@ -1,5 +1,6 @@
 import { EditorView } from '@codemirror/view';
 import { Notice } from 'obsidian';
+import { RenderingMode } from 'ui/typing/constants';
 import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 
@@ -19,7 +20,7 @@ export function handleScroll(editorView: OpenAPISource, event: Event): void {
         }
         const view = leaf.view as OpenAPIView;
 
-        if (view.mode === 'preview') {
+        if (view.mode === RenderingMode.Preview) {
             continue;
         }
         if (scrollAxis === 'top') {
@@ -33,7 +34,7 @@ export function handleScroll(editorView: OpenAPISource, event: Event): void {
 let fontSize = 16;
 
 export function handleChangeFontSizeOnWHeel() {
-    let timeout: NodeJS.Timeout | null = null;
+    let timeout: number | null = null;
     let notice: HTMLElement | undefined;
     return function (event: WheelEvent, view: EditorView): void {
         if (event.ctrlKey) {
@@ -43,13 +44,13 @@ export function handleChangeFontSizeOnWHeel() {
             if (notice) {
                 notice.textContent = `Font size: ${fontSize}`;
             } else {
-                notice = new Notice(`Font size: ${fontSize}`, 0).noticeEl;
+                notice = new Notice(`Font size: ${fontSize}`, 0).messageEl;
             }
             if (timeout) {
-                clearTimeout(timeout);
+                window.clearTimeout(timeout);
             }
 
-            timeout = setTimeout(() => {
+            timeout = window.setTimeout(() => {
                 timeout = null;
                 notice?.remove();
                 notice = undefined;

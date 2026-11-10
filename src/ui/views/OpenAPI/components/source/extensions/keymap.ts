@@ -3,7 +3,7 @@ import { defaultKeymap, indentWithTab, redo, undo } from '@codemirror/commands';
 import { KeyBinding } from '@codemirror/view';
 import { OpenAPISource } from 'ui/views/OpenAPI/components/source/openapi-source';
 
-function createBoundKeymap(editor: OpenAPISource): KeyBinding[] {
+function createBoundKeymap(_editor: OpenAPISource): KeyBinding[] {
     return [
         ...defaultKeymap,
         completionKeymap,

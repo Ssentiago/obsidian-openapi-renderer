@@ -1,11 +1,12 @@
-import { EventID } from 'events-management/typing/constants';
-import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import React from 'react';
+
 import {
     ODropdown,
     OSetting,
     OToggle,
 } from '@obsidian-lib/native-react-components';
+import { EventID } from 'events-management/typing/constants';
+import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import { useSettingsContext } from 'settings/components/core/context';
 
 /**
@@ -23,9 +24,9 @@ const Preview: React.FC = () => {
                         dark: 'Dark',
                         light: 'Light',
                     }}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.OpenAPIPreviewTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                     }}
                 />
             </OSetting>
@@ -36,9 +37,9 @@ const Preview: React.FC = () => {
             >
                 <OToggle
                     value={plugin.settings.syncOpenAPIPreviewTheme}
-                    onChange={async (value) => {
+                    onChange={(value) => {
                         plugin.settings.syncOpenAPIPreviewTheme = value;
-                        await plugin.settingsManager.saveSettings();
+                        void plugin.settingsManager.saveSettings();
                         plugin.publisher.publish({
                             eventID: EventID.OpenAPIThemeChangeState,
                             timestamp: new Date(),

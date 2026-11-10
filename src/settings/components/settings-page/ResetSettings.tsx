@@ -1,8 +1,7 @@
-import { useSettingsContext } from 'settings/components/core/context';
-
 import React, { useCallback } from 'react';
 
 import { OButton } from '@obsidian-lib/native-react-components';
+import { useSettingsContext } from 'settings/components/core/context';
 
 /**
  * Reset-to-defaults button. Rendered at the bottom of the root settings page.

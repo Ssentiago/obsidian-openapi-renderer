@@ -1,15 +1,15 @@
 interface Spec {
-    [k: string]: any;
+    [k: string]: unknown;
 }
 
 interface SwaggerRequest {
     url: string;
     credentials: string;
-    [k: string]: any;
+    [k: string]: unknown;
 }
 
 interface SwaggerResponse {
-    [k: string]: any;
+    [k: string]: unknown;
 }
 
 interface Url {
@@ -41,12 +41,12 @@ interface SwaggerConfigs {
     /**
      * An array of presets to use in Swagger UI. Usually, you'll want to include ApisPreset if you use this option.
      */
-    presets?: any[] | undefined;
+    presets?: unknown[] | undefined;
 
     /**
      * An array of plugin functions to use in Swagger UI.
      */
-    plugins?: any;
+    plugins?: unknown;
 
     /**
      * A JavaScript object describing the OpenAPI definition. When used, the url parameter will not be parsed. This is useful for testing manually-generated definitions without hosting them.
@@ -92,23 +92,21 @@ interface SwaggerConfigs {
      *  Accepts one argument requestInterceptor(request) and must return the modified request, or a Promise that resolves to the modified request.
      */
     requestInterceptor?:
-        | ((request: SwaggerRequest) => SwaggerRequest)
-        | undefined;
+        ((request: SwaggerRequest) => SwaggerRequest) | undefined;
 
     /**
      *  Function to intercept remote definition, "Try it out", and OAuth 2.0 responses.
      *  Accepts one argument responseInterceptor(response) and must return the modified response, or a Promise that resolves to the modified response.
      */
     responseInterceptor?:
-        | ((response: SwaggerResponse) => SwaggerResponse)
-        | undefined;
+        ((response: SwaggerResponse) => SwaggerResponse) | undefined;
 
-    [k: string]: any;
+    [k: string]: unknown;
 }
 export interface SwaggerUIBundle {
-    (a?: SwaggerConfigs): any;
+    (a?: SwaggerConfigs): unknown;
 
-    [k: string]: any;
+    [k: string]: unknown;
 
     getConfigs(): SwaggerConfigs;
 }

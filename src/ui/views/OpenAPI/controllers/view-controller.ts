@@ -25,13 +25,14 @@ export class OpenAPIController {
      * @returns {RenderingMode} The new mode to switch to.
      */
     get newMode(): RenderingMode {
+        const mode: string = this.view.mode;
         switch (this.view.mode) {
             case RenderingMode.Preview:
                 return RenderingMode.Source;
             case RenderingMode.Source:
                 return RenderingMode.Preview;
             default:
-                throw new Error(`Unsupported mode: ${this.view.mode}`);
+                throw new Error(`Unsupported mode: ${mode}`);
         }
     }
 
@@ -186,9 +187,9 @@ export class OpenAPIController {
         );
 
         return {
-            changeModeButton: changeModeButton,
-            themeButton: themeButton,
-            exportButton: exportButton,
+            changeModeButton,
+            themeButton,
+            exportButton,
         };
     }
 

@@ -12,11 +12,8 @@ abstract class Publisher {
     /**
      * Abstract method to publish an OpenAPiRenderer event.
      * @param event - The OpenAPiRendererEvent object to publish.
-     * @typeparam T - The specific type of OpenAPiRendererEvent being published.
      */
-    abstract publish<T extends OpenAPIRendererEvent>(
-        event: OpenAPIRendererEvent
-    ): void;
+    abstract publish(event: OpenAPIRendererEvent): void;
 }
 
 /**
@@ -60,8 +57,10 @@ abstract class Observer {
  * Observer for handling OpenAPiRenderer eventHandlers.
  */
 export class EventObserver extends Observer {
-    private subscriptions: Map<Events, Map<EventID, Array<() => void>>> =
-        new Map();
+    private readonly subscriptions: Map<
+        Events,
+        Map<EventID, Array<() => void>>
+    > = new Map();
 
     constructor(plugin: OpenAPIRendererPlugin) {
         super(plugin);
@@ -84,15 +83,16 @@ export class EventObserver extends Observer {
             await handler(event as T);
         });
 
-        if (!this.subscriptions.has(emitter)) {
-            this.subscriptions.set(emitter, new Map());
+        let emitterSubs = this.subscriptions.get(emitter);
+        if (!emitterSubs) {
+            emitterSubs = new Map();
+            this.subscriptions.set(emitter, emitterSubs);
         }
-        const emitterSubs = this.subscriptions.get(emitter)!;
-
-        if (!emitterSubs.has(eventID)) {
-            emitterSubs.set(eventID, []);
+        let handlers = emitterSubs.get(eventID);
+        if (!handlers) {
+            handlers = [];
+            emitterSubs.set(eventID, handlers);
         }
-        const handlers = emitterSubs.get(eventID)!;
 
         const dispose = (): void => {
             emitter.offref(eventRef);

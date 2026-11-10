@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-    OSetting,
-    OToggle,
-} from '@obsidian-lib/native-react-components';
+
+import { OSetting, OToggle } from '@obsidian-lib/native-react-components';
 import { useSettingsContext } from 'settings/components/core/context';
 import { UserExtensions } from 'ui/views/OpenAPI/components/source/typing/interfaces';
 
@@ -16,14 +14,18 @@ const Extensions: React.FC = () => {
         <>
             {Object.entries(plugin.settings.extensions).map(
                 ([id, extension]) => (
-                    <OSetting name={extension.name} key={id} noBorder>
+                    <OSetting
+                        name={extension.name}
+                        key={id}
+                        noBorder
+                    >
                         <OToggle
                             value={extension.on}
-                            onChange={async (value) => {
+                            onChange={(value) => {
                                 plugin.settings.extensions[
                                     id as UserExtensions
                                 ].on = value;
-                                await plugin.settingsManager.saveSettings();
+                                void plugin.settingsManager.saveSettings();
                             }}
                         />
                     </OSetting>

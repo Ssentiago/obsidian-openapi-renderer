@@ -1,7 +1,6 @@
 import { isObsidianDarkTheme } from 'ui/common/helpers';
-import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
-
 import { RESOURCE_NAME } from 'ui/typing/constants';
+import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
 
 export class ThemeController {
     constructor(public controller: OpenAPIPreviewController) {}

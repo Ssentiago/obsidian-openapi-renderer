@@ -1,6 +1,6 @@
 import { tags as t } from '@lezer/highlight';
-import { createTheme } from '@uiw/codemirror-themes';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import { createTheme } from '@uiw/codemirror-themes';
 
 const defaultDarkTheme = createTheme({
     theme: 'dark',

@@ -1,8 +1,8 @@
 import { Extension } from '@codemirror/state';
 import { isObsidianDarkTheme } from 'ui/common/helpers';
 import { RenderingMode } from 'ui/typing/constants';
-import { themes } from 'ui/views/OpenAPI/components/source/extensions/themes';
 import { SourceController } from 'ui/views/OpenAPI/components/source/controllers/source-controller';
+import { themes } from 'ui/views/OpenAPI/components/source/extensions/themes';
 
 export class ThemeController {
     constructor(private readonly controller: SourceController) {}

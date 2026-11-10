@@ -1,4 +1,3 @@
-/* eslint-disable no-console -- This module is the logger and reports internal errors on the console. */
 import * as fs from 'fs';
 import { moment } from 'obsidian';
 import os from 'os';
@@ -7,7 +6,7 @@ import * as path from 'path';
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export default class LoggingManager {
-    private maxFileSize = 1024 * 1024; // Maximum log file size in bytes (1 MB)
+    private readonly maxFileSize = 1024 * 1024; // Maximum log file size in bytes (1 MB)
     private readonly logDir;
 
     constructor(public plugin: OpenAPIRendererPlugin) {
@@ -74,17 +73,17 @@ export default class LoggingManager {
      */
     private log(level: string, message: string): void {
         const err = new Error();
-        const stackLines = err.stack?.split('\n');
+        const stackLines = err.stack?.split('\n') ?? [];
 
         const filteredStack = [
-            ...stackLines!.slice(0, 1),
-            ...stackLines!.slice(3),
+            ...stackLines.slice(0, 1),
+            ...stackLines.slice(3),
         ].join('\n');
 
         const logEntry = {
             timestamp: new Date().toISOString(),
-            level: level,
-            message: message,
+            level,
+            message,
             context: filteredStack,
             system: {
                 platform: os.platform(),
