@@ -16,22 +16,12 @@ export function onChange(source: OpenAPISource, update: ViewUpdate): void {
         return;
     }
 
-    document.dispatchEvent(
-        new KeyboardEvent('keydown', {
-            key: 's',
-            code: 'KeyS',
-            ctrlKey: true,
-            bubbles: true,
-            cancelable: true,
-            composed: true,
-        })
-    );
-
     const openApiGroupedLeaves = source.plugin.app.workspace.getGroupLeaves(
         'openapi-renderer-view-group'
     );
 
     source.view.setViewData(source.editor?.state.doc.toString() ?? '', false);
+    source.view.requestSave();
 
     for (const leaf of openApiGroupedLeaves) {
         const view = leaf.view as OpenAPIView;
@@ -44,6 +34,7 @@ export function onChange(source: OpenAPISource, update: ViewUpdate): void {
             });
 
             view.setViewData(editor?.state.doc.toString() ?? '', false);
+            view.requestSave();
         }
         source.plugin.publisher.publish({
             eventID: EventID.EditorChanged,
