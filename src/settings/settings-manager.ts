@@ -13,6 +13,7 @@ export interface DefaultSettings {
     OpenAPISourceDarkTheme: string;
     syncOpenAPISourceTheme: boolean;
     OpenAPIViewDefaultMode: string;
+    exportFolder: string;
     extensions: BaseExtensionsStorage;
 }
 
@@ -39,6 +40,7 @@ export default class SettingsManager {
             syncOpenAPIPreviewTheme: true,
             syncOpenAPISourceTheme: true,
             OpenAPIViewDefaultMode: 'source',
+            exportFolder: 'exports',
             extensions:
                 this.plugin.sourceExtensionsManager.pluginSettingsExtensions,
         };

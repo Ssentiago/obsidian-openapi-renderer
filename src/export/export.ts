@@ -1,53 +1,105 @@
-import { convertData } from 'ui/common/helpers';
+import SwaggerUiCss from 'assets/swagger-ui/swagger-ui-base.css';
+import SwaggerUiDarkCss from 'assets/swagger-ui/swagger-ui-dark.css';
+import SwaggerUiFixesCss from 'assets/swagger-ui/swagger-ui-fixes.css';
+import SwaggerUiLightCss from 'assets/swagger-ui/swagger-ui-light.css';
 import OpenAPIRendererPlugin from 'main';
 import { moment, TFile } from 'obsidian';
+import { convertData } from 'ui/common/helpers';
 import Yazl from 'yazl';
+
 import { RenderedSpec } from './interfaces';
 
 const API_EXTENSIONS = ['yaml', 'yml', 'json'];
 const API_MARKER = /^\s*["']?(openapi|swagger)["']?\s*:/m;
 
 export default class Export {
+    private bundleCache: string | null = null;
+
     constructor(public plugin: OpenAPIRendererPlugin) {}
 
     /**
-     * Generates HTML for Swagger UI based on the provided specification.
+     * Reads the Swagger UI runtime shipped in the plugin assets folder.
      *
-     * @param {string} spec - The specification to be used for generating Swagger UI.
-     * @return {string} The generated HTML for Swagger UI.
+     * The source is cached after the first read. Returns null when the asset
+     * is not shipped, so the caller can fall back to a CDN include.
+     *
+     * @return {Promise<string|null>} The bundle source, or null when unavailable.
      */
-    private renderSwaggerUIHtml(spec: string): string {
-        return `
-            <!doctype html>
+    private async loadSwaggerBundle(): Promise<string | null> {
+        if (this.bundleCache !== null) {
+            return this.bundleCache;
+        }
+        const pluginDir = this.plugin.manifest.dir;
+        if (!pluginDir) {
+            return null;
+        }
+        try {
+            const content = await this.plugin.app.vault.adapter.read(
+                `${pluginDir}/swagger-ui-bundle.js`
+            );
+            this.bundleCache = content;
+            return content;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Generates standalone HTML for Swagger UI based on the provided specification.
+     *
+     * The page is self-contained: styles are inlined from the bundled Swagger UI
+     * stylesheets and the Swagger UI runtime is inlined from the plugin assets,
+     * so the export works offline. The specification is embedded as JSON with
+     * every `<` escaped, so a `</script>` sequence inside example payloads cannot
+     * break out of the script element.
+     *
+     * @param {string} spec - The specification JSON text to render.
+     * @return {Promise<string>} The generated HTML for Swagger UI.
+     */
+    private async renderSwaggerUIHtml(spec: string): Promise<string> {
+        const safeSpec = spec.replace(/</g, '\\u003c');
+        const bundle = await this.loadSwaggerBundle();
+        const bundleTag = bundle
+            ? `<script>${bundle.replace(/<\/script/gi, '<\\/script')}</script>`
+            : '<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>';
+
+        return `<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Swagger UI</title>
-        <link
-            rel="stylesheet"
-            href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css"
-        />
-        <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+        <style>${SwaggerUiCss}</style>
+        <style>${SwaggerUiLightCss}</style>
+        <style>
+@media (prefers-color-scheme: dark) {
+${SwaggerUiDarkCss}
+}
+        </style>
+        <style>${SwaggerUiFixesCss}</style>
     </head>
     <body>
         <div id="swagger-ui"></div>
+        <script id="openapi-spec" type="application/json">${safeSpec}</script>
+        ${bundleTag}
         <script>
-            window.onload = function() {
-                let spec = ${spec};
-                const ui = SwaggerUIBundle({
+            window.onload = function () {
+                const spec = JSON.parse(
+                    document.getElementById('openapi-spec').textContent
+                );
+                SwaggerUIBundle({
                     spec: spec,
                     dom_id: '#swagger-ui',
                     presets: [
                         SwaggerUIBundle.presets.apis,
-                        SwaggerUIBundle.SwaggerUIStandalonePreset
+                        SwaggerUIBundle.SwaggerUIStandalonePreset,
                     ],
-                    layout: "BaseLayout"
+                    layout: 'BaseLayout',
                 });
-            }
+            };
         </script>
     </body>
-</html>
-        `;
+</html>`;
     }
 
     /**
@@ -62,9 +114,33 @@ export default class Export {
         return {
             name: file.basename,
             path: file.path,
-            html: this.renderSwaggerUIHtml(spec),
+            html: await this.renderSwaggerUIHtml(spec),
             time: Date.now(),
         };
+    }
+
+    /**
+     * Returns the folder all export artifacts are written to, creating it and
+     * any missing parents along the way. An empty setting means the vault root.
+     *
+     * @return {Promise<string>} The vault-relative folder path, or '' for the root.
+     */
+    private async ensureExportDir(): Promise<string> {
+        const folder = (this.plugin.settings.exportFolder ?? '')
+            .trim()
+            .replace(/^\/+|\/+$/g, '');
+        if (!folder) {
+            return '';
+        }
+        let current = '';
+        for (const segment of folder.split('/').filter(Boolean)) {
+            current = current ? `${current}/${segment}` : segment;
+            const exists = await this.plugin.app.vault.adapter.exists(current);
+            if (!exists) {
+                await this.plugin.app.vault.createFolder(current);
+            }
+        }
+        return folder;
     }
 
     /**
@@ -99,9 +175,15 @@ export default class Export {
             const rendered = await this.renderFile(file);
             const sanitizedName = file.basename.replace(/[^a-zA-Z0-9-_]/g, '_');
             const time = moment().format('YYYYMMDDHHmmss');
-            const exportPath = `export-${sanitizedName}-${time}.html`;
+            const exportDir = await this.ensureExportDir();
+            const exportPath = exportDir
+                ? `${exportDir}/export-${sanitizedName}-${time}.html`
+                : `export-${sanitizedName}-${time}.html`;
 
-            await this.plugin.app.vault.adapter.write(exportPath, rendered.html);
+            await this.plugin.app.vault.adapter.write(
+                exportPath,
+                rendered.html
+            );
             this.plugin.showNotice(`Exported to ${exportPath}`);
         } catch (error: any) {
             this.plugin.showNotice('Failed to export file');
@@ -129,7 +211,9 @@ export default class Export {
             await this.handleZip(rendered);
         } catch (error: any) {
             this.plugin.showNotice('Failed to export files');
-            this.plugin.logger.error(`Failed to export files: ${error.message}`);
+            this.plugin.logger.error(
+                `Failed to export files: ${error.message}`
+            );
         }
     }
 
@@ -172,7 +256,10 @@ export default class Export {
         })
             .then(async (buffer) => {
                 const time = moment().format('YYYYMMDDHHmmss');
-                const zipFilePath = `export-openapi-data-${time}.zip`;
+                const exportDir = await this.ensureExportDir();
+                const zipFilePath = exportDir
+                    ? `${exportDir}/export-openapi-data-${time}.zip`
+                    : `export-openapi-data-${time}.zip`;
 
                 await this.plugin.app.vault.adapter.writeBinary(
                     zipFilePath,

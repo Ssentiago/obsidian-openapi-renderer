@@ -5,17 +5,15 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
-import copy from 'rollup-plugin-copy';
-import { visualizer } from 'rollup-plugin-visualizer';
-
-import css from "rollup-plugin-import-css";
-import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
+import copy from 'rollup-plugin-copy';
+import css from 'rollup-plugin-import-css';
 import progress from 'rollup-plugin-progress';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 
 const baseConfig = {
     input: 'src/main.ts',
@@ -42,7 +40,7 @@ const baseConfig = {
                 },
             ],
         }),
-        css({minify: true}),
+        css({ minify: true }),
         nodeResolve({
             preferBuiltins: true,
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -78,6 +76,10 @@ const developmentConfig = {
                     src: './.hotreload',
                     dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
                 },
+                {
+                    src: './src/assets/swagger-ui/swagger-ui-bundle.js',
+                    dest: 'test-vault/.obsidian/plugins/openapi-renderer/',
+                },
             ],
         }),
     ],
@@ -102,6 +104,10 @@ const productionConfig = {
             targets: [
                 { src: './styles.css', dest: 'dist/' },
                 { src: './manifest.json', dest: 'dist/' },
+                {
+                    src: './src/assets/swagger-ui/swagger-ui-bundle.js',
+                    dest: 'dist/',
+                },
             ],
         }),
         terser({

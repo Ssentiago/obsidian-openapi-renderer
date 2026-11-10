@@ -1,6 +1,8 @@
 import React from 'react';
+
 import {
     ODropdown,
+    OFolder,
     OSetting,
     OToggle,
 } from '@obsidian-lib/native-react-components';
@@ -15,7 +17,7 @@ const General: React.FC = () => {
     return (
         <>
             <OSetting
-                name="Register YAML and JSON files for processing by default?"
+                name='Register YAML and JSON files for processing by default?'
                 desc={[
                     'Enable this option to open YAML and JSON files in this view by default.',
                     'You can still open these files via the context menu.',
@@ -28,6 +30,24 @@ const General: React.FC = () => {
                         plugin.settings.registerYamlJson = value;
                         await plugin.settingsManager.saveSettings();
                     }}
+                />
+            </OSetting>
+
+            <OSetting
+                name='Export folder'
+                desc={[
+                    'Folder for standalone HTML exports and ZIP archives.',
+                    'Created automatically. Empty value writes to the vault root.',
+                ]}
+            >
+                <OFolder
+                    value={plugin.settings.exportFolder}
+                    onChange={async (value) => {
+                        plugin.settings.exportFolder = value;
+                        await plugin.settingsManager.saveSettings();
+                    }}
+                    includeRoot
+                    placeholder='exports'
                 />
             </OSetting>
 
