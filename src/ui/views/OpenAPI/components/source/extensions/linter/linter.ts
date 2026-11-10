@@ -5,13 +5,25 @@ import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import jsyaml from 'js-yaml';
 
+import { validateOpenApiSpec } from './openapi-validator';
+
+/**
+ * Lints the source document as both YAML/JSON syntax and an OpenAPI
+ * specification.
+ *
+ * Syntax problems are reported first: a document that does not parse cannot be
+ * checked meaningfully as a spec. Once it parses, the parsed value is validated
+ * as an OpenAPI document so structural problems beyond bare syntax (a missing
+ * info block, an operation without responses, a dangling $ref) reach the editor
+ * gutter as well.
+ */
 export function Linter(): { extension: Extension } | readonly Extension[] {
     return linter((view: EditorView) => {
-        const diagnostics: Diagnostic[] = [];
         const text = view.state.doc.toString();
-        const cursorPos = view.state.doc.lineAt(view.state.selection.main.head);
+
         try {
-            jsyaml.load(text);
+            const spec = jsyaml.load(text);
+            return validateOpenApiSpec(text, spec);
         } catch (e) {
             if (e instanceof jsyaml.YAMLException) {
                 const mark = e.mark;
@@ -19,25 +31,18 @@ export function Linter(): { extension: Extension } | readonly Extension[] {
                 const from = errLine.from + mark.column;
                 const to = errLine.to;
 
-                diagnostics.push({
-                    from,
-                    to,
-                    severity: 'error',
-                    message: e.message,
-                });
-
-                if (errLine.number === cursorPos.number) {
-                    return diagnostics;
-                }
-                diagnostics.push({
-                    from: cursorPos.from,
-                    to: cursorPos.to,
-                    severity: 'error',
-                    message: `Possible error at line ${cursorPos.number}. Please check near this location.`,
-                });
+                const diagnostics: Diagnostic[] = [
+                    {
+                        from,
+                        to,
+                        severity: 'error',
+                        message: e.message,
+                    },
+                ];
+                return diagnostics;
             }
+            return [];
         }
-        return diagnostics;
     });
 }
 
