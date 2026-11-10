@@ -78,14 +78,17 @@ export class OpenAPIController {
      *      and open a new leaf of the same type in a floating window if Alt is pressed.
      *      Otherwise, it will switch the mode of the current leaf.
      *   2. Theme button: Switches current active component between light and dark theme.
+     *   3. Export button: Exports the current specification file as a standalone Swagger UI page.
      *
      * @returns {Object} An object with the following keys:
      *  - changeModeButton: The mode switch button.
      *  - themeButton: The theme button.
+     *  - exportButton: The export button.
      */
     initializeActions(): {
         changeModeButton: HTMLElement;
         themeButton: HTMLElement;
+        exportButton: HTMLElement;
     } {
         const changeModeButton = this.view.addAction(
             this.modeActionIcon,
@@ -123,6 +126,18 @@ export class OpenAPIController {
                         .themeButtonIcon,
                     `Theme: ${this.view.activeComponent.themeMode}`
                 );
+            }
+        );
+
+        const exportButton = this.view.addAction(
+            'file-code-2',
+            'Export as standalone HTML',
+            async () => {
+                const file = this.view.file;
+                if (!file) {
+                    return;
+                }
+                await this.view.plugin.export.exportCurrent(file);
             }
         );
 
@@ -171,6 +186,7 @@ export class OpenAPIController {
         return {
             changeModeButton: changeModeButton,
             themeButton: themeButton,
+            exportButton: exportButton,
         };
     }
 
