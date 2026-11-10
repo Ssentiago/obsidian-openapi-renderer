@@ -149,9 +149,7 @@ ${SwaggerUiDarkCss}
      * @return {Promise<TFile[]>} Files whose content declares an openapi or swagger key.
      */
     private async collectApiFiles(): Promise<TFile[]> {
-        const candidates = this.plugin.app.vault.getFiles().filter((file) => {
-            return API_EXTENSIONS.includes(file.extension.toLowerCase());
-        });
+        const candidates = this.plugin.app.vault.getFiles().filter((file) => API_EXTENSIONS.includes(file.extension.toLowerCase()));
 
         const apiFiles: TFile[] = [];
         for (const file of candidates) {

@@ -1,13 +1,12 @@
 {
     "compilerOptions": {
-        "baseUrl": "./src",
         "jsx": "react-jsx",
         "module": "ESNext",
         "target": "ESNext",
         "allowJs": false,
         "strict": true,
         "noImplicitAny": true,
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "types": ["node"],
         "typeRoots": ["node_modules/@types", "src/typing/interfaces"],
         "importHelpers": true,
@@ -15,7 +14,10 @@
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
         "skipLibCheck": true,
-        "lib": ["DOM", "ES5", "ES6", "ES7"]
+        "lib": ["DOM", "ES5", "ES6", "ES7"],
+        "paths": {
+            "*": ["./src/*"]
+        }
     },
     "include": [
         "**/*.ts",

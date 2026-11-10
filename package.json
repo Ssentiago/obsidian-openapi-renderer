@@ -12,7 +12,9 @@
         "build": "cross-env PRODUCTION=1 NODE_ENV=production rollup -c rollup.config.ts",
         "start": "obsidian-dev-tools start",
         "release": "obsidian-dev-tools release",
-        "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\""
+        "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
+        "lint": "eslint src",
+        "typecheck": "tsc --noEmit"
     },
     "keywords": [],
     "dependencies": {
@@ -51,7 +53,7 @@
         "@types/swagger-ui-dist": "^3.30.6",
         "@types/yazl": "2.4.2",
         "@typescript-eslint/eslint-plugin": "^8.45.0",
-        "@typescript-eslint/parser": "^7.18.0",
+        "@typescript-eslint/parser": "^8.45.0",
         "@typescript-eslint/utils": "^8.45.0",
         "cross-env": "^10.1.0",
         "eslint": "^9.36.0",
