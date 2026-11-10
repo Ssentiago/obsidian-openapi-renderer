@@ -1,0 +1,21 @@
+[project]
+name = "openapi-renderer"
+repo = "Ssentiago/obsidian-openapi-renderer"
+branches = ["main"]
+
+changelog_type = "conventional"
+changelog = "CHANGELOG.md"
+release_mode = "local"
+
+[[components]]
+name = "openapi-renderer"
+path = "."
+build = "bun run build"
+artifact = "./dist"
+zip = false
+
+[[components.version_files]]
+file = "manifest.json"
+
+[[components.version_files]]
+file = "package.json"
