@@ -1,5 +1,6 @@
 import SwaggerUiCss from 'assets/swagger-ui/swagger-ui-base.css';
 import SwaggerUiDarkCss from 'assets/swagger-ui/swagger-ui-dark.css';
+import SwaggerUiFixesCss from 'assets/swagger-ui/swagger-ui-fixes.css';
 import SwaggerUiLightCss from 'assets/swagger-ui/swagger-ui-light.css';
 import { SwaggerUIBundle } from 'swagger-ui-dist';
 import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
@@ -94,7 +95,7 @@ export class RenderController {
         }
 
         const style = document.createElement('style');
-        style.textContent = `${PREVIEW_LAYOUT_CSS}\n${SwaggerUiCss}\n${additionalCSS}`;
+        style.textContent = `${PREVIEW_LAYOUT_CSS}\n${SwaggerUiCss}\n${additionalCSS}\n${SwaggerUiFixesCss}`;
         shadowRoot.appendChild(style);
 
         const renderContainer = document.createElement('div');

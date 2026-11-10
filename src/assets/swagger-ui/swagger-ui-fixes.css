@@ -1,0 +1,80 @@
+/* Preview legibility fixes.
+ *
+ * Injected into the preview shadow root after swagger-ui-base.css and the
+ * active mode stylesheet, so it outranks both of them by order. The preview
+ * lives in a shadow root, so Obsidian's app.css and themes cannot match these
+ * elements at all; what still crosses the shadow boundary is inheritance
+ * (the host text colour) and the UA stylesheet (form controls keep their
+ * default palette). Everything below fixes those two channels plus the
+ * palette mistakes swagger-ui-dark.css inherits from the base stylesheet.
+ *
+ * Selectors are doubled (.swagger-ui.swagger-ui) where the fix deliberately
+ * overrides a colour set by Swagger itself, so the cascade does not depend on
+ * injection order.
+ */
+
+/* Form controls do not inherit colour by default: the UA stylesheet paints
+ * them black-on-white regardless of the surrounding theme. Base gives the
+ * fields a background but never a colour, so a dark preview shows near-black
+ * text on #1c1c21. Let them follow the preview theme instead. */
+.swagger-ui input:not([disabled]),
+.swagger-ui textarea:not([disabled]),
+.swagger-ui select:not([disabled]) {
+    color: inherit;
+}
+
+.swagger-ui input::placeholder,
+.swagger-ui textarea::placeholder {
+    color: inherit;
+    opacity: 0.55;
+}
+
+/* react-syntax-highlighter colours JSON keys (.hljs-attr) and punctuation
+ * with nothing, so they inherit the pre colour and the block reads as one
+ * flat wall of text. Give keys a distinct tint on the #333 code background. */
+.swagger-ui .microlight .hljs-attr {
+    color: #d1d9e6;
+}
+
+/* Base sets markdown code to #9012fe and fenced code to #000, and the dark
+ * stylesheet only repaints some of it. No single literal colour clears 4.5:1
+ * on both #262626 and #fafafa, so inherit and mark inline code with a
+ * translucent grey chip that reads on either background. */
+.swagger-ui.swagger-ui .markdown code,
+.swagger-ui.swagger-ui .renderedMarkdown code,
+.swagger-ui.swagger-ui .markdown pre,
+.swagger-ui.swagger-ui .renderedMarkdown pre {
+    color: inherit;
+}
+
+.swagger-ui.swagger-ui .markdown code,
+.swagger-ui.swagger-ui .renderedMarkdown code {
+    background-color: rgba(127, 127, 127, 0.18);
+    border-radius: 3px;
+    padding: 0.1em 0.3em;
+}
+
+/* Base paints POST, PUT and PATCH badges white on pastel backgrounds
+ * (#49cc90, #fca130, #50e3c2), which measures around 2:1 in both modes.
+ * Dark text on those three; GET, DELETE, HEAD and OPTIONS stay dark enough
+ * for white. The dark stylesheet repaints the badges but keeps them pastel. */
+.swagger-ui .opblock.opblock-post .opblock-summary-method,
+.swagger-ui .opblock.opblock-put .opblock-summary-method,
+.swagger-ui .opblock.opblock-patch .opblock-summary-method {
+    color: #10231b;
+}
+
+/* Base paints the OAS version stamp white on the olive #7d8492 background.
+ * Pure black clears AA at 5.7:1 where a near-black measures 4.36:1. */
+.swagger-ui.swagger-ui .info .title small pre {
+    color: #000;
+}
+
+/* Base gives the Execute button #4990e2 with white text (3.2:1), and the
+ * dark repaint stays under 3.3:1. Darken the background instead of the text
+ * so the fix holds in both modes. */
+.swagger-ui.swagger-ui .btn.execute {
+    background-color: #2f6fb5;
+    border-color: #2f6fb5;
+    color: #fff;
+}
