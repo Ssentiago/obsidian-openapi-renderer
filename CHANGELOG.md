@@ -1,21 +1,21 @@
-# 4.5.1
-# What's new
+## [4.5.1] - 2024-11-23
+### What's new
 
-# Fixes
+### Fixes
 - Resolve the bug where files were also opened in the default application when creating a new linked view, occurring when the 'Register YAML and JSON extensions' setting is disabled.
   There is a known issue where, if you have multiple linked OpenAPI views open and then close and reopen the Obsidian application, Obsidian will open the files from these linked views in the default application.
 
-# 4.5.0
-# What's New
+## [4.5.0] - 2024-11-23
+### What's New
 
-## Features
+### Features
 - Added a file menu item in the file manager to open files in OpenAPI View.
 - Introduced a new option to the plugin settings to enable or disable the default registration of YAML and JSON files for processing.
     - When disabled, clicking on a spec file in the file manager won't open it in OpenAPI View.
     - However, you can still open it via the right-click context menu by selecting `Open in OpenAPI View`.
 
-# 4.4.0
-## What's New
+## [4.4.0] - 2024-11-22
+### What's New
 
 ### Features
 - Plugin settings:
@@ -26,13 +26,13 @@
 - Resolved an issue where Preview mode was not working on Windows OS. Preview mode should now function correctly.
 
 
-# 4.3.0
-## What's new
+## [4.3.0] - 2024-11-20
+### What's new
 
 ### Features
 - Add anchor links support to edit / preview view. Users can create anchor links to any lines, view them in a convenient modal window (opens by clicking on the anchor button on the action bar), as well as copy these anchor links and paste them into notes so that at any time by clicking on the link to go to a specific line in the editor. To add or remove an anchor link, simply click on the gutter in the editor. You can also add an anchor link with additional information - to do this, right-click on the gutter and select the related context menu item.
 
-# 4.2.0
+## [4.2.0] - 2024-10-12
 ### Features
 - Add resolving of external file $ref links
 - Add new option to the plugin settings tab for enabling or disabling editor extensions (this applies globally for all the new OpenAPI views)
@@ -41,11 +41,11 @@
 ### Bugfixes
 - Fix some visual bugs related to the settings tab and so on...
 
-# 4.1.0
+## [4.1.0] - 2024-09-04
 ### Features
 - Add indentWithTab command
 
-# 4.0.0
+## [4.0.0] - 2024-09-01
 
 ### Breaking Changes
 
@@ -117,7 +117,7 @@
         - **View Actions:**
             - **Export all versions of all tracked files:** Export as a Zip file
 
-# 3.1.0
+## [3.1.0] - 2024-07-23
 
 ### Added
 
@@ -145,7 +145,7 @@
   work exclusively with templates, and users can export their own Swagger UI manually (`Open 
   comand palette - OpenAPI Renderer: Export`).
 
-# 3.0.0
+## [3.0.0] - 2024-07-22
 
 ### Added
 
@@ -192,7 +192,7 @@
 
 - Rendering in a modal window
 
-# 2.0.0
+## [2.0.0] - 2024-07-07
 
 ### Major Changes:
 
@@ -218,11 +218,11 @@ Added validation for HTML file existence on file open
 - Updated settings tab with improved input validation for file names and iframe dimensions
 - Added notices for invalid inputs in settings with automatic reversion
 
-## Performance:
+### Performance:
 
 - Optimized file open event handling with a small delay for better performance
 
-# 1.0.0 (Initial Release)
+## [1.0.0] - 2024-07-05 (Initial Release)
 
 ### Features:
 - Render OpenAPI specifications within Obsidian notes
