@@ -1,5 +1,6 @@
 import path from 'path';
 import { BaseExtensionsStorage } from 'ui/views/OpenAPI/components/source/typing/interfaces';
+
 import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export interface DefaultSettings {
@@ -29,7 +30,7 @@ export default class SettingsManager {
      */
     get defaultSettings(): DefaultSettings {
         return {
-            registerYamlJson: true,
+            registerYamlJson: false,
             resourcesAutoUpdate: false,
             OpenAPIPreviewTheme: 'dark',
             OpenAPISourceThemeMode: 'dark',
@@ -44,6 +45,39 @@ export default class SettingsManager {
     }
 
     /**
+     * Normalizes the stored extension toggles against the extensions currently
+     * known to the source extensions manager.
+     *
+     * Unknown ids from older data files are dropped, missing ids fall back to
+     * their default state, and existing on/off values are preserved. This keeps
+     * `settings.extensions` in sync with `extensionsStorage` so lookups in the
+     * extension controller never hit an undefined entry.
+     *
+     * @param stored The extension storage loaded from the data file.
+     * @returns A full extension storage matching the current extension set.
+     */
+    private normalizeExtensions(stored: unknown): BaseExtensionsStorage {
+        const defaults =
+            this.plugin.sourceExtensionsManager.pluginSettingsExtensions;
+        const saved = (stored ?? {}) as Partial<BaseExtensionsStorage>;
+
+        const result = {} as BaseExtensionsStorage;
+        for (const id of Object.keys(
+            defaults
+        ) as (keyof BaseExtensionsStorage)[]) {
+            const savedEntry = saved[id];
+            result[id] = {
+                name: defaults[id].name,
+                on:
+                    typeof savedEntry?.on === 'boolean'
+                        ? savedEntry.on
+                        : defaults[id].on,
+            };
+        }
+        return result;
+    }
+
+    /**
      * Loads the plugin's settings from the plugin's data store.
      *
      * This method loads the plugin's settings from the plugin's data store, merges them with the default settings,
@@ -55,6 +89,7 @@ export default class SettingsManager {
         const userSettings = (await this.plugin.loadData()) ?? {};
         const defaultSettings = this.defaultSettings;
         const settings = Object.assign({}, defaultSettings, userSettings);
+        settings.extensions = this.normalizeExtensions(userSettings.extensions);
         this.plugin.settings = {
             ...settings,
         };
