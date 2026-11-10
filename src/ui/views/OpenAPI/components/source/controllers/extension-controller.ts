@@ -11,6 +11,7 @@ import { Compartment, EditorState, Extension } from '@codemirror/state';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
 import { SourceController } from 'ui/views/OpenAPI/components/source/controllers/source-controller';
 import createBoundKeymap from 'ui/views/OpenAPI/components/source/extensions/keymap';
+import { refNavigationExtension } from 'ui/views/OpenAPI/components/source/extensions/ref-navigation/ref-navigation';
 import { onChange } from 'ui/views/OpenAPI/components/source/handlers/editor-handlers';
 import {
     handleChangeFontSizeOnWHeel,
@@ -40,9 +41,7 @@ export class ExtensionController {
      * `extension` property, or an array of extensions, or a `LanguageSupport` object.
      */
     get defaultExtensions(): (
-        | { extension: Extension }
-        | readonly Extension[]
-        | LanguageSupport
+        { extension: Extension } | readonly Extension[] | LanguageSupport
     )[] {
         const boundWheelHandler = handleChangeFontSizeOnWHeel();
         const { source } = this.controller;
@@ -85,6 +84,7 @@ export class ExtensionController {
             syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
             history(),
             keymap.of(createBoundKeymap(source)),
+            refNavigationExtension(source),
             indentOnInput(),
             EditorState.tabSize.of(4),
         ];
