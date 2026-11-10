@@ -1,7 +1,7 @@
 import { foldGutter } from '@codemirror/language';
 import { lintGutter } from '@codemirror/lint';
 import { highlightSelectionMatches } from '@codemirror/search';
-import { Compartment } from '@codemirror/state';
+import { Compartment, Extension } from '@codemirror/state';
 import { highlightActiveLine, lineNumbers } from '@codemirror/view';
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
 import { linkHighlightExtension } from 'ui/views/OpenAPI/components/source/extensions/link-highlighting';
@@ -37,10 +37,10 @@ export class ExtensionManager {
                 name: 'Folding',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return foldGutter();
                 },
             },
@@ -49,10 +49,10 @@ export class ExtensionManager {
                 name: 'Linter',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return [yamlJsonLinter, lintGutter()];
                 },
             },
@@ -61,10 +61,10 @@ export class ExtensionManager {
                 name: 'Line Numbers',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return lineNumbers({
                         formatNumber: (lineNo) => `${lineNo}`,
                         domEventHandlers: {
@@ -85,10 +85,10 @@ export class ExtensionManager {
                 name: 'Highlight Selection Matches',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return highlightSelectionMatches();
                 },
             },
@@ -97,10 +97,10 @@ export class ExtensionManager {
                 name: 'OpenAPI Completion',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return OpenAPICompletionExtension;
                 },
             },
@@ -109,10 +109,10 @@ export class ExtensionManager {
                 name: 'Link Highlight Extension',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return linkHighlightExtension;
                 },
             },
@@ -121,10 +121,10 @@ export class ExtensionManager {
                 name: 'Highlight Active Line',
                 type: 'User',
                 on: true,
-                get compartment() {
+                get compartment(): Compartment {
                     return new Compartment();
                 },
-                get extension() {
+                get extension(): Extension | Extension[] {
                     return highlightActiveLine();
                 },
             },

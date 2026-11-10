@@ -1,11 +1,12 @@
-import { EventID } from 'events-management/typing/constants';
-import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import React from 'react';
+
 import {
     ODropdown,
     OSetting,
     OToggle,
 } from '@obsidian-lib/native-react-components';
+import { EventID } from 'events-management/typing/constants';
+import { OpenAPIThemeChangeState } from 'events-management/typing/interfaces';
 import { useSettingsContext } from 'settings/components/core/context';
 
 /**
@@ -14,7 +15,7 @@ import { useSettingsContext } from 'settings/components/core/context';
 const Source: React.FC = () => {
     const { app, plugin } = useSettingsContext();
 
-    const publishSourceThemeChange = () => {
+    const publishSourceThemeChange = (): void => {
         plugin.publisher.publish({
             eventID: EventID.OpenAPIThemeChangeState,
             timestamp: new Date(),

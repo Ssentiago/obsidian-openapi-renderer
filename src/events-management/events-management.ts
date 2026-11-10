@@ -94,7 +94,7 @@ export class EventObserver extends Observer {
         }
         const handlers = emitterSubs.get(eventID)!;
 
-        const dispose = () => {
+        const dispose = (): void => {
             emitter.offref(eventRef);
             const index = handlers.indexOf(dispose);
             if (index !== -1) {

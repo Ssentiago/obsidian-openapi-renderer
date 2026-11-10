@@ -1,8 +1,10 @@
+/* eslint-disable no-console -- This module is the logger and reports internal errors on the console. */
 import * as fs from 'fs';
 import { moment } from 'obsidian';
-import * as path from 'path';
-import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 import os from 'os';
+import * as path from 'path';
+
+import OpenAPIRendererPlugin from '../core/openapi-renderer-plugin';
 
 export default class LoggingManager {
     private maxFileSize = 1024 * 1024; // Maximum log file size in bytes (1 MB)

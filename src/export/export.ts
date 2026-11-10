@@ -126,13 +126,16 @@ ${SwaggerUiDarkCss}
      * @return {Promise<string>} The vault-relative folder path, or '' for the root.
      */
     private async ensureExportDir(): Promise<string> {
-        const folder = (this.plugin.settings.exportFolder ?? '')
+        const folder = (this.plugin.settings.exportFolder || '')
             .trim()
             .replace(/^\/+|\/+$/g, '');
         if (!folder) {
             return '';
         }
         let current = '';
+        // Folder segments are created top down one at a time so each parent
+        // exists before its child, which makes sequential awaits necessary.
+        /* eslint-disable no-await-in-loop */
         for (const segment of folder.split('/').filter(Boolean)) {
             current = current ? `${current}/${segment}` : segment;
             const exists = await this.plugin.app.vault.adapter.exists(current);
@@ -140,6 +143,7 @@ ${SwaggerUiDarkCss}
                 await this.plugin.app.vault.createFolder(current);
             }
         }
+        /* eslint-enable no-await-in-loop */
         return folder;
     }
 
@@ -149,15 +153,22 @@ ${SwaggerUiDarkCss}
      * @return {Promise<TFile[]>} Files whose content declares an openapi or swagger key.
      */
     private async collectApiFiles(): Promise<TFile[]> {
-        const candidates = this.plugin.app.vault.getFiles().filter((file) => API_EXTENSIONS.includes(file.extension.toLowerCase()));
+        const candidates = this.plugin.app.vault
+            .getFiles()
+            .filter((file) =>
+                API_EXTENSIONS.includes(file.extension.toLowerCase())
+            );
+
+        const contents = await Promise.all(
+            candidates.map((file) => this.plugin.app.vault.cachedRead(file))
+        );
 
         const apiFiles: TFile[] = [];
-        for (const file of candidates) {
-            const content = await this.plugin.app.vault.cachedRead(file);
-            if (API_MARKER.test(content)) {
+        candidates.forEach((file, index) => {
+            if (API_MARKER.test(contents[index])) {
                 apiFiles.push(file);
             }
-        }
+        });
         return apiFiles;
     }
 
