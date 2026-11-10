@@ -8,7 +8,6 @@ import typescript from '@rollup/plugin-typescript';
 import path, { dirname } from 'path';
 import copy from 'rollup-plugin-copy';
 import css from 'rollup-plugin-import-css';
-import progress from 'rollup-plugin-progress';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { fileURLToPath } from 'url';
 
