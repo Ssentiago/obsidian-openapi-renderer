@@ -60,13 +60,13 @@ export default class OpenAPIPreview implements PreviewComponent {
      * Cleans up the preview.
      *
      * This method is called when the view is closed.
-     * It clears the preview content element.
+     * It clears the preview content element and its shadow root.
      *
      * @returns {void} .
      */
     close(): void {
         this.contentEl.empty();
-        this.controller.renderController.ui = undefined;
+        this.controller.renderController.clear();
     }
 
     /**

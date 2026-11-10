@@ -4,8 +4,24 @@ import SwaggerUiLightCss from 'assets/swagger-ui/swagger-ui-light.css';
 import { SwaggerUIBundle } from 'swagger-ui-dist';
 import OpenAPIPreviewController from 'ui/views/OpenAPI/components/preview/controllers/preview-controller';
 
+export const PREVIEW_LAYOUT_CSS = `
+.fill-height-or-more {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.fill-height-or-more > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+`;
+
 export class RenderController {
     ui: any;
+    shadowRoot: ShadowRoot | null = null;
+
     constructor(public controller: OpenAPIPreviewController) {}
 
     /**
@@ -22,26 +38,49 @@ export class RenderController {
     }
 
     /**
+     * Returns the shadow root used to host the preview, creating it if needed.
+     *
+     * All Swagger UI markup and styles live inside this shadow root so they
+     * cannot leak into (or be affected by) the rest of the Obsidian DOM.
+     *
+     * @param containerEl The host element owned by the view.
+     *
+     * @returns {ShadowRoot} The shadow root hosting the preview.
+     */
+    private ensureShadowRoot(containerEl: HTMLDivElement): ShadowRoot {
+        if (!this.shadowRoot || containerEl.shadowRoot !== this.shadowRoot) {
+            this.shadowRoot =
+                containerEl.shadowRoot ??
+                containerEl.attachShadow({ mode: 'open' });
+        }
+        return this.shadowRoot;
+    }
+
+    /**
      * Renders the Swagger UI for the preview component.
      *
      * This method is responsible for rendering the Swagger UI.
+     * Markup and styles are rendered into the shadow root of the preview
+     * container, keeping the preview isolated from the host document styles.
      *
-     * @param containerEl The HTML element to render the Swagger UI component into.
+     * @param containerEl The host element to render the Swagger UI component into.
      *
      * @returns {Promise<void>} A promise that resolves when the Swagger UI component is rendered.
      *
      * @throws If there is an error loading the CSS resources.
      */
     private async renderSwaggerUI(containerEl: HTMLDivElement): Promise<void> {
-        const updated = await this.updatePreview(
-            await this.controller.previewUtilController.loadSpec()
-        );
+        const parsedSpec =
+            await this.controller.previewUtilController.loadSpec();
+
+        const updated = await this.updatePreview(parsedSpec);
 
         if (updated) {
             return;
         }
 
-        containerEl.empty();
+        const shadowRoot = this.ensureShadowRoot(containerEl);
+        shadowRoot.innerHTML = '';
 
         let additionalCSS = '';
 
@@ -54,15 +93,13 @@ export class RenderController {
                 break;
         }
 
-        const style = containerEl.createEl('style');
-        style.textContent = `${SwaggerUiCss}\n${additionalCSS}`;
+        const style = document.createElement('style');
+        style.textContent = `${PREVIEW_LAYOUT_CSS}\n${SwaggerUiCss}\n${additionalCSS}`;
+        shadowRoot.appendChild(style);
 
-        const renderContainer = containerEl.createDiv({
-            cls: 'fill-height-or-more',
-        });
-
-        const parsedSpec =
-            await this.controller.previewUtilController.loadSpec();
+        const renderContainer = document.createElement('div');
+        renderContainer.className = 'fill-height-or-more';
+        shadowRoot.appendChild(renderContainer);
 
         if (!parsedSpec) {
             return;
@@ -77,6 +114,19 @@ export class RenderController {
             ],
             layout: 'BaseLayout',
         });
+    }
+
+    /**
+     * Clears the preview.
+     *
+     * Removes everything rendered into the shadow root and drops the
+     * Swagger UI instance. Called when the view is closed.
+     *
+     * @returns {void} No return value.
+     */
+    clear(): void {
+        this.ui = undefined;
+        this.shadowRoot?.replaceChildren();
     }
 
     /**
