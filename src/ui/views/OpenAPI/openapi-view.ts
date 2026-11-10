@@ -1,5 +1,4 @@
 import OpenAPIRendererPlugin from 'core/openapi-renderer-plugin';
-import { AnchorData } from 'indexedDB/database/anchor';
 import { IconName, TextFileView, TFile, WorkspaceLeaf } from 'obsidian';
 import { RenderingMode } from 'ui/typing/constants';
 import { OpenAPIViewComponent } from 'ui/typing/interfaces';
@@ -17,8 +16,6 @@ export class OpenAPIView extends TextFileView {
     sourceContainer!: HTMLDivElement;
     previewContainer!: HTMLDivElement;
     previousFile: TFile | undefined = undefined;
-
-    anchors = new Set<AnchorData>();
 
     constructor(
         leaf: WorkspaceLeaf,
@@ -127,7 +124,6 @@ export class OpenAPIView extends TextFileView {
      * This method is called when a file is loaded into the view.
      * It:
      * - Calls the superclass's `onLoadFile` method.
-     * - Fetches the anchors from the IndexedDB database.
      * - Calls the `render` method on the active component.
      *
      * @param {TFile} file The file that was loaded.
@@ -135,7 +131,6 @@ export class OpenAPIView extends TextFileView {
      */
     async onLoadFile(file: TFile): Promise<void> {
         await super.onLoadFile(file);
-        this.anchors = new Set<AnchorData>(await this.controller.getAnchors());
         this.activeComponent?.render();
     }
 

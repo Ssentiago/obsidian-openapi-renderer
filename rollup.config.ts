@@ -8,7 +8,6 @@ import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import css from "rollup-plugin-import-css";
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
@@ -52,12 +51,6 @@ const baseConfig = {
             include: 'node_modules/**',
         }),
         typescript(),
-        webWorkerLoader({
-            inline: true,
-            forceInline: true,
-            targetPlatform: 'browser',
-            format: 'cjs',
-        }),
     ],
 };
 

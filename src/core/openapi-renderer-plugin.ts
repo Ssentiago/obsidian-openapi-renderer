@@ -3,35 +3,24 @@ import {
     EventPublisher,
 } from 'events-management/events-management';
 import Export from 'export/export';
-import { addIcon, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
+import { addIcon, Notice, Plugin, TFile } from 'obsidian';
 import { OpenAPISettingTab } from 'settings/settings';
 import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
-import { createNewLeaf } from 'ui/common/helpers';
-import { EntryView } from 'ui/views/OpenAPI Entry/entry-view';
-import { VersionView } from 'ui/views/OpenAPI Version/version-view';
 import { ExtensionManager } from 'ui/views/OpenAPI/components/source/managers/extension-manager';
 import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
-import { FileWatcher } from '../filewatcher/filewatcher';
-import { WorkerHelper } from '../indexedDB/worker/helper';
 import LoggingManager from '../logging/logging-manager';
-import {
-    OPENAPI_ENTRY_VIEW,
-    OPENAPI_VERSION_VIEW,
-    OPENAPI_VIEW,
-} from '../ui/typing/types';
+import { OPENAPI_VIEW } from '../ui/typing/types';
 
 export default class OpenAPIRendererPlugin extends Plugin {
-    settings!: DefaultSettings;
+    declare settings: DefaultSettings;
     settingsTab!: OpenAPISettingTab;
     logger!: LoggingManager;
     publisher!: EventPublisher;
     observer!: EventObserver;
     settingsManager!: SettingsManager;
     export!: Export;
-    fileWatcher!: FileWatcher;
-    workerHelper!: WorkerHelper;
     sourceExtensionsManager!: ExtensionManager;
 
     /**
@@ -83,14 +72,13 @@ export default class OpenAPIRendererPlugin extends Plugin {
     /**
      * Initializes the core components of the plugin.
      *
-     * This method creates and initializes the settings manager, logger, and resource manager.
+     * This method creates and initializes the settings manager and logger.
      *
      * @returns A promise that resolves when the core components have been initialized.
      */
     private async initializeCore(): Promise<void> {
         await this.settingsManager.loadSettings();
         this.logger = new LoggingManager(this);
-        this.workerHelper = new WorkerHelper();
     }
 
     /**
@@ -121,12 +109,10 @@ export default class OpenAPIRendererPlugin extends Plugin {
     /**
      * Initializes the UI components of the plugin.
      *
-     * This method registers three views: `OpenAPIView`, `VersionView`, and `EntryView`.
-     * It also registers extensions for YAML, YML, and JSON files so that they can be opened with the
-     * `OpenAPIView` by default.
-     *
-     * Additionally, this method adds a ribbon icon for opening the `EntryView` and a command
-     * for opening the `EntryView` from the command palette.
+     * This method registers the `OpenAPIView` and extensions for YAML, YML, and JSON files so
+     * that they can be opened with the `OpenAPIView` by default. It also adds a file menu item
+     * for opening a specification in the OpenAPI View and registers the `openapi-open` protocol
+     * handler for deep links into a specification file.
      *
      * @returns A promise that resolves when the UI components have been initialized.
      */
@@ -162,39 +148,6 @@ export default class OpenAPIRendererPlugin extends Plugin {
                     await this.app.workspace.revealLeaf(leaf);
                 });
             });
-        });
-
-        this.registerView(
-            OPENAPI_VERSION_VIEW,
-            (leaf: WorkspaceLeaf) => new VersionView(leaf, this)
-        );
-
-        this.registerView(
-            OPENAPI_ENTRY_VIEW,
-            (leaf: WorkspaceLeaf) => new EntryView(leaf, this)
-        );
-
-        this.addRibbonIcon('view', 'Open OpenAPI Entry View', async () => {
-            const leaf = this.app.workspace.getLeaf(true);
-            await leaf.setViewState({
-                type: OPENAPI_ENTRY_VIEW,
-                active: true,
-            });
-            await this.app.workspace.revealLeaf(leaf);
-        });
-
-        this.addCommand({
-            id: 'openapi-renderer-open-openapi-entry',
-            name: 'OpenAPI Entry',
-            icon: 'file-search-2',
-            callback: async () => {
-                const leaf = this.app.workspace.getLeaf(true);
-                await leaf.setViewState({
-                    type: OPENAPI_ENTRY_VIEW,
-                    active: true,
-                });
-                await this.app.workspace.revealLeaf(leaf);
-            },
         });
 
         this.registerObsidianProtocolHandler(
@@ -259,20 +212,43 @@ export default class OpenAPIRendererPlugin extends Plugin {
     }
 
     /**
-     * Initializes the utility components of the plugin.
+     * Initializes the utility components of the plugin and registers export commands.
      *
-     * This method creates instances of several utility classes:
-     * - `StateChecker`: This utility checks the state of the plugin, determining if it is being launched for the first time or if there are updates available. It shows appropriate notifications based on its findings.
-     * - `FileWatcher`: This utility monitors file changes in the workspace, allowing the plugin to respond to file renames
-     * - `Export`: This utility handles the export functionality of the plugin and is utilized in views to allow users to export specifications
-     *
-     * It also checks the plugin's state by invoking `checkState` on the `StateChecker`.
+     * This method creates the `Export` utility, which renders specification files as
+     * standalone Swagger UI pages, and registers the commands that trigger it.
      *
      * @returns A promise that resolves when all utility components have been initialized.
      */
     private async initializeUtilities(): Promise<void> {
-        this.fileWatcher = new FileWatcher(this);
         this.export = new Export(this);
+
+        this.addCommand({
+            id: 'openapi-renderer-export-html',
+            name: 'Export current OpenAPI as standalone HTML',
+            icon: 'file-code-2',
+            callback: async () => {
+                const file = this.app.workspace.getActiveFile();
+                if (
+                    !file ||
+                    !['yaml', 'yml', 'json'].includes(
+                        file.extension.toLowerCase()
+                    )
+                ) {
+                    this.showNotice('Open an OpenAPI file first');
+                    return;
+                }
+                await this.export.exportCurrent(file);
+            },
+        });
+
+        this.addCommand({
+            id: 'openapi-renderer-export-zip',
+            name: 'Export all OpenAPI files as ZIP',
+            icon: 'file-archive',
+            callback: async () => {
+                await this.export.exportAll();
+            },
+        });
     }
 
     /**

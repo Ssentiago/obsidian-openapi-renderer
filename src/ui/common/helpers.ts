@@ -1,47 +1,5 @@
 import yaml from 'js-yaml';
 import { setIcon } from 'obsidian';
-import { EntryView } from 'ui/views/OpenAPI Entry/entry-view';
-import { VersionView } from 'ui/views/OpenAPI Version/version-view';
-import { OpenAPIView } from '../views/OpenAPI/openapi-view';
-
-export async function createNewLeaf(
-    viewType: string,
-    view: OpenAPIView | VersionView | EntryView,
-    filePath?: string
-): Promise<void> {
-    const viewLeaves = view.app.workspace.getLeavesOfType(viewType);
-
-    let path: string;
-    if (view instanceof EntryView) {
-        path = filePath!;
-    } else {
-        path = view.file?.path!;
-    }
-
-    if (!path) {
-        return;
-    }
-
-    const existingView = viewLeaves.find(
-        (leaf) => leaf.getViewState().state?.file === path
-    );
-    if (existingView) {
-        const newViewState = {
-            ...existingView.getViewState(),
-            active: true,
-        };
-        await existingView.setViewState(newViewState);
-    } else {
-        const newLeaf = view.app.workspace.getLeaf(true);
-        await newLeaf.setViewState({
-            type: viewType,
-            active: true,
-            state: {
-                file: path,
-            },
-        });
-    }
-}
 
 /**
  * Converts given data from a JSON / YAML string to JSON string

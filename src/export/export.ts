@@ -1,8 +1,11 @@
-import { Specification } from 'indexedDB/database/specification';
+import { convertData } from 'ui/common/helpers';
 import OpenAPIRendererPlugin from 'main';
-import { moment } from 'obsidian';
+import { moment, TFile } from 'obsidian';
 import Yazl from 'yazl';
-import { OneFileVersionData, renderData, specData } from './interfaces';
+import { RenderedSpec } from './interfaces';
+
+const API_EXTENSIONS = ['yaml', 'yml', 'json'];
+const API_MARKER = /^\s*["']?(openapi|swagger)["']?\s*:/m;
 
 export default class Export {
     constructor(public plugin: OpenAPIRendererPlugin) {}
@@ -48,97 +51,58 @@ export default class Export {
     }
 
     /**
-     * Renders Swagger UI HTML for a list of file specifications.
+     * Reads a vault file and renders it as a standalone Swagger UI page.
      *
-     * @param {Specification[]} specs - An array of file specifications.
-     * @return {renderData} An object containing the path, name, and data for the rendered Swagger UI.
+     * @param {TFile} file - The specification file to render.
+     * @return {Promise<RenderedSpec>} The rendered page with its metadata.
      */
-    private renderSwaggerUIHtmlForFileSpecs(
-        specs: Specification[]
-    ): renderData {
-        const data = specs.reduce<specData[]>((htmlStrings, spec) => {
-            const specString = spec.getPatchedVersion(specs).diff as string;
-            const specData = {
-                version: spec.version,
-                diff: this.renderSwaggerUIHtml(specString),
-                time: new Date(spec.createdAt).getTime(),
-                name: spec.name,
-            };
-            htmlStrings.push(specData);
-            return htmlStrings;
-        }, []);
+    private async renderFile(file: TFile): Promise<RenderedSpec> {
+        const content = await this.plugin.app.vault.cachedRead(file);
+        const spec = convertData(content, file.extension.toLowerCase());
         return {
-            path: specs[0].path,
-            data: data,
+            name: file.basename,
+            path: file.path,
+            html: this.renderSwaggerUIHtml(spec),
+            time: Date.now(),
         };
     }
 
     /**
-     * Renders Swagger UI HTML for a list of file specifications.
+     * Collects all vault files that look like OpenAPI specifications.
      *
-     * @param {Record<string, Specification[]>} specsData - An object containing an array of file specifications for each key.
-     * @return {renderData[]} An array of objects containing the path, name, and data for the rendered Swagger UI for each file specification.
+     * @return {Promise<TFile[]>} Files whose content declares an openapi or swagger key.
      */
-    private renderSwaggerUIHtmlForFiles(
-        specsData: Record<string, Specification[]>
-    ): renderData[] {
-        return Object.entries(specsData).map(([_, specs]) =>
-            this.renderSwaggerUIHtmlForFileSpecs(specs)
-        );
-    }
+    private async collectApiFiles(): Promise<TFile[]> {
+        const candidates = this.plugin.app.vault.getFiles().filter((file) => {
+            return API_EXTENSIONS.includes(file.extension.toLowerCase());
+        });
 
-    async export(specs: OneFileVersionData): Promise<void>;
-    async export(specs: Specification[]): Promise<void>;
-    async export(specs: Record<string, Specification[]>): Promise<void>;
-
-    async export(
-        specs:
-            | OneFileVersionData
-            | Specification[]
-            | Record<string, Specification[]>
-    ): Promise<void> {
-        let data: renderData | renderData[];
-        if (Array.isArray(specs)) {
-            if (specs.length === 0) {
-                return;
-            }
-
-            data = this.renderSwaggerUIHtmlForFileSpecs(
-                specs as Specification[]
-            );
-            await this.handleZip(data);
-        } else {
-            if (Object.keys(specs).includes('specs')) {
-                await this.handleSaveOneVersion(specs as OneFileVersionData);
-            } else {
-                const specsRecord = specs as Record<string, Specification[]>;
-                if (Object.keys(specsRecord).length === 0) {
-                    return;
-                }
-                data = this.renderSwaggerUIHtmlForFiles(specsRecord);
-                await this.handleZip(data);
+        const apiFiles: TFile[] = [];
+        for (const file of candidates) {
+            const content = await this.plugin.app.vault.cachedRead(file);
+            if (API_MARKER.test(content)) {
+                apiFiles.push(file);
             }
         }
+        return apiFiles;
     }
 
-    private async handleSaveOneVersion(
-        specData: OneFileVersionData
-    ): Promise<void> {
+    /**
+     * Exports the given specification file as a standalone Swagger UI page
+     * written to the vault root.
+     *
+     * @param {TFile} file - The specification file to export.
+     * @return {Promise<void>} A promise that resolves when the file is written.
+     */
+    async exportCurrent(file: TFile): Promise<void> {
         try {
-            let diff = specData.spec.getPatchedVersion(specData.specs)
-                .diff as string;
-            diff = this.renderSwaggerUIHtml(diff);
-            const pathMatch = specData.spec.path.match(/\/?(.+)\./)?.[1];
+            const rendered = await this.renderFile(file);
+            const sanitizedName = file.basename.replace(/[^a-zA-Z0-9-_]/g, '_');
             const time = moment().format('YYYYMMDDHHmmss');
-            const pathPart = pathMatch ? `${pathMatch[1]}-` : '';
-            const sanitizedName = specData.spec.name.replace(
-                /[^a-zA-Z0-9-_]/g,
-                '_'
-            );
+            const exportPath = `export-${sanitizedName}-${time}.html`;
 
-            const exportPath = `export-${pathPart}${sanitizedName}-${time}.html`;
-
-            await this.plugin.app.vault.adapter.write(exportPath, diff);
+            await this.plugin.app.vault.adapter.write(exportPath, rendered.html);
+            this.plugin.showNotice(`Exported to ${exportPath}`);
         } catch (error: any) {
             this.plugin.showNotice('Failed to export file');
             this.plugin.logger.error(`Failed to export file: ${error.message}`);
@@ -146,45 +110,55 @@ export default class Export {
     }
 
     /**
-     * Adds the files from the given renderData object to a zip file.
+     * Exports every OpenAPI specification found in the vault as a ZIP archive
+     * of standalone Swagger UI pages written to the vault root.
      *
-     * @param {Yazl.ZipFile} zip - The zip file to add the files to.
-     * @param {renderData} files - The renderData object containing the files to add.
-     * @return {Promise<void>} A Promise that resolves when all files have been added.
+     * @return {Promise<void>} A promise that resolves when the archive is written.
      */
-    private async addFilesToZip(
-        zip: Yazl.ZipFile,
-        files: renderData
-    ): Promise<void> {
-        for (const file of files.data) {
-            const version = file.version;
-            const time = moment(file.time).format('YYYYMMDDHHmmss');
-            const path = files.path.match(/(.+)\..+$/);
-            const filePath = `${path?.[1] ?? ''}/${file.name}-${version}-${time}.html`;
+    async exportAll(): Promise<void> {
+        try {
+            const apiFiles = await this.collectApiFiles();
+            if (apiFiles.length === 0) {
+                this.plugin.showNotice('No OpenAPI files found');
+                return;
+            }
 
-            const fileBuffer = Buffer.from(file.diff, 'utf8');
-
-            zip.addBuffer(fileBuffer, filePath);
+            const rendered = await Promise.all(
+                apiFiles.map((file) => this.renderFile(file))
+            );
+            await this.handleZip(rendered);
+        } catch (error: any) {
+            this.plugin.showNotice('Failed to export files');
+            this.plugin.logger.error(`Failed to export files: ${error.message}`);
         }
     }
 
-    private async handleZip(data: renderData): Promise<void>;
-    private async handleZip(data: renderData[]): Promise<void>;
+    /**
+     * Adds the rendered specifications to a ZIP file.
+     *
+     * @param {Yazl.ZipFile} zip - The ZIP file to add the files to.
+     * @param {RenderedSpec} spec - The rendered specification to add.
+     * @return {void}
+     */
+    private addFileToZip(zip: Yazl.ZipFile, spec: RenderedSpec): void {
+        const folder = spec.path.match(/(.+)\..+$/)?.[1] ?? spec.name;
+        const time = moment(spec.time).format('YYYYMMDDHHmmss');
+        const filePath = `${folder}-${spec.name}-${time}.html`;
+
+        zip.addBuffer(Buffer.from(spec.html, 'utf8'), filePath);
+    }
 
     /**
-     * Handles the creation and saving of a ZIP file from the given data.
+     * Handles the creation and saving of a ZIP file from the given rendered
+     * specifications.
      *
-     * @param {renderData | renderData[]} data - The data to be added to the ZIP file.
-     * @return {Promise<void>} A Promise that resolves when the ZIP file is saved.
+     * @param {RenderedSpec[]} specs - The rendered specifications to archive.
+     * @return {Promise<void>} A promise that resolves when the archive is written.
      */
-    private async handleZip(data: renderData | renderData[]): Promise<void> {
-        if (!Array.isArray(data)) {
-            data = [data];
-        }
-
+    private async handleZip(specs: RenderedSpec[]): Promise<void> {
         const zip = new Yazl.ZipFile();
 
-        await Promise.all(data.map((file) => this.addFilesToZip(zip, file)));
+        specs.forEach((spec) => this.addFileToZip(zip, spec));
 
         new Promise<Buffer>((resolve, reject) => {
             const chunks: Buffer[] = [];
@@ -204,6 +178,7 @@ export default class Export {
                     zipFilePath,
                     buffer
                 );
+                this.plugin.showNotice(`Exported to ${zipFilePath}`);
             })
             .catch((err) => {
                 this.plugin.logger.error(

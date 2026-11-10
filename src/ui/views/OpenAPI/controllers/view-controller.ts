@@ -3,13 +3,9 @@ import {
     OpenAPIThemeChangeState,
     UpdateOpenAPIViewStateEvent,
 } from 'events-management/typing/interfaces';
-import { AnchorData } from 'indexedDB/database/anchor';
-import { MessageType, ResponseType } from 'indexedDB/typing/interfaces';
-import { createNewLeaf, updateButton } from 'ui/common/helpers';
+import { updateButton } from 'ui/common/helpers';
 import { RenderingMode } from 'ui/typing/constants';
 
-import { OPENAPI_VERSION_VIEW } from 'ui/typing/types';
-import { AnchorModal } from 'ui/views/OpenAPI/components/source/modals/anchors-modal/anchor-modal';
 import { UtilController } from 'ui/views/OpenAPI/controllers/util-controller';
 import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 
@@ -81,16 +77,13 @@ export class OpenAPIController {
      *      It will open a new leaf of the same type to the right if Ctrl is pressed,
      *      and open a new leaf of the same type in a floating window if Alt is pressed.
      *      Otherwise, it will switch the mode of the current leaf.
-     *   2. Version control button: Opens a new leaf of type OPENAPI_VERSION_VIEW_TYPE.
-     *   3. Theme button: Switches current active component between light and dark theme.
+     *   2. Theme button: Switches current active component between light and dark theme.
      *
      * @returns {Object} An object with the following keys:
      *  - changeModeButton: The mode switch button.
-     *  - versionViewButton: The version control button.
      *  - themeButton: The theme button.
      */
     initializeActions(): {
-        versionViewButton: HTMLElement;
         changeModeButton: HTMLElement;
         themeButton: HTMLElement;
     } {
@@ -111,14 +104,6 @@ export class OpenAPIController {
                     this.modeActionIcon,
                     this.modeActionTitle
                 );
-            }
-        );
-
-        const versionViewButton = this.view.addAction(
-            'git-compare-arrows',
-            'Version control',
-            async () => {
-                await createNewLeaf(OPENAPI_VERSION_VIEW, this.view);
             }
         );
 
@@ -185,7 +170,6 @@ export class OpenAPIController {
 
         return {
             changeModeButton: changeModeButton,
-            versionViewButton: versionViewButton,
             themeButton: themeButton,
         };
     }
@@ -246,43 +230,4 @@ export class OpenAPIController {
         );
     }
 
-    async addAnchor(anchorData: AnchorData) {
-        const result = await this.view.plugin.workerHelper.sendMessage({
-            type: MessageType.AddAnchor,
-            payload: {
-                data: {
-                    path: this.view.file?.path,
-                    anchorData: anchorData,
-                },
-            },
-        });
-        return result.type === ResponseType.Success;
-    }
-
-    async getAnchors() {
-        const result = await this.view.plugin.workerHelper.sendMessage({
-            type: MessageType.GetAnchors,
-            payload: {
-                data: {
-                    path: this.view.file?.path,
-                },
-            },
-        });
-        return result.type === ResponseType.Success
-            ? (result.payload.data.anchors as AnchorData[])
-            : [];
-    }
-
-    async deleteAnchor(anchorData: AnchorData) {
-        const result = await this.view.plugin.workerHelper.sendMessage({
-            type: MessageType.DeleteAnchor,
-            payload: {
-                data: {
-                    path: this.view.file?.path,
-                    anchorData: anchorData,
-                },
-            },
-        });
-        return result.type === ResponseType.Success;
-    }
 }

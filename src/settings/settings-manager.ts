@@ -12,7 +12,6 @@ export interface DefaultSettings {
     OpenAPISourceDarkTheme: string;
     syncOpenAPISourceTheme: boolean;
     OpenAPIViewDefaultMode: string;
-    OpenAPIEntryGridLayoutColumns: number;
     extensions: BaseExtensionsStorage;
 }
 
@@ -39,7 +38,6 @@ export default class SettingsManager {
             syncOpenAPIPreviewTheme: true,
             syncOpenAPISourceTheme: true,
             OpenAPIViewDefaultMode: 'source',
-            OpenAPIEntryGridLayoutColumns: 4,
             extensions:
                 this.plugin.sourceExtensionsManager.pluginSettingsExtensions,
         };
