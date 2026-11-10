@@ -5,7 +5,6 @@ import {
 } from 'events-management/typing/interfaces';
 import { updateButton } from 'ui/common/helpers';
 import { RenderingMode } from 'ui/typing/constants';
-
 import { UtilController } from 'ui/views/OpenAPI/controllers/util-controller';
 import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
 
@@ -141,7 +140,8 @@ export class OpenAPIController {
             }
         );
 
-        this.view.plugin.observer.subscribe(
+        this.view.plugin.observer.subscribeForView(
+            this.view,
             this.view.plugin.app.workspace,
             EventID.SwitchModeState,
             async () => {
@@ -153,7 +153,8 @@ export class OpenAPIController {
             }
         );
 
-        this.view.plugin.observer.subscribe(
+        this.view.plugin.observer.subscribeForView(
+            this.view,
             this.view.plugin.app.workspace,
             EventID.SwitchModeState,
             async () => {
@@ -166,7 +167,8 @@ export class OpenAPIController {
             }
         );
 
-        this.view.plugin.observer.subscribe(
+        this.view.plugin.observer.subscribeForView(
+            this.view,
             this.view.plugin.app.workspace,
             EventID.OpenAPIThemeChangeState,
             async (event: OpenAPIThemeChangeState) => {
@@ -213,7 +215,8 @@ export class OpenAPIController {
                 }
             }
         );
-        this.view.plugin.observer.subscribe(
+        this.view.plugin.observer.subscribeForView(
+            this.view,
             this.view.app.workspace,
             EventID.UpdateOpenAPIViewState,
             async (event: UpdateOpenAPIViewStateEvent) => {
@@ -229,11 +232,14 @@ export class OpenAPIController {
             }
         );
 
-        this.view.app.workspace.on('css-change', async () => {
-            await this.view.activeComponent?.controller.themeController.themeUpdate();
-        });
+        this.view.registerEvent(
+            this.view.app.workspace.on('css-change', async () => {
+                await this.view.activeComponent?.controller.themeController.themeUpdate();
+            })
+        );
 
-        this.view.plugin.observer.subscribe(
+        this.view.plugin.observer.subscribeForView(
+            this.view,
             this.view.plugin.app.workspace,
             EventID.OpenAPIThemeChangeState,
             async (event: OpenAPIThemeChangeState) => {
@@ -245,5 +251,4 @@ export class OpenAPIController {
             }
         );
     }
-
 }

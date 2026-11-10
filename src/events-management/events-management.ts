@@ -53,7 +53,7 @@ abstract class Observer {
         emitter: Events,
         eventID: EventID,
         handler: (event: T) => Promise<void>
-    ): void;
+    ): () => void;
 }
 
 /**
@@ -78,7 +78,7 @@ export class EventObserver extends Observer {
         emitter: Events,
         eventID: EventID,
         handler: (event: T) => Promise<void>
-    ): void {
+    ): () => void {
         const eventRef = emitter.on(eventID, async (...data: unknown[]) => {
             const event = data[0] as OpenAPIRendererEvent;
             await handler(event as T);
@@ -92,7 +92,23 @@ export class EventObserver extends Observer {
         if (!emitterSubs.has(eventID)) {
             emitterSubs.set(eventID, []);
         }
-        emitterSubs.get(eventID)!.push(() => emitter.offref(eventRef));
+        const handlers = emitterSubs.get(eventID)!;
+
+        const dispose = () => {
+            emitter.offref(eventRef);
+            const index = handlers.indexOf(dispose);
+            if (index !== -1) {
+                handlers.splice(index, 1);
+            }
+            if (handlers.length === 0) {
+                emitterSubs.delete(eventID);
+            }
+            if (emitterSubs.size === 0) {
+                this.subscriptions.delete(emitter);
+            }
+        };
+        handlers.push(dispose);
+        return dispose;
     }
 
     /**
@@ -109,17 +125,17 @@ export class EventObserver extends Observer {
         eventID: EventID,
         handler: (event: T) => Promise<void>
     ): void {
-        this.subscribe(emitter, eventID, handler);
-        view.register(() => this.unsubscribeFromEvent(emitter, eventID));
+        const dispose = this.subscribe(emitter, eventID, handler);
+        view.register(dispose);
     }
 
     /**
      * Unsubscribes from all events on all emitters
      */
     unsubscribeAll(): void {
-        this.subscriptions.forEach((emitterSubs, emitter) => {
+        this.subscriptions.forEach((emitterSubs) => {
             emitterSubs.forEach((handlers) => {
-                handlers.forEach((unsubscribe) => unsubscribe());
+                [...handlers].forEach((dispose) => dispose());
             });
         });
         this.subscriptions.clear();
@@ -133,7 +149,7 @@ export class EventObserver extends Observer {
         const emitterSubs = this.subscriptions.get(emitter);
         if (emitterSubs) {
             emitterSubs.forEach((handlers) => {
-                handlers.forEach((unsubscribe) => unsubscribe());
+                [...handlers].forEach((dispose) => dispose());
             });
             this.subscriptions.delete(emitter);
         }
@@ -149,7 +165,7 @@ export class EventObserver extends Observer {
         if (emitterSubs) {
             const handlers = emitterSubs.get(eventID);
             if (handlers) {
-                handlers.forEach((unsubscribe) => unsubscribe());
+                [...handlers].forEach((dispose) => dispose());
                 emitterSubs.delete(eventID);
             }
             if (emitterSubs.size === 0) {

@@ -1,9 +1,9 @@
 import { EventID } from 'events-management/typing/constants';
 import { SwitchModeStateEvent } from 'events-management/typing/interfaces';
-import { ExtensionsModal } from 'ui/views/OpenAPI/components/source/modals/extensions-modal';
+import { SourceController } from 'ui/views/OpenAPI/components/source/controllers/source-controller';
 import openAPIFormatter from 'ui/views/OpenAPI/components/source/extensions/formatter';
 import convertFile from 'ui/views/OpenAPI/components/source/extensions/yamlAndJsonConverter';
-import { SourceController } from 'ui/views/OpenAPI/components/source/controllers/source-controller';
+import { ExtensionsModal } from 'ui/views/OpenAPI/components/source/modals/extensions-modal';
 
 export class SourceUtilController {
     constructor(public controller: SourceController) {}
@@ -44,7 +44,8 @@ export class SourceUtilController {
                 new ExtensionsModal(app, this.controller.source).open();
             }
         );
-        plugin.observer.subscribe(
+        plugin.observer.subscribeForView(
+            view,
             app.workspace,
             EventID.SwitchModeState,
             async (event: SwitchModeStateEvent) => {

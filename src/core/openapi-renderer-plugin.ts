@@ -8,6 +8,7 @@ import { OpenAPISettingTab } from 'settings/settings';
 import SettingsManager, { DefaultSettings } from 'settings/settings-manager';
 import { ExtensionManager } from 'ui/views/OpenAPI/components/source/managers/extension-manager';
 import { OpenAPIView } from 'ui/views/OpenAPI/openapi-view';
+
 import { EventID } from '../events-management/typing/constants';
 import { PowerOffEvent } from '../events-management/typing/interfaces';
 import LoggingManager from '../logging/logging-manager';
@@ -123,32 +124,36 @@ export default class OpenAPIRendererPlugin extends Plugin {
             this.registerExtensions(['yaml', 'yml', 'json'], OPENAPI_VIEW);
         }
 
-        this.app.workspace.on('file-menu', (menu, file) => {
-            if (!(file instanceof TFile)) {
-                return;
-            }
+        this.registerEvent(
+            this.app.workspace.on('file-menu', (menu, file) => {
+                if (!(file instanceof TFile)) {
+                    return;
+                }
 
-            if (
-                !['yaml', 'yml', 'json'].includes(file.extension.toLowerCase())
-            ) {
-                return;
-            }
-            menu.addItem((item) => {
-                item.setIcon('circle-dot');
-                item.setTitle('Open in OpenAPI View');
-                item.onClick(async () => {
-                    const leaf = this.app.workspace.getLeaf(true);
-                    await leaf.setViewState({
-                        type: OPENAPI_VIEW,
-                        active: true,
-                        state: {
-                            file: file.path,
-                        },
+                if (
+                    !['yaml', 'yml', 'json'].includes(
+                        file.extension.toLowerCase()
+                    )
+                ) {
+                    return;
+                }
+                menu.addItem((item) => {
+                    item.setIcon('circle-dot');
+                    item.setTitle('Open in OpenAPI View');
+                    item.onClick(async () => {
+                        const leaf = this.app.workspace.getLeaf(true);
+                        await leaf.setViewState({
+                            type: OPENAPI_VIEW,
+                            active: true,
+                            state: {
+                                file: file.path,
+                            },
+                        });
+                        await this.app.workspace.revealLeaf(leaf);
                     });
-                    await this.app.workspace.revealLeaf(leaf);
                 });
-            });
-        });
+            })
+        );
 
         this.registerObsidianProtocolHandler(
             'openapi-open',

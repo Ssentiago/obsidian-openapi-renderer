@@ -93,7 +93,8 @@ export class PreviewUtilController {
      */
     setupEventListeners(): void {
         const { plugin } = this.controller.preview.openAPIView;
-        plugin.observer.subscribe(
+        plugin.observer.subscribeForView(
+            this.controller.preview.openAPIView,
             plugin.app.workspace,
             EventID.EditorChanged,
             async (event: SourceChangedEvent) => {
@@ -167,7 +168,8 @@ will not be processed automatically. To capture and resolve these references, pl
 
         let timeout: NodeJS.Timeout | undefined = undefined;
 
-        this.controller.preview.plugin.observer.subscribe(
+        this.controller.preview.plugin.observer.subscribeForView(
+            this.controller.preview.openAPIView,
             this.controller.preview.plugin.app.workspace,
             EventID.PreviewState,
             async () => {
@@ -198,7 +200,8 @@ will not be processed automatically. To capture and resolve these references, pl
             }
         );
 
-        this.controller.preview.plugin.observer.subscribe(
+        this.controller.preview.plugin.observer.subscribeForView(
+            this.controller.preview.openAPIView,
             this.controller.preview.plugin.app.workspace,
             EventID.SwitchModeState,
             async (event: SwitchModeStateEvent) => {
