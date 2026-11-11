@@ -255,7 +255,7 @@ ${SwaggerUiDarkCss}
 
         specs.forEach((spec) => this.addFileToZip(zip, spec));
 
-        new Promise<Buffer>((resolve, reject) => {
+        const buffer = await new Promise<Buffer>((resolve, reject) => {
             const chunks: Buffer[] = [];
 
             zip.outputStream
@@ -264,24 +264,15 @@ ${SwaggerUiDarkCss}
                 .on('error', reject);
 
             zip.end();
-        })
-            .then(async (buffer) => {
-                const time = moment().format('YYYYMMDDHHmmss');
-                const exportDir = await this.ensureExportDir();
-                const zipFilePath = exportDir
-                    ? `${exportDir}/export-openapi-data-${time}.zip`
-                    : `export-openapi-data-${time}.zip`;
+        });
 
-                await this.plugin.app.vault.adapter.writeBinary(
-                    zipFilePath,
-                    buffer
-                );
-                this.plugin.showNotice(`Exported to ${zipFilePath}`);
-            })
-            .catch((err: unknown) => {
-                this.plugin.logger.error(
-                    `Error when handling ZIP file: ${err instanceof Error ? err.message : String(err)}`
-                );
-            });
+        const time = moment().format('YYYYMMDDHHmmss');
+        const exportDir = await this.ensureExportDir();
+        const zipFilePath = exportDir
+            ? `${exportDir}/export-openapi-data-${time}.zip`
+            : `export-openapi-data-${time}.zip`;
+
+        await this.plugin.app.vault.adapter.writeBinary(zipFilePath, buffer);
+        this.plugin.showNotice(`Exported to ${zipFilePath}`);
     }
 }
