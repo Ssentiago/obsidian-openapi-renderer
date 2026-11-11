@@ -1,3 +1,21 @@
+## [4.6.0] - 2026-11-11
+
+### Features
+- validate specs as OpenAPI in the linter ([`1e52912`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/1e529126b02a1251958512c5d36d4c9a41488311))
+- navigate to $ref targets on Ctrl/Cmd click ([`814f8fb`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/814f8fb9b3edbc2f940523dbbfe15f6a52cb300e))
+- render OpenAPI preview in shadow DOM ([`fde7f11`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/fde7f11977d1df8697aa54113bba95d39cfa47c4))
+- add export button to the OpenAPI View action row ([`57d330f`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/57d330f731fd42de8c212bcc564a0f6b1c665444))
+- migrate to native-react-components 0.1.0 and drill-down layout ([`7a93ef3`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/7a93ef38ad8d5d1bcc256046b80837abc3b9cd77))
+
+### Bug Fixes
+- await ZIP write before reporting success ([`788185f`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/788185f1d3c6aa9800fa837bcf597cca50fdbc20))
+- resolve eslint-plugin-obsidianmd findings ([`f83b4b4`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/f83b4b4bf79bf8d82dec478eb4666459bb780626))
+- scope view subscriptions to their own lifecycle ([`9792258`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/979225813ef99d96fa28297060d41db521ff4958))
+- restore preview legibility fixes inside the shadow root ([`777480d`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/777480da5a90ae669ad800eea51a00ac68384e43))
+- save file through TextFileView.requestSave instead of synthetic Ctrl+S ([`7e21dd4`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/7e21dd4127237d8e231ef3a49eab24814a68668e))
+- normalize extension toggles and stop hijacking yaml/json by default ([`d9b5b01`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/d9b5b013e3d21df1afb7b1ff614293c6a94c5bd8))
+- offline standalone HTML with safe spec embedding and export folder ([`b80bd5d`](https://github.com/Ssentiago/obsidian-openapi-renderer/commit/b80bd5d99a7806f658aabc273e7aca15175ebb76))
+
 ## [4.5.1] - 2024-11-23
 ### What's new
 
